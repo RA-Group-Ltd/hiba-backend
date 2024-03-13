@@ -1,0 +1,52 @@
+version: '3'
+
+volumes:
+  webapp:
+
+services:
+  mariadb:
+    image: mariadb:latest
+    environment:
+      MYSQL_DATABASE: hiba
+      MYSQL_USER: mariadbuser
+      MYSQL_PASSWORD: mariadbpwd
+      MYSQL_ROOT_PASSWORD: mariadbrootpwd
+    ports:
+      - "3306:3306"
+
+  spring:
+    image: openjdk:17-alpine
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./hiba/build/libs:/webapp
+      - ./uploads:/webapp/static/images
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://hiba_mariadb_1:3306/hiba
+      SPRING_DATASOURCE_USERNAME: mariadbuser
+      SPRING_DATASOURCE_PASSWORD: mariadbpwd
+      SPRING_LIQUIBASE_URL: jdbc:mariadb://hiba_mariadb_1:3306/hiba
+      SPRING_LIQUIBASE_USER: mariadbuser
+      SPRING_LIQUIBASE_PASSWORD: mariadbpwd
+      SPRING_LIQUIBASE_CHANGE-LOG: classpath:db/changelog/db-changelog-master.xml
+    working_dir: /webapp
+    command: ["java","-jar","hiba.jar"]
+
+  gradle:
+    image: gradle:jdk17-alpine
+    volumes:
+      - ./hiba:/app
+      - ./hiba/build/libs:/app/output
+    working_dir: /app
+    command: ["gradle","build"]
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - /etc/nginx/conf.d:/etc/nginx/conf.d
+      - /etc/letsencrypt:/etc/letsencrypt
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - spring
