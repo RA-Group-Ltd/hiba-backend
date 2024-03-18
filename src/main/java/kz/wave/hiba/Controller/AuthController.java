@@ -61,7 +61,7 @@ public class AuthController {
         // Генерируем и отправляем код, не зависимо от того, новый пользователь или нет
         telegramBot.generateAndSendVerificationCode(user);
 
-        String deepLink = "https://t.me/" + telegramBot.getBotUsername();
+        String deepLink = "https://t.me/" + telegramBot.getBotUsername()+ "?start="+ verificationDTO.getPhoneNumber();
         return ResponseEntity.ok(deepLink);
     }
 

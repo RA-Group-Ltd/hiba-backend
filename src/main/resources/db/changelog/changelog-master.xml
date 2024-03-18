@@ -43,7 +43,7 @@
                  stripComments="true" />
     </changeSet>
 
-    <changeSet id="2024_03_07_create_notification_table" author="batyrkhan-kenzhaliyev">
+    <!--<changeSet id="2024_03_07_create_notification_table" author="batyrkhan-kenzhaliyev">
         <sqlFile path="changes/2024_03_07_create_notification_table.sql"
                  dbms="mariadb"
                  encoding="UTF-8"
@@ -51,7 +51,7 @@
                  relativeToChangelogFile="true"
                  splitStatements="true"
                  stripComments="true" />
-    </changeSet>
+    </changeSet>-->
 
 
 </databaseChangeLog>

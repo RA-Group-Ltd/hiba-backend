@@ -42,11 +42,11 @@ public class MenuController {
     }
 
     @PostMapping(value = "/createMenu")
-    @PreAuthorize("hasAnyRole('ROLE_BUTCHER')")
-    public ResponseEntity<?> createMenu(@RequestBody Menu menuu) {
+    @PreAuthorize("hasAnyRole('ROLE_BUTCHER', 'ROLE_SUPERADMIN')")
+    public ResponseEntity<?> createMenu(@RequestBody Menu menu) {
         try {
-            Menu menu = menuService.createMenu(menuu);
-            return new ResponseEntity<>(menu, HttpStatus.CREATED);
+            Menu createMenu = menuService.createMenu(menu);
+            return new ResponseEntity<>(createMenu, HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("You don't have butchery role!", HttpStatus.BAD_REQUEST);

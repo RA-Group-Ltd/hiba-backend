@@ -14,6 +14,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Random;
 
 @Component
@@ -64,24 +65,23 @@ public class TelegramBot extends TelegramLongPollingBot {
             var messageText = update.getMessage().getText();
             var chatId = update.getMessage().getChatId();
 
-            switch (messageText) {
-                case START -> {
+            if(messageText.contains("/start")){
                     String username = update.getMessage().getChat().getUserName();
-                    startCommand(chatId, username);
-
+                    String phone = messageText.split("/start ")[1];
                     // Сохраните telegramChatId при первом подключении через deep link
-                    User user = userRepository.findByPhone(messageText);
+                    User user = userRepository.findByPhone(phone);
                     if (user != null) {
                         user.setTelegramChatId(chatId.toString());
                         userRepository.save(user);
                     }
+                    startCommand(chatId, username, user);
                 }
-            }
+
         }
     }
 
-    private void startCommand(Long chatId, String userName) {
-        VerificationCode verificationCode = verificationCodeRepository.getVerificationCodeByUserId(chatId);
+    private void startCommand(Long chatId, String userName, User user) {
+        VerificationCode verificationCode = verificationCodeRepository.getVerificationCodeByUserId(user.getId());
         var text = " Добро пожаловать Hiba bot! " + verificationCode.getToken();
 
         var formattedText = String.format(text, userName);

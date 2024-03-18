@@ -18,16 +18,13 @@ public class Menu extends BaseEntity {
     @Column(name = "weight")
     private int weight;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "is_whole_animal")
     private Boolean isWholeAnimal;
 
-    @ManyToOne
-    @JoinColumn(name = "butcheryId", referencedColumnName = "id", insertable = false, updatable = false)
-    private Butchery butchery;
+    @Column(name = "butcheryId")
+    private Long butcheryId;
 
-    @ManyToOne
-    @JoinColumn(name = "categoryId", referencedColumnName = "id", insertable = false, updatable = false)
-    private Category category;
-
+    @Column(name = "categoryId")
+    private Long categoryId;
 
 }

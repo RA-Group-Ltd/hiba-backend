@@ -83,7 +83,7 @@ CREATE TABLE menu (
                       butchery_id INT,
                       category_id INT,
                       weight INT,
-                      isWholeAnimal BOOLEAN,
+                      is_whole_animal BOOLEAN,
                       FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
                       FOREIGN KEY (butchery_id) REFERENCES butcheries(id) ON DELETE CASCADE
 );
