@@ -11,6 +11,8 @@ public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
 
     void deleteUserRoleByUserId(Long id);
 
+    UserRole getUserRoleByUserId(Long id);
+
     UserRole getByUserId(Long id);
 
 }

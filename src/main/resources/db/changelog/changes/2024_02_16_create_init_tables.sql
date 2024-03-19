@@ -80,12 +80,12 @@ CREATE TABLE butchers (
 CREATE TABLE menu (
                       id INT AUTO_INCREMENT PRIMARY KEY,
                       name VARCHAR(255) NOT NULL,
-                      butchery_id INT,
+                      butchery_category_id INT,
                       category_id INT,
                       weight INT,
                       is_whole_animal BOOLEAN,
                       FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
-                      FOREIGN KEY (butchery_id) REFERENCES butcheries(id) ON DELETE CASCADE
+                      FOREIGN KEY (butchery_category_id) REFERENCES butcheries(id) ON DELETE CASCADE
 );
 
 CREATE TABLE reviews (

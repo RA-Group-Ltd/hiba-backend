@@ -4,6 +4,7 @@ import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Entities.VerificationCode;
 import kz.wave.hiba.Repository.UserRepository;
 import kz.wave.hiba.Repository.VerificationCodeRepository;
+import kz.wave.hiba.Service.AuthService;
 import kz.wave.hiba.Service.VerificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +38,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AuthService authService;
+
     @Override
     public String getBotUsername() {
         return botUsername;
@@ -69,20 +73,36 @@ public class TelegramBot extends TelegramLongPollingBot {
                     String username = update.getMessage().getChat().getUserName();
                     String phone = messageText.split("/start ")[1];
                     // Сохраните telegramChatId при первом подключении через deep link
-                    User user = userRepository.findByPhone(phone);
-                    if (user != null) {
-                        user.setTelegramChatId(chatId.toString());
-                        userRepository.save(user);
-                    }
-                    startCommand(chatId, username, user);
+
+
+
+
+                    startCommand(chatId, username, phone);
                 }
 
         }
     }
 
-    private void startCommand(Long chatId, String userName, User user) {
-        VerificationCode verificationCode = verificationCodeRepository.getVerificationCodeByUserId(user.getId());
-        var text = " Добро пожаловать Hiba bot! " + verificationCode.getToken();
+    private void startCommand(Long chatId, String userName, String phone) {
+        User user = userRepository.findByPhone(phone);
+
+        if (user == null) {
+            // Если пользователя нет, создаем нового и отправляем код
+            user = authService.createUserWithPhoneNumber(phone);
+
+            user.setTelegramChatId(chatId.toString());
+            userRepository.save(user);
+        }
+
+        VerificationCode code = new VerificationCode();
+        String verificationCode = String.format("%04d", new Random().nextInt(10000)); // генерирует 4-значный код
+        code.setToken(verificationCode);
+        // Сетим expirationDate, используя LocalDateTime
+        code.setExpirationDate(LocalDateTime.now().plusMinutes(10)); // код действителен 10 минут
+        code.setUser(user);
+        verificationCodeRepository.save(code);
+
+        var text = " Добро пожаловать Hiba bot! " + code.getToken();
 
         var formattedText = String.format(text, userName);
         sendMessage(chatId, formattedText);
@@ -98,7 +118,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    public void generateAndSendVerificationCode(User user) {
+    /*public void generateAndSendVerificationCode(User user) {
         VerificationCode verificationCode = generateVerificationCode(user);
         verificationCodeRepository.save(verificationCode);
     }
@@ -111,7 +131,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         code.setExpirationDate(LocalDateTime.now().plusMinutes(10)); // код действителен 10 минут
         code.setUser(user);
         return code;
-    }
+    }*/
 
 
 }

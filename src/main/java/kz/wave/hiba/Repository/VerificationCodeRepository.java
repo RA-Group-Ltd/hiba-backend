@@ -13,4 +13,5 @@ import java.util.List;
 public interface VerificationCodeRepository extends JpaRepository<VerificationCode, Long> {
     List<VerificationCode> findByUserIdAndExpirationDateAfter(Long id, LocalDateTime now);
     VerificationCode getVerificationCodeByUserId(Long id);
+    void deleteVerificationCodeByUserId(Long id);
 }

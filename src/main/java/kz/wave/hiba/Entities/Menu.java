@@ -21,8 +21,8 @@ public class Menu extends BaseEntity {
     @Column(nullable = false, name = "is_whole_animal")
     private Boolean isWholeAnimal;
 
-    @Column(name = "butcheryId")
-    private Long butcheryId;
+    @Column(name = "butcheryCategoryId")
+    private Long butcheryCategoryId;
 
     @Column(name = "categoryId")
     private Long categoryId;

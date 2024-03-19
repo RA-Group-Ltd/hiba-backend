@@ -1,6 +1,8 @@
 package kz.wave.hiba.Service.Impl;
 
+import kz.wave.hiba.Config.JwtUtils;
 import kz.wave.hiba.Config.TelegramBot;
+import kz.wave.hiba.Config.UserResponse;
 import kz.wave.hiba.DTO.AuthCheckDTO;
 import kz.wave.hiba.DTO.AuthDTO;
 import kz.wave.hiba.Entities.*;
@@ -12,6 +14,9 @@ import kz.wave.hiba.Service.AuthService;
 import kz.wave.hiba.Service.TelegramService;
 import kz.wave.hiba.Service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRoleRepository userRoleRepository;
     private final RoleRepository roleRepository;
     private final VerificationCodeRepository verificationCodeRepository;
-    private final TelegramBot telegramBot;
+    private final JwtUtils jwtUtils;
 
     public User findByPhoneNumber(String phoneNumber) {
         return userRepository.findByPhone(phoneNumber);
@@ -41,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
     public User createUserWithPhoneNumber(String phoneNumber) {
         User newUser = new User();
         newUser.setPhone(phoneNumber);
-        newUser.setTelegramChatId(newUser.getTelegramChatId());
+//        newUser.setTelegramChatId(newUser.getTelegramChatId());
         return userRepository.save(newUser);
     }
 
@@ -84,12 +89,20 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void confirmUser(String phoneNumber) {
+    public ResponseEntity<?> confirmUser(String phoneNumber) {
         User user = findByPhoneNumber(phoneNumber);
         if (user != null) {
-            user.setConfirmed(true); // Предполагается, что у вас есть поле confirmed в сущности User
-            userRepository.save(user);
+            verificationCodeRepository.deleteVerificationCodeByUserId(user.getId());
+            if (!user.isConfirmed()){
+                user.setConfirmed(true); // Предполагается, что у вас есть поле confirmed в сущности User
+                userRepository.save(user);
+                return new ResponseEntity<>("", HttpStatus.OK);
+            } else {
+                String token = jwtUtils.generateToken(user);
+                return new ResponseEntity<>(new UserResponse(token, user), HttpStatus.OK);
+            }
         }
+        return new ResponseEntity<>("", HttpStatus.BAD_REQUEST);
     }
 
     @Override

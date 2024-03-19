@@ -52,14 +52,14 @@ public class AuthController {
     @PostMapping("/send-or-verify-code")
     public ResponseEntity<?> sendOrVerifyCode(@RequestBody VerificationDTO verificationDTO) {
         // Проверяем, есть ли пользователь с таким номером телефона
-        User user = authService.findByPhoneNumber(verificationDTO.getPhoneNumber());
-        if (user == null) {
-            // Если пользователя нет, создаем нового и отправляем код
-            user = authService.createUserWithPhoneNumber(verificationDTO.getPhoneNumber());
-        }
+//        User user = authService.findByPhoneNumber(verificationDTO.getPhoneNumber());
+//        if (user == null) {
+//            // Если пользователя нет, создаем нового и отправляем код
+//            user = authService.createUserWithPhoneNumber(verificationDTO.getPhoneNumber());
+//        }
 
         // Генерируем и отправляем код, не зависимо от того, новый пользователь или нет
-        telegramBot.generateAndSendVerificationCode(user);
+//        telegramBot.generateAndSendVerificationCode(user);
 
         String deepLink = "https://t.me/" + telegramBot.getBotUsername()+ "?start="+ verificationDTO.getPhoneNumber();
         return ResponseEntity.ok(deepLink);
@@ -71,8 +71,7 @@ public class AuthController {
         boolean isCodeValid = authService.verifyCode(verificationDTO.getPhoneNumber(), verificationDTO.getCode());
         if (isCodeValid) {
             // Если код правильный, подтверждаем пользователя
-            authService.confirmUser(verificationDTO.getPhoneNumber());
-            return ResponseEntity.ok("Код подтверждения правильный. Пользователь подтвержден.");
+            return authService.confirmUser(verificationDTO.getPhoneNumber());
         } else {
             return ResponseEntity.badRequest().body("Неверный код подтверждения или срок его действия истек.");
         }

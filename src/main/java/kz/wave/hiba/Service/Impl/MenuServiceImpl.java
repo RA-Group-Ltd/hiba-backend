@@ -1,9 +1,9 @@
 package kz.wave.hiba.Service.Impl;
 
-import kz.wave.hiba.Entities.Butchery;
+import kz.wave.hiba.Entities.ButcheryCategory;
 import kz.wave.hiba.Entities.Category;
 import kz.wave.hiba.Entities.Menu;
-import kz.wave.hiba.Repository.ButcheryRepository;
+import kz.wave.hiba.Repository.ButcheryCategoryRepository;
 import kz.wave.hiba.Repository.CategoryRepository;
 import kz.wave.hiba.Repository.MenuRepository;
 import kz.wave.hiba.Service.MenuService;
@@ -20,7 +20,7 @@ public class MenuServiceImpl implements MenuService {
     private MenuRepository menuRepository;
 
     @Autowired
-    private ButcheryRepository butcheryRepository;
+    private ButcheryCategoryRepository butcheryCategoryRepository;
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -44,23 +44,24 @@ public class MenuServiceImpl implements MenuService {
         newMenu.setIsWholeAnimal(menu.getIsWholeAnimal());
         newMenu.setWeight(menu.getWeight());
 
-        Optional<Butchery> butcheryOptional = butcheryRepository.findById(menu.getButcheryId());
+        Optional<ButcheryCategory> butcheryOptional = butcheryCategoryRepository.findById(menu.getButcheryCategoryId());
 
-        /*if (!butcheryOptional.isPresent()) {
+        if (butcheryOptional.isEmpty()) {
             return null;
-        }*/
+        }
 
-        Butchery butchery = butcheryOptional.get();
+        ButcheryCategory butcheryCategory = butcheryOptional.get();
 
         Optional<Category> categoryOptional = categoryRepository.findById(menu.getCategoryId());
 
-        /*if (!categoryOptional.isEmpty()) {
+        if (categoryOptional.isEmpty()) {
             return null;
-        }*/
+        }
+
         Category category = categoryOptional.get();
 
-        newMenu.setButcheryId(butchery.getId());
-        newMenu.setButcheryId(category.getId());
+        newMenu.setButcheryCategoryId(butcheryCategory.getId());
+        newMenu.setCategoryId(category.getId());
 
         return menuRepository.save(menu);
     }
