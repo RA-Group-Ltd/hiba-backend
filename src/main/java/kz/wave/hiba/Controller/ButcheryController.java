@@ -5,6 +5,7 @@ import kz.wave.hiba.DTO.ButcheryUpdateDTO;
 import kz.wave.hiba.Entities.Butchery;
 import kz.wave.hiba.Entities.City;
 import kz.wave.hiba.Repository.CityRepository;
+import kz.wave.hiba.Response.ButcheryResponse;
 import kz.wave.hiba.Service.ButcheryService;
 import kz.wave.hiba.Service.CityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +39,9 @@ public class ButcheryController {
 
     @GetMapping(value = "/getOneButchery/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Butchery> getOneButchery(@PathVariable Long id) {
+    public ResponseEntity<ButcheryResponse> getOneButchery(@PathVariable Long id) {
         if (butcheryService.getOneButchery(id) != null) {
-            Butchery butchery= butcheryService.getOneButchery(id);
+            ButcheryResponse butchery= butcheryService.getOneButchery(id);
             return ResponseEntity.ok(butchery);
         } else {
             return ResponseEntity.notFound().build();

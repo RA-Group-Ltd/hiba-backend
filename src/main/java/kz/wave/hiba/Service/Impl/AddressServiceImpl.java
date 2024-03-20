@@ -42,12 +42,14 @@ public class AddressServiceImpl implements AddressService {
         Optional<User> userId = userRepository.findById(user.getId());
         Optional<City> cityId = cityRepository.findById(addressCreateDTO.getCity_id());
 
-        address.setApartment(address.getApartment());
+        address.setApartment(addressCreateDTO.getApartment());
         address.setCity(cityId.get());
         address.setUser(userId.get());
         address.setFloor(addressCreateDTO.getFloor());
         address.setEntrance(addressCreateDTO.getEntrance());
-        address.setBuilding_name(addressCreateDTO.getBuilding_name());
+        address.setBuilding(addressCreateDTO.getBuilding());
+        address.setAddress(addressCreateDTO.getAddress());
+        address.setName(addressCreateDTO.getName());
 
         return addressRepository.save(address);
     }
@@ -64,7 +66,9 @@ public class AddressServiceImpl implements AddressService {
 
         Optional<City> cityId = cityRepository.findById(addressUpdateDTO.getCity_id());
 
-        addressUpdate.setBuilding_name(addressUpdateDTO.getBuilding_name());
+        addressUpdate.setBuilding(addressUpdateDTO.getBuilding());
+        addressUpdate.setName(addressUpdateDTO.getName());
+        addressUpdate.setAddress(addressUpdateDTO.getAddress());
         addressUpdate.setApartment(addressUpdateDTO.getApartment());
         addressUpdate.setFloor(addressUpdateDTO.getFloor());
         addressUpdate.setEntrance(addressUpdateDTO.getEntrance());

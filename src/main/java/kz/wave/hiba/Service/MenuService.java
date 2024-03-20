@@ -12,5 +12,6 @@ public interface MenuService {
     Menu updateMenu(Menu updateMenu);
     void deleteMenu(Long id);
 
+    List<Menu> getMenuListByButcheryCategoryId(Long id);
 
 }

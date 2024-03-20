@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 public class AddressUpdateDTO {
 
     private Long id;
-    private String building_name;
+    private String building;
+    private String name;
+    private String address;
     private String floor;
     private String entrance;
     private String apartment;

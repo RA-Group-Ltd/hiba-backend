@@ -10,10 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AddressCreateDTO {
 
-    private String building_name;
+    private String address;
+    private String building;
     private String entrance;
     private String floor;
     private String apartment;
+    private String name;
     @JsonIgnore
     private Long user_id;
     private Long city_id;

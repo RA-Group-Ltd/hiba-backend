@@ -77,6 +77,14 @@ CREATE TABLE butchers (
                           FOREIGN KEY (butchery_id) REFERENCES butcheries(id) ON DELETE CASCADE
 );
 
+CREATE TABLE butchery_category (
+                                   id INT AUTO_INCREMENT PRIMARY KEY,
+                                   butchery_id int,
+                                   category_id int,
+                                   FOREIGN KEY (butchery_id) REFERENCES butcheries(id) ON DELETE CASCADE ,
+                                   FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+);
+
 CREATE TABLE menu (
                       id INT AUTO_INCREMENT PRIMARY KEY,
                       name VARCHAR(255) NOT NULL,
@@ -85,7 +93,7 @@ CREATE TABLE menu (
                       weight INT,
                       is_whole_animal BOOLEAN,
                       FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
-                      FOREIGN KEY (butchery_category_id) REFERENCES butcheries(id) ON DELETE CASCADE
+                      FOREIGN KEY (butchery_category_id) REFERENCES butchery_category(id) ON DELETE CASCADE
 );
 
 CREATE TABLE reviews (

@@ -43,6 +43,7 @@ public class MenuServiceImpl implements MenuService {
         newMenu.setName(menu.getName());
         newMenu.setIsWholeAnimal(menu.getIsWholeAnimal());
         newMenu.setWeight(menu.getWeight());
+        newMenu.setPrice(menu.getPrice());
 
         Optional<ButcheryCategory> butcheryOptional = butcheryCategoryRepository.findById(menu.getButcheryCategoryId());
 
@@ -74,5 +75,10 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public void deleteMenu(Long id) {
         menuRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Menu> getMenuListByButcheryCategoryId(Long id) {
+        return menuRepository.getMenusByButcheryCategoryId(id);
     }
 }

@@ -18,8 +18,11 @@ public class Address {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "building_name")
-    private String building_name;
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "building")
+    private String building;
 
     @Column(name = "entrance")
     private String entrance;
@@ -29,6 +32,9 @@ public class Address {
 
     @Column(name = "floor")
     private String floor;
+
+    @Column(name = "name")
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

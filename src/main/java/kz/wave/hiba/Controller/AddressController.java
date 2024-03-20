@@ -7,7 +7,6 @@ import kz.wave.hiba.DTO.AddressUpdateDTO;
 import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Repository.UserRepository;
 import kz.wave.hiba.Service.AddressService;
-import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

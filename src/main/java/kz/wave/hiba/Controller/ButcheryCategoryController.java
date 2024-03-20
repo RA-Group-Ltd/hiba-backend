@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping(value = "/butchery-category")
@@ -21,8 +23,8 @@ public class ButcheryCategoryController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getCategoriesByButcheryId(@RequestParam Long butcheryId) {
         try {
-            ButcheryCategory butcheryCategory = butcheryCategoryService.getCategoriesByButcheryId(butcheryId);
-            return new ResponseEntity<>(butcheryCategory, HttpStatus.OK);
+            List<ButcheryCategory> butcheryCategories = butcheryCategoryService.getCategoriesByButcheryId(butcheryId);
+            return new ResponseEntity<>(butcheryCategories, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
