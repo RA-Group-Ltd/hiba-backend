@@ -32,7 +32,6 @@ public class User implements UserDetails {
     @Column(name = "phone")
     private String phone;
 
-    @JsonIgnore
     @Column(name = "avatar")
     private byte[] avatar;
 

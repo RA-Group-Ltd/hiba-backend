@@ -2,6 +2,7 @@ package kz.wave.hiba.Controller;
 
 import kz.wave.hiba.Config.JwtUtils;
 import kz.wave.hiba.Config.TelegramBot;
+import kz.wave.hiba.Config.UserResponse;
 import kz.wave.hiba.DTO.AuthCheckDTO;
 import kz.wave.hiba.DTO.AuthDTO;
 import kz.wave.hiba.DTO.CompleteRegistrationDTO;
@@ -78,12 +79,12 @@ public class AuthController {
     }
 
     @PostMapping("/complete-registration")
-    public ResponseEntity<?> completeRegistration(@RequestBody CompleteRegistrationDTO registrationDTO) {
+    public ResponseEntity<?> completeRegistration(@ModelAttribute CompleteRegistrationDTO registrationDTO) {
         // Завершаем регистрацию пользователя
         User user = authService.completeRegistration(registrationDTO.getPhoneNumber(), registrationDTO.getName(), registrationDTO.getPhoto());
         if (user != null) {
             String token = jwtUtils.generateToken(user);
-            return ResponseEntity.ok(token);
+            return new ResponseEntity<>(new UserResponse(token, user), HttpStatus.OK);
 //            return ResponseEntity.ok("Регистрация завершена.");
         } else {
             return ResponseEntity.badRequest().body("Не удалось завершить регистрацию.");

@@ -12,6 +12,7 @@ import kz.wave.hiba.Repository.UserRoleRepository;
 import kz.wave.hiba.Repository.VerificationCodeRepository;
 import kz.wave.hiba.Service.AuthService;
 import kz.wave.hiba.Service.TelegramService;
+import kz.wave.hiba.Service.UserFileUploadService;
 import kz.wave.hiba.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
+    private final UserFileUploadService userFileUploadService;
     private final RoleRepository roleRepository;
     private final VerificationCodeRepository verificationCodeRepository;
     private final JwtUtils jwtUtils;
@@ -94,7 +96,7 @@ public class AuthServiceImpl implements AuthService {
         if (user != null) {
             verificationCodeRepository.deleteVerificationCodeByUserId(user.getId());
             if (!user.isConfirmed()){
-                user.setConfirmed(true); // Предполагается, что у вас есть поле confirmed в сущности User
+//                user.setConfirmed(true); // Предполагается, что у вас есть поле confirmed в сущности User
                 userRepository.save(user);
                 return new ResponseEntity<>("", HttpStatus.OK);
             } else {
@@ -112,9 +114,10 @@ public class AuthServiceImpl implements AuthService {
         if (user != null) {
             user.setName(name);
             user.setCreatedAt(Instant.now());
+            user.setConfirmed(true);
             // Здесь логика для сохранения фотографии, если применимо
             // Например, сохранение файла на сервере или в облачном хранилище и установка пути к файлу в поле user.photoPath
-
+            userFileUploadService.uploadImage(photo, user);
             Role role = roleRepository.findByName("ROLE_USER");
             UserRoleId userRoleId = new UserRoleId(user.getId(), role.getId());
             UserRole userRole = new UserRole(userRoleId, user, role);
