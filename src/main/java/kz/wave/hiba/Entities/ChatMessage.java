@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "chat_message")
 @Getter
@@ -28,8 +30,11 @@ public class ChatMessage {
     @Column(name = "content")
     private String content;
 
+    @Column(name = "timestamp")
+    private Date timestamp;
+
     @Enumerated(EnumType.STRING)
-    private SenderType senderType;
+    private SenderType recipientType;
 
     @Enumerated(EnumType.STRING)
     private MessageStatus status;

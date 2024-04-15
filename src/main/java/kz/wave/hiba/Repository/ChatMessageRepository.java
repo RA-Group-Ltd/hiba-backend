@@ -15,7 +15,7 @@ import java.util.Optional;
 @Transactional
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
 
-    long countByChatAndAndSenderType(Chat chat, SenderType senderType);
+    long countByChatAndRecipientType(Chat chat, SenderType recipientType);
 
     List<ChatMessage> findByChat(Chat chat);
 

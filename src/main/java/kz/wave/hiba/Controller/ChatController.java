@@ -53,7 +53,7 @@ public class ChatController {
         Long senderId;
 
         // Определяем идентификаторы отправителя и получателя в зависимости от типа отправителя
-        if (chatMessage.getSenderType() == SenderType.CLIENT) {
+        if (chatMessage.getRecipientType() == SenderType.CLIENT) {
             senderId = chat.getClientId();
             recipientId = chat.getSupportId();
         } else {
