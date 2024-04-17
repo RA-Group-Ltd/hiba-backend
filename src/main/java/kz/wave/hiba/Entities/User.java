@@ -32,6 +32,9 @@ public class User implements UserDetails {
     @Column(name = "phone")
     private String phone;
 
+    @Column(name = "password")
+    private String password;
+
     @Column(name = "avatar")
     private byte[] avatar;
 
@@ -57,7 +60,7 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return password;
     }
 
     @Override

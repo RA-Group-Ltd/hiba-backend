@@ -8,6 +8,7 @@ import kz.wave.hiba.DTO.AuthDTO;
 import kz.wave.hiba.DTO.CompleteRegistrationDTO;
 import kz.wave.hiba.DTO.VerificationDTO;
 import kz.wave.hiba.Entities.User;
+import kz.wave.hiba.Entities.UserRole;
 import kz.wave.hiba.Service.AuthService;
 import kz.wave.hiba.Service.UserRoleService;
 import kz.wave.hiba.Service.VerificationService;
@@ -83,8 +84,9 @@ public class AuthController {
         // Завершаем регистрацию пользователя
         User user = authService.completeRegistration(registrationDTO.getPhoneNumber(), registrationDTO.getName(), registrationDTO.getPhoto());
         if (user != null) {
+            UserRole userRole = userRoleService.getUserRoleByUserId(user.getId());
             String token = jwtUtils.generateToken(user);
-            return new ResponseEntity<>(new UserResponse(token, user), HttpStatus.OK);
+            return new ResponseEntity<>(new UserResponse(token, user, userRole), HttpStatus.OK);
 //            return ResponseEntity.ok("Регистрация завершена.");
         } else {
             return ResponseEntity.badRequest().body("Не удалось завершить регистрацию.");
@@ -131,9 +133,9 @@ public class AuthController {
             e.printStackTrace();
             return new ResponseEntity<>("An error occurred", HttpStatus.BAD_REQUEST);
         }
-    }
+    }*/
 
-    @PostMapping("/login")
+    @PostMapping("/admin-login")
     public ResponseEntity<?> login(@RequestBody AuthDTO authDTO) {
         try {
             User user = authService.login(authDTO);
@@ -147,6 +149,6 @@ public class AuthController {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
-    }*/
+    }
 
 }

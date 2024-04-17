@@ -1,9 +1,11 @@
 package kz.wave.hiba.Controller;
 
 import kz.wave.hiba.DTO.ButcheryCategoryCreateDTO;
+import kz.wave.hiba.DTO.UserDTO;
 import kz.wave.hiba.Entities.ButcheryCategory;
 import kz.wave.hiba.Service.ButcheryCategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import kz.wave.hiba.Service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,10 +16,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/butchery-category")
+@RequiredArgsConstructor
 public class ButcheryCategoryController {
 
-    @Autowired
-    private ButcheryCategoryService butcheryCategoryService;
+    private final ButcheryCategoryService butcheryCategoryService;
 
     @GetMapping(value = "/getCategoriesByButcheryId/{butcheryId}")
     @PreAuthorize("isAuthenticated()")

@@ -1,5 +1,6 @@
 package kz.wave.hiba.DTO;
 
+import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Enum.OrderStatus;
 import kz.wave.hiba.Entities.Address;
 import lombok.AllArgsConstructor;
@@ -16,5 +17,6 @@ public class OrderUpdateDTO {
     private Long id;
     private OrderStatus orderStatus;
     private Address address;
+    private User user;
 
 }

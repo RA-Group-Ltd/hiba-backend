@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class AuthDTO {
 
     private String phone;
+    private String password;
 
 }

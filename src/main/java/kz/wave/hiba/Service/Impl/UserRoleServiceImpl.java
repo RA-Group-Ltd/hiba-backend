@@ -1,5 +1,6 @@
 package kz.wave.hiba.Service.Impl;
 
+import kz.wave.hiba.Entities.Role;
 import kz.wave.hiba.Entities.UserRole;
 import kz.wave.hiba.Repository.UserRoleRepository;
 import kz.wave.hiba.Service.UserRoleService;
@@ -15,5 +16,13 @@ public class UserRoleServiceImpl implements UserRoleService {
     @Override
     public UserRole getUserRoleByUserId(Long id) {
         return userRoleRepository.getByUserId(id);
+    }
+
+    @Override
+    public UserRole identifyUserRole(Role role) {
+        if (role.equals("ROLES_SUPERADMIN")) {
+
+        }
+        return null;
     }
 }

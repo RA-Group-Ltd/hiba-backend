@@ -14,6 +14,6 @@ public interface OrderService {
     Order getOneOrder(Long id);
     Order createOrder(OrderCreateDTO orderCreateDTO, HttpServletRequest request);
     Order updateOrder(OrderUpdateDTO orderUpdateDTO, HttpServletRequest request);
-    Order updateOrderStatus(OrderUpdateDTO orderUpdateDTO, HttpServletRequest request);
+    Order updateOrderStatus(Long id, HttpServletRequest request);
 
 }

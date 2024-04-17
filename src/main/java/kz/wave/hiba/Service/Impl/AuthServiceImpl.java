@@ -10,10 +10,7 @@ import kz.wave.hiba.Repository.RoleRepository;
 import kz.wave.hiba.Repository.UserRepository;
 import kz.wave.hiba.Repository.UserRoleRepository;
 import kz.wave.hiba.Repository.VerificationCodeRepository;
-import kz.wave.hiba.Service.AuthService;
-import kz.wave.hiba.Service.TelegramService;
-import kz.wave.hiba.Service.UserFileUploadService;
-import kz.wave.hiba.Service.UserService;
+import kz.wave.hiba.Service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -35,9 +32,11 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
+    private final UserRoleService userRoleService;
     private final UserFileUploadService userFileUploadService;
     private final RoleRepository roleRepository;
     private final VerificationCodeRepository verificationCodeRepository;
+    private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
 
     public User findByPhoneNumber(String phoneNumber) {
@@ -100,8 +99,9 @@ public class AuthServiceImpl implements AuthService {
                 userRepository.save(user);
                 return new ResponseEntity<>("", HttpStatus.OK);
             } else {
+                UserRole userRole = userRoleService.getUserRoleByUserId(user.getId());
                 String token = jwtUtils.generateToken(user);
-                return new ResponseEntity<>(new UserResponse(token, user), HttpStatus.OK);
+                return new ResponseEntity<>(new UserResponse(token, user, userRole), HttpStatus.OK);
             }
         }
         return new ResponseEntity<>("", HttpStatus.BAD_REQUEST);
@@ -115,8 +115,9 @@ public class AuthServiceImpl implements AuthService {
             user.setName(name);
             user.setCreatedAt(Instant.now());
             user.setConfirmed(true);
-            // Здесь логика для сохранения фотографии, если применимо
-            // Например, сохранение файла на сервере или в облачном хранилище и установка пути к файлу в поле user.photoPath
+            // TODO: first of all  we need to test this code !
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            //
             userFileUploadService.uploadImage(photo, user);
             Role role = roleRepository.findByName("ROLE_USER");
             UserRoleId userRoleId = new UserRoleId(user.getId(), role.getId());
@@ -144,6 +145,7 @@ public class AuthServiceImpl implements AuthService {
         newUser.setPhone(authDTO.getPhone());
 //        newUser.setName(authDTO.getUsername());
         newUser.setCreatedAt(Instant.now());
+        newUser.setPassword(passwordEncoder.encode(authDTO.getPassword()));
 
         userRepository.save(newUser);
 
@@ -159,9 +161,9 @@ public class AuthServiceImpl implements AuthService {
     public User login(AuthDTO authDTO) {
         User user = userRepository.findByPhone(authDTO.getPhone());
         if (user != null) {
-//            if (passwordEncoder.matches(authDTO.getCode(), user.getPassword())) {
+            if (passwordEncoder.matches(authDTO.getPassword(), user.getPassword())) {
                 return user;
-//            }
+            }
         }
 
         return null;

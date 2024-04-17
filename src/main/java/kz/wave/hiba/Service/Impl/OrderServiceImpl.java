@@ -75,13 +75,13 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.save(order);
     }
 
-    public Order updateOrderStatus(OrderUpdateDTO orderUpdateDTO, HttpServletRequest request) {
+    public Order updateOrderStatus(Long id, HttpServletRequest request) {
         String token = jwtUtils.getTokenFromRequest(request);
         String currentUser = jwtUtils.getUsernameFromToken(token);
         User user = userRepository.findByPhone(currentUser);
-        Order order = orderRepository.findById(orderUpdateDTO.getId()).orElseThrow();
+        Order order = orderRepository.findById(id).orElseThrow();
 
-        order.setOrderStatus(orderUpdateDTO.getOrderStatus());
+        order.setOrderStatus(order.getOrderStatus());
 
         return orderRepository.save(order);
     }

@@ -5,7 +5,9 @@ import kz.wave.hiba.DTO.OrderCreateDTO;
 import kz.wave.hiba.DTO.OrderUpdateDTO;
 import kz.wave.hiba.Entities.Order;
 import kz.wave.hiba.Repository.OrderRepository;
+import kz.wave.hiba.Service.NotificationService;
 import kz.wave.hiba.Service.OrderService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +19,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/order")
+@RequiredArgsConstructor
 public class OrderController {
 
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderService orderService;
+    private final OrderRepository orderRepository;
+    private final NotificationService notificationService;
 
     @GetMapping(value = "/getOrders")
     @PreAuthorize("isAuthenticated()")
@@ -39,9 +40,9 @@ public class OrderController {
 
     @GetMapping(value = "/getOrder/{orderId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getOneOrder(@PathVariable Long id) {
+    public ResponseEntity<?> getOneOrder(@PathVariable Long orderId) {
         try {
-            Order order = orderService.getOneOrder(id);
+            Order order = orderService.getOneOrder(orderId);
 
             if (order.getId() != null) {
                 return ResponseEntity.ok(order);
@@ -89,9 +90,10 @@ public class OrderController {
 
     @PutMapping(value = "/updateOrderStatus/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERADMIN')")
-    public ResponseEntity<?> updateOrderStatus(@RequestBody OrderUpdateDTO orderUpdateDTO, HttpServletRequest request) {
+    public ResponseEntity<?> updateOrderStatus(@PathVariable Long id, HttpServletRequest request) {
         try {
-            orderService.updateOrderStatus(orderUpdateDTO, request);
+            orderService.updateOrderStatus(id, request);
+            notificationService.sendNotificationToUser(id);
             return new ResponseEntity<>("Accepted your request and changed status!", HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();

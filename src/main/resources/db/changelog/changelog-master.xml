@@ -53,5 +53,24 @@
                  stripComments="true" />
     </changeSet>
 
+    <changeSet id="2024_04_15_create_notification_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_04_15_create_notification_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_04_17_alter_users_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_04_17_alter_users_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
 
 </databaseChangeLog>

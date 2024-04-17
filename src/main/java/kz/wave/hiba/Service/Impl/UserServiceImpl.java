@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
         User newUser = new User();
         newUser.setName(userDTO.getUsername());
         newUser.setPhone(userDTO.getPhone());
-//        newUser.setPassword(passwordEncoder.encode(userDTO.getNewPassword()));
+        newUser.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         newUser.setCreatedAt(Instant.now());
 //        newUser.setAvatar(userDTO.getAvatar());
 
@@ -51,9 +51,9 @@ public class UserServiceImpl implements UserService {
     public User login(AuthDTO authDTO) {
         User user = userRepository.findByPhone(authDTO.getPhone());
         if (user != null) {
-//            if (passwordEncoder.matches(authDTO.getPassword(), user.getPassword())) {
+            if (passwordEncoder.matches(authDTO.getPassword(), user.getPassword())) {
                 return user;
-//            }
+            }
         }
 
         return null;

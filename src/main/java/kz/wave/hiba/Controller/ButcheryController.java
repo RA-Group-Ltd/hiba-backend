@@ -2,12 +2,14 @@ package kz.wave.hiba.Controller;
 
 import kz.wave.hiba.DTO.ButcheryCreateDTO;
 import kz.wave.hiba.DTO.ButcheryUpdateDTO;
+import kz.wave.hiba.DTO.UserDTO;
 import kz.wave.hiba.Entities.Butchery;
 import kz.wave.hiba.Entities.City;
 import kz.wave.hiba.Repository.CityRepository;
 import kz.wave.hiba.Response.ButcheryResponse;
 import kz.wave.hiba.Service.ButcheryService;
 import kz.wave.hiba.Service.CityService;
+import kz.wave.hiba.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,9 @@ public class ButcheryController {
     @Autowired
     private CityRepository cityRepository;
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping(value = "/getAllButcheries")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Butchery>> getAllButcheries() {
@@ -50,7 +55,9 @@ public class ButcheryController {
 
     @PostMapping(value = "/create-butchery")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERADMIN')")
-    public ResponseEntity<?> createButchery(@RequestBody ButcheryCreateDTO butcheryCreateDTO) {
+    public ResponseEntity<?> createButchery(@RequestBody ButcheryAndUserResponse butcheryAndUserResponse) {
+        ButcheryCreateDTO butcheryCreateDTO = butcheryAndUserResponse.getButchery();
+        UserDTO userDTO = butcheryAndUserResponse.getUser();
         Optional<City> cityOptional = cityRepository.findById(butcheryCreateDTO.getCityId());
 
         if (cityOptional.isEmpty()) {
@@ -59,6 +66,7 @@ public class ButcheryController {
         City city = cityOptional.get();
 
         Butchery butchery = butcheryService.createButchery(butcheryCreateDTO, city);
+        userService.createUser(userDTO);
 
         if (butchery != null) {
             return new ResponseEntity<>(HttpStatus.CREATED);
