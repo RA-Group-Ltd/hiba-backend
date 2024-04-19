@@ -75,8 +75,8 @@ public class ChatController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Chat> createChat(@RequestParam("clientId") Long clientId, @RequestParam("supportId") Long supportId) {
-        Chat chat = chatService.createChat(clientId, supportId);
+    public ResponseEntity<Chat> createChat(@RequestParam("supportId") Long supportId, HttpServletRequest request) {
+        Chat chat = chatService.createChat(supportId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(chat);
     }
 
