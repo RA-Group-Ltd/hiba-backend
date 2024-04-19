@@ -15,5 +15,10 @@ public class ButcheryCreateDTO {
     private Float longitude;
     private String address;
     private Long cityId;
+    private String meatType;
+    private String phone;
+    private String owner;
+    private String regNumber;
+    private String email;
 
 }

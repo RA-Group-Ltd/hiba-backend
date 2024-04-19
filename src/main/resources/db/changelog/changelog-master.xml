@@ -73,4 +73,54 @@
                  stripComments="true" />
     </changeSet>
 
+    <changeSet id="2024_04_17_alter_butchery_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_04_17_alter_butchery_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_04_17_delete_butchery_column" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_04_17_delete_butchery_column.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_04_17_delete_butchery_column1" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_04_17_delete_butchery_column1.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_04_17_alter_butchery_column1" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_04_17_alter_butchery_column1.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_04_17_alter_butchery_column2" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_04_17_alter_butchery_column2.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
 </databaseChangeLog>

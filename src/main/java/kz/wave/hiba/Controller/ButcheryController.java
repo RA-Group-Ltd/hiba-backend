@@ -5,7 +5,11 @@ import kz.wave.hiba.DTO.ButcheryUpdateDTO;
 import kz.wave.hiba.DTO.UserDTO;
 import kz.wave.hiba.Entities.Butchery;
 import kz.wave.hiba.Entities.City;
+import kz.wave.hiba.Entities.Country;
+import kz.wave.hiba.Entities.Region;
 import kz.wave.hiba.Repository.CityRepository;
+import kz.wave.hiba.Repository.CountryRepository;
+import kz.wave.hiba.Repository.RegionRepository;
 import kz.wave.hiba.Response.ButcheryResponse;
 import kz.wave.hiba.Service.ButcheryService;
 import kz.wave.hiba.Service.CityService;
@@ -35,6 +39,13 @@ public class ButcheryController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RegionRepository regionRepository;
+
+    @Autowired
+    private CountryRepository countryRepository;
+
+
     @GetMapping(value = "/getAllButcheries")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Butchery>> getAllButcheries() {
@@ -56,21 +67,24 @@ public class ButcheryController {
     @PostMapping(value = "/create-butchery")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERADMIN')")
     public ResponseEntity<?> createButchery(@RequestBody ButcheryAndUserResponse butcheryAndUserResponse) {
-        ButcheryCreateDTO butcheryCreateDTO = butcheryAndUserResponse.getButchery();
-        UserDTO userDTO = butcheryAndUserResponse.getUser();
-        Optional<City> cityOptional = cityRepository.findById(butcheryCreateDTO.getCityId());
+        try {
+            ButcheryCreateDTO butcheryCreateDTO = butcheryAndUserResponse.getButchery();
+//            UserDTO userDTO = butcheryAndUserResponse.getUser();
+            Optional<City> cityOptional = cityRepository.findById(butcheryCreateDTO.getCityId());
 
-        if (cityOptional.isEmpty()) {
-            return new ResponseEntity<>("City not found", HttpStatus.BAD_REQUEST);
-        }
-        City city = cityOptional.get();
 
-        Butchery butchery = butcheryService.createButchery(butcheryCreateDTO, city);
-        userService.createUser(userDTO);
+            if (cityOptional.isEmpty()) {
+                return new ResponseEntity<>("City not found", HttpStatus.NOT_FOUND);
+            }
 
-        if (butchery != null) {
+
+            City city = cityOptional.get();
+
+            butcheryService.createButchery(butcheryCreateDTO, city);
+
             return new ResponseEntity<>(HttpStatus.CREATED);
-        } else {
+        } catch(Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

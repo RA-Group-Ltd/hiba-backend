@@ -4,6 +4,9 @@ import kz.wave.hiba.DTO.ButcheryCreateDTO;
 import kz.wave.hiba.DTO.ButcheryUpdateDTO;
 import kz.wave.hiba.Entities.*;
 import kz.wave.hiba.Repository.ButcheryRepository;
+import kz.wave.hiba.Repository.RoleRepository;
+import kz.wave.hiba.Repository.UserRepository;
+import kz.wave.hiba.Repository.UserRoleRepository;
 import kz.wave.hiba.Response.ButcheryCategoryResponse;
 import kz.wave.hiba.Response.ButcheryResponse;
 import kz.wave.hiba.Service.ButcheryCategoryService;
@@ -13,6 +16,7 @@ import kz.wave.hiba.Service.MenuService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +29,9 @@ public class ButcheryServiceImpl implements ButcheryService {
     private final ButcheryCategoryService butcheryCategoryService;
     private final MenuService menuService;
     private final CategoryService categoryService;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final UserRoleRepository userRoleRepository;
 
     @Override
     public List<Butchery> getAllButchery() {
@@ -60,11 +67,39 @@ public class ButcheryServiceImpl implements ButcheryService {
     public Butchery createButchery(ButcheryCreateDTO butcheryCreateDTO, City city) {
 
         Butchery newButchery = new Butchery();
+
+        if (userRepository.findByPhone(butcheryCreateDTO.getPhone()) == null) {
+            User user = new User();
+            user.setName(butcheryCreateDTO.getOwner());
+            user.setPhone(butcheryCreateDTO.getPhone());
+            user.setCreatedAt(Instant.now());
+
+            Role role = roleRepository.findByName("ROLE_BUTCHERY");
+            UserRoleId userRoleId = new UserRoleId(user.getId(), role.getId());
+            UserRole userRole = new UserRole(userRoleId, user, role);
+            userRoleRepository.save(userRole);
+
+            User newUser = userRepository.save(user);
+            newButchery.setOwner(newUser);
+        } else {
+            User user = userRepository.findByPhone(butcheryCreateDTO.getPhone());
+
+            newButchery.setOwner(user);
+        }
+
         newButchery.setName(butcheryCreateDTO.getName());
         newButchery.setAddress(butcheryCreateDTO.getAddress());
-        newButchery.setLongitude(butcheryCreateDTO.getLongitude());
-        newButchery.setLatitude(butcheryCreateDTO.getLatitude());
+        if (butcheryCreateDTO.getLongitude() != null) {
+            newButchery.setLongitude(butcheryCreateDTO.getLongitude());
+        }
+        if (butcheryCreateDTO.getLatitude() != null) {
+            newButchery.setLatitude(butcheryCreateDTO.getLatitude());
+        }
         newButchery.setCity(city);
+        newButchery.setEmail(butcheryCreateDTO.getEmail());
+        newButchery.setMeatType(butcheryCreateDTO.getMeatType());
+        newButchery.setRegNumber(butcheryCreateDTO.getRegNumber());
+        newButchery.setCreatedAt(Instant.now());
 
         return butcheryRepository.save(newButchery);
     }

@@ -29,7 +29,7 @@ public class LocationController {
     private CityService cityService;
 
     @GetMapping(value = "/getAllCountries")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Country>> getAllCountries() {
         List<Country> countries = countryService.getAllCountries();
         return ResponseEntity.ok(countries);
