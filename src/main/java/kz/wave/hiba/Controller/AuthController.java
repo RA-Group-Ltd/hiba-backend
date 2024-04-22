@@ -2,7 +2,7 @@ package kz.wave.hiba.Controller;
 
 import kz.wave.hiba.Config.JwtUtils;
 import kz.wave.hiba.Config.TelegramBot;
-import kz.wave.hiba.Config.UserResponse;
+import kz.wave.hiba.Response.UserResponse;
 import kz.wave.hiba.DTO.AuthCheckDTO;
 import kz.wave.hiba.DTO.AuthDTO;
 import kz.wave.hiba.DTO.CompleteRegistrationDTO;

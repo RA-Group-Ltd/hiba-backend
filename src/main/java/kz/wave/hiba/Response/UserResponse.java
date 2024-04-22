@@ -1,4 +1,4 @@
-package kz.wave.hiba.Config;
+package kz.wave.hiba.Response;
 
 import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Entities.UserRole;

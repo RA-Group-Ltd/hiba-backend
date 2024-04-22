@@ -1,11 +1,16 @@
 package kz.wave.hiba.Entities;
 
 import jakarta.persistence.*;
+import kz.wave.hiba.DTO.MenuDTO;
 import kz.wave.hiba.Enum.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "orders")
@@ -33,7 +38,12 @@ public class Order {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "butcher_id")
-    private Butcher butcher;
+    @JoinColumn(name = "butchery_id")
+    private Butchery butchery;
+
+    @ElementCollection
+    @CollectionTable(name = "order_menu_items", joinColumns = @JoinColumn(name = "order_id"))
+    @Column(name = "count", nullable = false)
+    private Map<Menu, Integer> menuItems = new HashMap<>();
 
 }

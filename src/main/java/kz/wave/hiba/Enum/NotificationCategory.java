@@ -7,5 +7,6 @@ public enum NotificationCategory {
     PROMOTIONS,       // Акции и предложения
     WARNINGS,         // Предупреждения
     NEWS,             // Новости
-    UPDATES           // Обновления
+    UPDATES,           // Обновления
+    ORDERS
 }

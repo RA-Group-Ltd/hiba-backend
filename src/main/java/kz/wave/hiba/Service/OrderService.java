@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import kz.wave.hiba.DTO.OrderCreateDTO;
 import kz.wave.hiba.DTO.OrderUpdateDTO;
 import kz.wave.hiba.Entities.Order;
+import kz.wave.hiba.Enum.OrderStatus;
 
 import java.util.List;
 
@@ -14,6 +15,6 @@ public interface OrderService {
     Order getOneOrder(Long id);
     Order createOrder(OrderCreateDTO orderCreateDTO, HttpServletRequest request);
     Order updateOrder(OrderUpdateDTO orderUpdateDTO, HttpServletRequest request);
-    Order updateOrderStatus(Long id, HttpServletRequest request);
+    Order updateOrderStatus(Long id, HttpServletRequest request, OrderStatus newOrderStatus);
 
 }

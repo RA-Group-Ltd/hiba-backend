@@ -1,8 +1,7 @@
 package kz.wave.hiba.Service.Impl;
 
 import kz.wave.hiba.Config.JwtUtils;
-import kz.wave.hiba.Config.TelegramBot;
-import kz.wave.hiba.Config.UserResponse;
+import kz.wave.hiba.Response.UserResponse;
 import kz.wave.hiba.DTO.AuthCheckDTO;
 import kz.wave.hiba.DTO.AuthDTO;
 import kz.wave.hiba.Entities.*;
@@ -13,18 +12,15 @@ import kz.wave.hiba.Repository.VerificationCodeRepository;
 import kz.wave.hiba.Service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.sql.Date;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor

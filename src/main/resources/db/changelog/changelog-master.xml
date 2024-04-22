@@ -123,4 +123,23 @@
                  stripComments="true" />
     </changeSet>
 
+    <changeSet id="2024_04_17_create_order_menu_items_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_04_17_create_order_menu_items_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_04_22_alter_order_table_butchery_column" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_04_22_alter_order_table_butchery_column.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
 </databaseChangeLog>

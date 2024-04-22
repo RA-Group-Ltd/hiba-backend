@@ -11,8 +11,7 @@ import kz.wave.hiba.Service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +21,8 @@ public class OrderServiceImpl implements OrderService {
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
-    private final ButcherRepository butcherRepository;
+    private final ButcheryRepository butcheryRepository;
+    private final MenuRepository menuRepository;
 
     @Override
     public List<Order> getAllOrders() {
@@ -42,17 +42,36 @@ public class OrderServiceImpl implements OrderService {
 
         Address address = addressRepository.findAddressByUserId(user.getId());
 
-        Butcher butcher = butcherRepository.findByUserId(user.getId());
+        Optional<Butchery> butcheryOptional = butcheryRepository.findById(orderCreateDTO.getButchery().getId());
 
-        if (orderRepository.findByButcher(orderCreateDTO.getButcher()) != null) {
+        if (butcheryOptional.isEmpty()) {
             return null;
         }
+
+        if (orderRepository.findByButchery(orderCreateDTO.getButchery()) != null) {
+            return null;
+        }
+
+        Map<Menu, Integer> menuItemMap = new HashMap<>();
+
+        for (Map.Entry<Long, Integer> entry : orderCreateDTO.getMenuItemsId().entrySet()) {
+            Long menuId = entry.getKey();
+            Integer count = entry.getValue();
+
+            Menu menuItem = menuRepository.findById(menuId)
+                    .orElseThrow(() -> new IllegalArgumentException("Menu item not found"));
+
+            menuItemMap.put(menuItem, count);
+        }
+
+        Butchery butchery = butcheryOptional.get();
 
         Order order = new Order();
         order.setOrderStatus(OrderStatus.IN_PROCESS);
         order.setUser(user);
         order.setAddress(address);
-        order.setButcher(butcher);
+        order.setButchery(butchery);
+        order.setMenuItems(menuItemMap);
 
         return orderRepository.save(order);
     }
@@ -75,13 +94,13 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.save(order);
     }
 
-    public Order updateOrderStatus(Long id, HttpServletRequest request) {
+    public Order updateOrderStatus(Long id, HttpServletRequest request, OrderStatus newOrderStatus) {
         String token = jwtUtils.getTokenFromRequest(request);
         String currentUser = jwtUtils.getUsernameFromToken(token);
         User user = userRepository.findByPhone(currentUser);
         Order order = orderRepository.findById(id).orElseThrow();
 
-        order.setOrderStatus(order.getOrderStatus());
+        order.setOrderStatus(newOrderStatus);
 
         return orderRepository.save(order);
     }

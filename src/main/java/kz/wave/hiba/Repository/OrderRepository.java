@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 @Transactional
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    Order findByButcher(Butcher butcherId);
+    Order findByButchery(Butchery butcheryId);
 
 }

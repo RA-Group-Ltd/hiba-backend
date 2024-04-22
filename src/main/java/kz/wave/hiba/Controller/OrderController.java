@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import kz.wave.hiba.DTO.OrderCreateDTO;
 import kz.wave.hiba.DTO.OrderUpdateDTO;
 import kz.wave.hiba.Entities.Order;
+import kz.wave.hiba.Enum.NotificationCategory;
+import kz.wave.hiba.Enum.OrderStatus;
 import kz.wave.hiba.Repository.OrderRepository;
 import kz.wave.hiba.Service.NotificationService;
 import kz.wave.hiba.Service.OrderService;
@@ -59,14 +61,10 @@ public class OrderController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createOrder(@RequestBody OrderCreateDTO orderCreateDTO, HttpServletRequest request) {
         try {
-            orderService.createOrder(orderCreateDTO, request);
-            Optional<Order> order = orderRepository.findById(orderCreateDTO.getId());
+            Order order = orderService.createOrder(orderCreateDTO, request);
+//            Optional<Order> order = orderRepository.findById(orderCreateDTO.getId());
 
-            if (order.isEmpty()) {
-                return new ResponseEntity<>("Order doesn't create!", HttpStatus.BAD_REQUEST);
-            } else {
-                return new ResponseEntity<>("Order created", HttpStatus.OK);
-            }
+            return new ResponseEntity<>(order, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
@@ -90,10 +88,11 @@ public class OrderController {
 
     @PutMapping(value = "/updateOrderStatus/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERADMIN')")
-    public ResponseEntity<?> updateOrderStatus(@PathVariable Long id, HttpServletRequest request) {
+    public ResponseEntity<?> updateOrderStatus(@PathVariable Long id, HttpServletRequest request, @RequestParam("status") OrderStatus newOrderStatus) {
+
         try {
-            orderService.updateOrderStatus(id, request);
-            notificationService.sendNotificationToUser(id);
+            orderService.updateOrderStatus(id, request, newOrderStatus);
+            notificationService.sendNotificationToUser(id, NotificationCategory.ORDERS);
             return new ResponseEntity<>("Accepted your request and changed status!", HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
