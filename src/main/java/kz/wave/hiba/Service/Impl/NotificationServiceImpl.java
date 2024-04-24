@@ -40,6 +40,7 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setMessage(message);
         notification.setUser(user);
         notification.setNotificationCategory(notificationCategory);
+//        notification.setRead();
 
         notificationRepository.save(notification);
 

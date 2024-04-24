@@ -1,12 +1,16 @@
 package kz.wave.hiba.Controller;
 
+import com.google.api.Http;
 import jakarta.servlet.http.HttpServletRequest;
+import kz.wave.hiba.Config.JwtUtils;
 import kz.wave.hiba.DTO.OrderCreateDTO;
 import kz.wave.hiba.DTO.OrderUpdateDTO;
 import kz.wave.hiba.Entities.Order;
+import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Enum.NotificationCategory;
 import kz.wave.hiba.Enum.OrderStatus;
 import kz.wave.hiba.Repository.OrderRepository;
+import kz.wave.hiba.Repository.UserRepository;
 import kz.wave.hiba.Service.NotificationService;
 import kz.wave.hiba.Service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +31,8 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderRepository orderRepository;
     private final NotificationService notificationService;
+    private final JwtUtils jwtUtils;
+    private final UserRepository userRepository;
 
     @GetMapping(value = "/getOrders")
     @PreAuthorize("isAuthenticated()")
@@ -64,6 +70,10 @@ public class OrderController {
             Order order = orderService.createOrder(orderCreateDTO, request);
 //            Optional<Order> order = orderRepository.findById(orderCreateDTO.getId());
 
+            if (order == null) {
+                return ResponseEntity.badRequest().build();
+            }
+
             return new ResponseEntity<>(order, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,6 +107,22 @@ public class OrderController {
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("You don't have privilege!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/getMyOrders")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getMyOrders(HttpServletRequest request) {
+        try {
+            String token = jwtUtils.getTokenFromRequest(request);
+            String username = jwtUtils.getUsernameFromToken(token);
+            User user = userRepository.findByPhone(username);
+
+            List<Order> orderList = orderRepository.findOrdersByUserId(user.getId());
+
+            return new ResponseEntity<>(orderList, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
         }
     }
 

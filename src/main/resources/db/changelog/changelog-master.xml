@@ -142,4 +142,24 @@
                  splitStatements="true"
                  stripComments="true" />
     </changeSet>
+
+    <changeSet id="2024_04_24_alter_notification_column" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_04_24_alter_notification_column.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_04_24_alter_order_column" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_04_24_alter_order_column.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
 </databaseChangeLog>

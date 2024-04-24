@@ -48,10 +48,6 @@ public class OrderServiceImpl implements OrderService {
             return null;
         }
 
-        if (orderRepository.findByButchery(orderCreateDTO.getButchery()) != null) {
-            return null;
-        }
-
         Map<Menu, Integer> menuItemMap = new HashMap<>();
 
         for (Map.Entry<Long, Integer> entry : orderCreateDTO.getMenuItemsId().entrySet()) {
@@ -72,6 +68,7 @@ public class OrderServiceImpl implements OrderService {
         order.setAddress(address);
         order.setButchery(butchery);
         order.setMenuItems(menuItemMap);
+        order.setCharity(orderCreateDTO.isCharity());
 
         return orderRepository.save(order);
     }

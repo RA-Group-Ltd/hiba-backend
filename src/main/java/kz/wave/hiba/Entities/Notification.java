@@ -32,6 +32,9 @@ public class Notification {
     @Column(name = "notification_category")
     private NotificationCategory notificationCategory;
 
+    @Column(name = "is_readed")
+    private boolean isRead = false;
+
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 

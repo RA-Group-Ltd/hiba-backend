@@ -41,6 +41,9 @@ public class Order {
     @JoinColumn(name = "butchery_id")
     private Butchery butchery;
 
+    @Column(name = "is_charity")
+    private boolean isCharity = false;
+
     @ElementCollection
     @CollectionTable(name = "order_menu_items", joinColumns = @JoinColumn(name = "order_id"))
     @Column(name = "count", nullable = false)

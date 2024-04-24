@@ -27,6 +27,7 @@ public class OrderCreateDTO {
     @JsonIgnore
     private User user;
     private Butchery butchery;
+    private boolean isCharity;
     private Map<Long, Integer> menuItemsId;
 
 }
