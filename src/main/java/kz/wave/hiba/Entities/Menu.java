@@ -10,7 +10,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Menu extends BaseEntity {
+public class Menu {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "name")
     private String name;
@@ -29,5 +34,8 @@ public class Menu extends BaseEntity {
 
     @Column(name = "categoryId")
     private Long categoryId;
+
+    @Column(name = "image")
+    private byte[] image;
 
 }

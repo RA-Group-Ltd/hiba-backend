@@ -6,6 +6,7 @@ import kz.wave.hiba.Entities.Menu;
 import kz.wave.hiba.Repository.ButcheryCategoryRepository;
 import kz.wave.hiba.Repository.CategoryRepository;
 import kz.wave.hiba.Repository.MenuRepository;
+import kz.wave.hiba.Service.MenuFileUploadService;
 import kz.wave.hiba.Service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,9 @@ public class MenuServiceImpl implements MenuService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private MenuFileUploadService menuFileUploadService;
 
 
     @Override
@@ -63,6 +67,8 @@ public class MenuServiceImpl implements MenuService {
 
         newMenu.setButcheryCategoryId(butcheryCategory.getId());
         newMenu.setCategoryId(category.getId());
+
+//        newMenu = menuFileUploadService.uploadImage(menu.getImage(), menu);
 
         return menuRepository.save(menu);
     }

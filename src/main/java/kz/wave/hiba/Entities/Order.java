@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,4 +50,15 @@ public class Order {
     @Column(name = "count", nullable = false)
     private Map<Menu, Integer> menuItems = new HashMap<>();
 
+    @Column(name = "delivery_date")
+    private Instant deliveryDate = null;
+
+    @Column(name = "total_price")
+    private double totalPrice = 0.0;
+
+    @Column(name = "delivery_price")
+    private double deliveryPrice = 0.0;
+
+    @Column(name = "donation")
+    private double donation = 0.0;
 }

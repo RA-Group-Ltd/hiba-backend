@@ -3,6 +3,8 @@ package kz.wave.hiba.Entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import javax.annotation.Nullable;
+
 @Entity
 @Table(name = "chat")
 @Getter
@@ -28,5 +30,10 @@ public class Chat {
 
     @Column(name = "rate")
     private int rate;
+
+    @Nullable
+    @OneToOne
+    @JoinColumn(name = "order")
+    private Order order;
 
 }

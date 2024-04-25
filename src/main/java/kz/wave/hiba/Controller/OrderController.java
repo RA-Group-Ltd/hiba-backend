@@ -1,9 +1,9 @@
 package kz.wave.hiba.Controller;
 
-import com.google.api.Http;
 import jakarta.servlet.http.HttpServletRequest;
 import kz.wave.hiba.Config.JwtUtils;
 import kz.wave.hiba.DTO.OrderCreateDTO;
+import kz.wave.hiba.DTO.OrderReadWithoutUserDTO;
 import kz.wave.hiba.DTO.OrderUpdateDTO;
 import kz.wave.hiba.Entities.Order;
 import kz.wave.hiba.Entities.User;
@@ -14,7 +14,6 @@ import kz.wave.hiba.Repository.UserRepository;
 import kz.wave.hiba.Service.NotificationService;
 import kz.wave.hiba.Service.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/order")
@@ -118,12 +118,24 @@ public class OrderController {
             String username = jwtUtils.getUsernameFromToken(token);
             User user = userRepository.findByPhone(username);
 
-            List<Order> orderList = orderRepository.findOrdersByUserId(user.getId());
+            List<OrderReadWithoutUserDTO> orderDtos = orderService.getMyOrders(user.getId())
+                    .stream()
+                    .map(this::transformOrderToDTO)
+                    .collect(Collectors.toList());
 
-            return new ResponseEntity<>(orderList, HttpStatus.OK);
+            return new ResponseEntity<>(orderDtos, HttpStatus.OK);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    private OrderReadWithoutUserDTO transformOrderToDTO(Order order) {
+        System.out.println(order.getMenuItems());
+        return new OrderReadWithoutUserDTO(order.getId(), order.getOrderStatus(),
+                order.getAddress(), order.getButchery(),
+                order.isCharity(), order.getMenuItems(), order.getDeliveryDate(),
+                order.getTotalPrice(), order.getTotalPrice(), order.getDonation());
     }
 
     /*@PutMapping(value = "/updateOrderStatus/{id}")

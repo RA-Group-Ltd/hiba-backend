@@ -2,6 +2,7 @@ package kz.wave.hiba.Service.Impl;
 
 import jakarta.servlet.http.HttpServletRequest;
 import kz.wave.hiba.Config.JwtUtils;
+import kz.wave.hiba.DTO.OrderReadWithoutUserDTO;
 import kz.wave.hiba.Enum.OrderStatus;
 import kz.wave.hiba.DTO.OrderCreateDTO;
 import kz.wave.hiba.DTO.OrderUpdateDTO;
@@ -69,6 +70,10 @@ public class OrderServiceImpl implements OrderService {
         order.setButchery(butchery);
         order.setMenuItems(menuItemMap);
         order.setCharity(orderCreateDTO.isCharity());
+        order.setDeliveryDate(orderCreateDTO.getDeliveryDate());
+        order.setTotalPrice(orderCreateDTO.getTotalPrice());
+        order.setDeliveryPrice(orderCreateDTO.getDeliveryPrice());
+        order.setDonation(orderCreateDTO.getDonation());
 
         return orderRepository.save(order);
     }
@@ -100,6 +105,11 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderStatus(newOrderStatus);
 
         return orderRepository.save(order);
+    }
+
+    @Override
+    public List<Order> getMyOrders(Long userId) {
+        return orderRepository.findOrdersByUserId(userId);
     }
 
     /*@Override
