@@ -1,5 +1,6 @@
 package kz.wave.hiba.Controller;
 
+import kz.wave.hiba.DTO.MenuCreateDTO;
 import kz.wave.hiba.Entities.Menu;
 import kz.wave.hiba.Service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +44,9 @@ public class MenuController {
 
     @PostMapping(value = "/createMenu")
     @PreAuthorize("hasAnyRole('ROLE_BUTCHER', 'ROLE_SUPERADMIN')")
-    public ResponseEntity<?> createMenu(@RequestBody Menu menu) {
+    public ResponseEntity<?> createMenu(@ModelAttribute MenuCreateDTO menuCreateDTO) {
         try {
-            Menu createMenu = menuService.createMenu(menu);
+            Menu createMenu = menuService.createMenu(menuCreateDTO);
             return new ResponseEntity<>(createMenu, HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,5 +1,6 @@
 package kz.wave.hiba.Service.Impl;
 
+import kz.wave.hiba.DTO.MenuCreateDTO;
 import kz.wave.hiba.Entities.ButcheryCategory;
 import kz.wave.hiba.Entities.Category;
 import kz.wave.hiba.Entities.Menu;
@@ -41,15 +42,15 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public Menu createMenu(Menu menu) {
+    public Menu createMenu(MenuCreateDTO menuCreateDTO) {
 
         Menu newMenu = new Menu();
-        newMenu.setName(menu.getName());
-        newMenu.setIsWholeAnimal(menu.getIsWholeAnimal());
-        newMenu.setWeight(menu.getWeight());
-        newMenu.setPrice(menu.getPrice());
+        newMenu.setName(menuCreateDTO.getName());
+        newMenu.setIsWholeAnimal(menuCreateDTO.getIsWholeAnimal());
+        newMenu.setWeight(menuCreateDTO.getWeight());
+        newMenu.setPrice(menuCreateDTO.getPrice());
 
-        Optional<ButcheryCategory> butcheryOptional = butcheryCategoryRepository.findById(menu.getButcheryCategoryId());
+        Optional<ButcheryCategory> butcheryOptional = butcheryCategoryRepository.findById(menuCreateDTO.getButcheryCategoryId());
 
         if (butcheryOptional.isEmpty()) {
             return null;
@@ -57,7 +58,7 @@ public class MenuServiceImpl implements MenuService {
 
         ButcheryCategory butcheryCategory = butcheryOptional.get();
 
-        Optional<Category> categoryOptional = categoryRepository.findById(menu.getCategoryId());
+        Optional<Category> categoryOptional = categoryRepository.findById(menuCreateDTO.getCategoryId());
 
         if (categoryOptional.isEmpty()) {
             return null;
@@ -68,9 +69,9 @@ public class MenuServiceImpl implements MenuService {
         newMenu.setButcheryCategoryId(butcheryCategory.getId());
         newMenu.setCategoryId(category.getId());
 
-//        newMenu = menuFileUploadService.uploadImage(menu.getImage(), menu);
+        newMenu = menuFileUploadService.uploadImage(menuCreateDTO.getImage(), newMenu);
 
-        return menuRepository.save(menu);
+        return menuRepository.save(newMenu);
     }
 
     @Override

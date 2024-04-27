@@ -12,6 +12,8 @@ import kz.wave.hiba.Service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -70,10 +72,12 @@ public class OrderServiceImpl implements OrderService {
         order.setButchery(butchery);
         order.setMenuItems(menuItemMap);
         order.setCharity(orderCreateDTO.isCharity());
-        order.setDeliveryDate(orderCreateDTO.getDeliveryDate());
+        order.setDeliveryDate(Instant.ofEpochMilli(orderCreateDTO.getDeliveryDate()));
+        order.setCreateAt(Instant.now().atZone(ZoneId.of("UTC")).toInstant());
         order.setTotalPrice(orderCreateDTO.getTotalPrice());
         order.setDeliveryPrice(orderCreateDTO.getDeliveryPrice());
         order.setDonation(orderCreateDTO.getDonation());
+        order.setSender(orderCreateDTO.getSender());
 
         return orderRepository.save(order);
     }

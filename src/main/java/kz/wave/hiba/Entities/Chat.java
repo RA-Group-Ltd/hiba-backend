@@ -33,7 +33,7 @@ public class Chat {
 
     @Nullable
     @OneToOne
-    @JoinColumn(name = "order")
+    @JoinColumn(name = "order_id")
     private Order order;
 
 }

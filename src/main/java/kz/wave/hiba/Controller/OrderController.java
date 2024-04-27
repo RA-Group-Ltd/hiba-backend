@@ -68,7 +68,6 @@ public class OrderController {
     public ResponseEntity<?> createOrder(@RequestBody OrderCreateDTO orderCreateDTO, HttpServletRequest request) {
         try {
             Order order = orderService.createOrder(orderCreateDTO, request);
-//            Optional<Order> order = orderRepository.findById(orderCreateDTO.getId());
 
             if (order == null) {
                 return ResponseEntity.badRequest().build();

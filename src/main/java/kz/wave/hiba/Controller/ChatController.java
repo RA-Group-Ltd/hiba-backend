@@ -75,15 +75,25 @@ public class ChatController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Chat> createChat(@RequestParam("supportId") Long supportId, HttpServletRequest request) {
-        Chat chat = chatService.createChat(supportId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(chat);
+    public ResponseEntity<?> createChat(@RequestParam("supportId") Long supportId, @RequestParam("orderId") Long orderId, HttpServletRequest request) {
+        try {
+            Chat chat = chatService.createChat(supportId, orderId, request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(chat);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/client/{clientId}/support/{supportId}")
-    public ResponseEntity<Chat> getChatByClientAndSupport(@PathVariable Long clientId, @PathVariable Long supportId) {
-        Optional<Chat> chat = chatService.getChatByClientAndSupport(clientId, supportId);
-        return chat.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> getChatByClientAndSupport(@PathVariable Long clientId, @PathVariable Long supportId) {
+        try {
+            Optional<Chat> chat = chatService.getChatByClientAndSupport(clientId, supportId);
+            return chat.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/client/{clientId}")

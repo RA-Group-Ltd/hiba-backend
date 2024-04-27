@@ -1,7 +1,6 @@
 package kz.wave.hiba.Entities;
 
 import jakarta.persistence.*;
-import kz.wave.hiba.DTO.MenuDTO;
 import kz.wave.hiba.Enum.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -53,6 +52,9 @@ public class Order {
     @Column(name = "delivery_date")
     private Instant deliveryDate = null;
 
+    @Column(name = "created_at")
+    private Instant createAt;
+
     @Column(name = "total_price")
     private double totalPrice = 0.0;
 
@@ -61,4 +63,7 @@ public class Order {
 
     @Column(name = "donation")
     private double donation = 0.0;
+
+    @Column(name = "sender")
+    private String sender = null;
 }

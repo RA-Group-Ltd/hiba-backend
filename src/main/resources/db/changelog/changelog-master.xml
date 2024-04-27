@@ -182,4 +182,74 @@
                  splitStatements="true"
                  stripComments="true" />
     </changeSet>
+
+    <changeSet id="2024_04_25_alter_order_column2" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_04_25_alter_order_column2.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_04_27_create_chat_table" author="batyrkhan-kenzhaliyev" >
+        <sqlFile path="changes/2024_04_27_create_chat_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_04_27_create_chat_message_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_04_27_create_chat_message_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_04_27_create_chat_notification_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_04_27_create_chat_notification_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_04_27_create_message_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_04_27_create_message_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_04_27_create_notification_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_04_27_create_notification_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_04_27_alter_order_column3" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_04_27_alter_order_column3.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
 </databaseChangeLog>

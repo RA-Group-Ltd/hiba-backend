@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface ChatService {
 
     Optional<Chat> getChatById(Long id);
-    Chat createChat(Long supportId, HttpServletRequest request);
+    Chat createChat(Long supportId, Long orderId, HttpServletRequest request);
     Optional<Chat> getChatByClientAndSupport(Long clientId, Long supportId);
     List<Chat> getChatsByClientId(Long clientId);
     List<Chat> getChatsBySupportId(Long supportId);

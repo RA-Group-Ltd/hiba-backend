@@ -34,6 +34,7 @@ public class OrderCreateDTO {
     private double donation;
     private double deliveryPrice;
     private double totalPrice;
-    private Instant deliveryDate;
+    private Long deliveryDate;
+    private String sender;
 
 }

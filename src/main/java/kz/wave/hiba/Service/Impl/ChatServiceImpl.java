@@ -3,8 +3,10 @@ package kz.wave.hiba.Service.Impl;
 import jakarta.servlet.http.HttpServletRequest;
 import kz.wave.hiba.Config.JwtUtils;
 import kz.wave.hiba.Entities.Chat;
+import kz.wave.hiba.Entities.Order;
 import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Repository.ChatRepository;
+import kz.wave.hiba.Repository.OrderRepository;
 import kz.wave.hiba.Repository.UserRepository;
 import kz.wave.hiba.Service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +22,10 @@ public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
+    private final OrderRepository orderRepository;
 
     @Override
-    public Chat createChat(Long supportId, HttpServletRequest request) {
+    public Chat createChat(Long supportId, Long orderId, HttpServletRequest request) {
         String userToken = jwtUtils.getTokenFromRequest(request);
         String currentUser = jwtUtils.getUsernameFromToken(userToken);
         User user = userRepository.findByPhone(currentUser);
@@ -33,10 +36,20 @@ public class ChatServiceImpl implements ChatService {
         if (supportUserOptional.isEmpty()) {
             return null;
         }
+
+        Optional<Order> orderOptional = orderRepository.findById(orderId);
+
+        if (orderOptional.isEmpty()) {
+            return null;
+        }
+
+        Order order = orderOptional.get();
+
         User supportUser = supportUserOptional.get();
         chat.setSupportId(supportUser.getId());
         chat.setArchive(false);
         chat.setRate(0);
+        chat.setOrder(order);
         return chatRepository.save(chat);
     }
 

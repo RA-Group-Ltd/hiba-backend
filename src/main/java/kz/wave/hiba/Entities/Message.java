@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.util.List;
 
 @Entity
+@Table(name = "message")
 @Getter
 @Setter
 @AllArgsConstructor
