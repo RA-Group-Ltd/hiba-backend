@@ -252,4 +252,64 @@
                  splitStatements="true"
                  stripComments="true" />
     </changeSet>
+
+    <changeSet id="2024_05_02_create_promotion_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_05_02_create_promotion_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_05_02_alter_promotion_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_05_02_alter_promotion_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_05_02_alter_butchery_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_05_02_alter_butchery_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_05_02_drop_butchery_table_certificate_column" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_05_02_drop_butchery_table_certificate_column.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_05_02_create_butchery_document_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_05_02_create_butchery_document_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_05_04_alter_menu_table_column" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_05_04_alter_menu_table_column.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
 </databaseChangeLog>

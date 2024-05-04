@@ -38,4 +38,7 @@ public class Menu {
     @Column(name = "image")
     private byte[] image;
 
+    @Column(name = "description")
+    private String description;
+
 }

@@ -9,10 +9,7 @@ import kz.wave.hiba.Repository.UserRepository;
 import kz.wave.hiba.Repository.UserRoleRepository;
 import kz.wave.hiba.Response.ButcheryCategoryResponse;
 import kz.wave.hiba.Response.ButcheryResponse;
-import kz.wave.hiba.Service.ButcheryCategoryService;
-import kz.wave.hiba.Service.ButcheryService;
-import kz.wave.hiba.Service.CategoryService;
-import kz.wave.hiba.Service.MenuService;
+import kz.wave.hiba.Service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +29,7 @@ public class ButcheryServiceImpl implements ButcheryService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
+    private final ButcheryFileUploadCertificate butcheryFileUploadCertificate;
 
     @Override
     public List<Butchery> getAllButchery() {
@@ -100,6 +98,7 @@ public class ButcheryServiceImpl implements ButcheryService {
         newButchery.setMeatType(butcheryCreateDTO.getMeatType());
         newButchery.setRegNumber(butcheryCreateDTO.getRegNumber());
         newButchery.setCreatedAt(Instant.now());
+        butcheryFileUploadCertificate.uploadDocuments(butcheryCreateDTO.getDocuments(), newButchery);
 
         return butcheryRepository.save(newButchery);
     }
@@ -116,6 +115,8 @@ public class ButcheryServiceImpl implements ButcheryService {
             updateButchery.setLongitude(butcheryUpdateDTO.getLongitude());
             updateButchery.setLatitude(butcheryUpdateDTO.getLatitude());
             updateButchery.setCity(city);
+
+            butcheryFileUploadCertificate.uploadDocuments(butcheryUpdateDTO.getDocuments(), updateButchery);
 
             return butcheryRepository.save(updateButchery);
         } else {

@@ -3,6 +3,9 @@ package kz.wave.hiba.DTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -20,5 +23,6 @@ public class ButcheryCreateDTO {
     private String owner;
     private String regNumber;
     private String email;
+    private List<MultipartFile> documents;
 
 }

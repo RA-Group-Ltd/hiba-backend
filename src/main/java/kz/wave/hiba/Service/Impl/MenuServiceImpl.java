@@ -1,6 +1,7 @@
 package kz.wave.hiba.Service.Impl;
 
 import kz.wave.hiba.DTO.MenuCreateDTO;
+import kz.wave.hiba.DTO.MenuUpdateDTO;
 import kz.wave.hiba.Entities.ButcheryCategory;
 import kz.wave.hiba.Entities.Category;
 import kz.wave.hiba.Entities.Menu;
@@ -49,6 +50,7 @@ public class MenuServiceImpl implements MenuService {
         newMenu.setIsWholeAnimal(menuCreateDTO.getIsWholeAnimal());
         newMenu.setWeight(menuCreateDTO.getWeight());
         newMenu.setPrice(menuCreateDTO.getPrice());
+        newMenu.setDescription(menuCreateDTO.getDescription());
 
         Optional<ButcheryCategory> butcheryOptional = butcheryCategoryRepository.findById(menuCreateDTO.getButcheryCategoryId());
 
@@ -75,8 +77,40 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public Menu updateMenu(Menu updateMenu) {
-        return menuRepository.save(updateMenu);
+    public Menu updateMenu(MenuUpdateDTO menuUpdateDTO) {
+
+        Optional<Menu> menuOptional = menuRepository.findById(menuUpdateDTO.getId());
+
+        if (menuOptional.isEmpty()) {
+            return null;
+        }
+
+        Optional<ButcheryCategory> butcheryCategoryOptional = butcheryCategoryRepository.findById(menuUpdateDTO.getButcheryCategoryId());
+
+        if (butcheryCategoryOptional.isEmpty()) {
+            return null;
+        }
+
+        Optional<Category> categoryOptional = categoryRepository.findById(menuUpdateDTO.getCategoryId());
+
+        if (categoryOptional.isEmpty()) {
+            return null;
+        }
+
+        Menu menuUpdate = menuOptional.get();
+        ButcheryCategory butcheryCategory = butcheryCategoryOptional.get();
+        Category category = categoryOptional.get();
+
+        menuUpdate.setName(menuUpdateDTO.getName());
+        menuUpdate.setIsWholeAnimal(menuUpdateDTO.getIsWholeAnimal());
+        menuUpdate.setWeight(menuUpdateDTO.getWeight());
+        menuUpdate.setPrice(menuUpdateDTO.getPrice());
+        menuUpdate.setDescription(menuUpdateDTO.getDescription());
+        menuUpdate.setButcheryCategoryId(butcheryCategory.getId());
+        menuUpdate.setCategoryId(category.getId());
+        menuUpdate = menuFileUploadService.uploadImage(menuUpdateDTO.getImage(), menuUpdate);
+
+        return menuRepository.save(menuUpdate);
     }
 
     @Override

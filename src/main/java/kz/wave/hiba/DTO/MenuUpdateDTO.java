@@ -1,6 +1,5 @@
 package kz.wave.hiba.DTO;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,8 +10,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MenuCreateDTO {
+public class MenuUpdateDTO {
 
+    private Long id;
     private String name;
     private int weight;
     private Boolean isWholeAnimal;

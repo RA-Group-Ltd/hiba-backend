@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "butcheries")
@@ -37,6 +39,9 @@ public class Butchery extends BaseEntity{
 
     @Column(name = "created_at")
     private Instant createdAt;
+
+    @OneToMany(mappedBy = "butchery", cascade = CascadeType.ALL)
+    private List<ButcheryDocument> documents = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "cityId")

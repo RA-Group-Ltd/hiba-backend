@@ -43,8 +43,6 @@ public class OrderServiceImpl implements OrderService {
         String currentUser = jwtUtils.getUsernameFromToken(token);
         User user = userRepository.findByPhone(currentUser);
 
-        Address address = addressRepository.findAddressByUserId(user.getId());
-
         Optional<Butchery> butcheryOptional = butcheryRepository.findById(orderCreateDTO.getButchery().getId());
 
         if (butcheryOptional.isEmpty()) {
@@ -68,7 +66,13 @@ public class OrderServiceImpl implements OrderService {
         Order order = new Order();
         order.setOrderStatus(OrderStatus.IN_PROCESS);
         order.setUser(user);
-        order.setAddress(address);
+        if (orderCreateDTO.isCharity()) {
+            order.setAddress(null);
+        } else {
+            Optional<Address> addressOptional = addressRepository.findById(orderCreateDTO.getAddress().getId());
+            Address address = addressOptional.get();
+            order.setAddress(address);
+        }
         order.setButchery(butchery);
         order.setMenuItems(menuItemMap);
         order.setCharity(orderCreateDTO.isCharity());

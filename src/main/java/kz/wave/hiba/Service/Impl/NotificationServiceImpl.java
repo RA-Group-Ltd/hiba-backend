@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -33,10 +34,11 @@ public class NotificationServiceImpl implements NotificationService {
 
         Order order = orderOptional.get();
         User user = order.getUser();
-        String message = "Ваш заказ передан в службу доставки " + "Ваш заказ будет доставлен " + Instant.now() + ". Курьер с вами заранее свяжется";
+        Instant deliveryTime = order.getDeliveryDate();
+        String message = "Ваш заказ передан в службу доставки " + "Ваш заказ будет доставлен " + deliveryTime + ". Курьер с вами заранее свяжется";
 
         Notification notification = new Notification();
-        notification.setTime(Instant.now());
+        notification.setTime(deliveryTime);
         notification.setMessage(message);
         notification.setUser(user);
         notification.setNotificationCategory(notificationCategory);

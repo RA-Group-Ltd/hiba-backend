@@ -1,6 +1,7 @@
 package kz.wave.hiba.DTO;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import kz.wave.hiba.Enum.Audience;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,15 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MenuCreateDTO {
+public class PromotionCreateDTO {
 
-    private String name;
-    private int weight;
-    private Boolean isWholeAnimal;
-    private int price;
-    private Long butcheryCategoryId;
-    private Long categoryId;
-    private MultipartFile image;
+    private String title;
     private String description;
+    private Audience audience;
+    private MultipartFile image;
 
 }

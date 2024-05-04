@@ -1,6 +1,7 @@
 package kz.wave.hiba.Controller;
 
 import kz.wave.hiba.DTO.MenuCreateDTO;
+import kz.wave.hiba.DTO.MenuUpdateDTO;
 import kz.wave.hiba.Entities.Menu;
 import kz.wave.hiba.Service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +57,9 @@ public class MenuController {
 
     @PutMapping(value = "/updateMenu")
     @PreAuthorize("hasAnyRole('ROLE_BUTHCER')")
-    public ResponseEntity<?> updateMenu(@RequestBody Menu menu) {
+    public ResponseEntity<?> updateMenu(@RequestBody MenuUpdateDTO menuUpdateDTO) {
         try {
-            Menu updateMenu = menuService.updateMenu(menu);
+            Menu updateMenu = menuService.updateMenu(menuUpdateDTO);
             return new ResponseEntity<>(updateMenu, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
