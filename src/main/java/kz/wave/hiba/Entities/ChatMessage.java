@@ -34,7 +34,7 @@ public class ChatMessage {
     private Date timestamp;
 
     @Enumerated(EnumType.STRING)
-    private SenderType recipientType;
+    private SenderType sender;
 
     @Enumerated(EnumType.STRING)
     private MessageStatus status;

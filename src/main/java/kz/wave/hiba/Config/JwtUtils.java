@@ -4,7 +4,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
+import kz.wave.hiba.Entities.User;
+import kz.wave.hiba.Repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -23,6 +27,9 @@ public class JwtUtils {
 
     @Value("${jwt.expiration.ms}")
     private long expirationMs;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Transactional
     public String generateToken(UserDetails userDetails) {
@@ -77,6 +84,27 @@ public class JwtUtils {
 
     public String getUsernameFromToken(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public User validateAndGetUserFromToken(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secret.getBytes())
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            String username = claims.getSubject();
+            // Возможно, вам нужно будет изменить способ поиска пользователя в зависимости от того, что вы используете в качестве идентификатора в токене
+            User user = userRepository.findByPhone(username);
+            if (user != null) {
+                return user;
+            } else {
+                throw new RuntimeException("User not found with username: " + username);
+            }
+        } catch (SignatureException ex) {
+            // Логика обработки ошибок
+            throw new RuntimeException("Invalid JWT signature");
+        }
     }
 
 }

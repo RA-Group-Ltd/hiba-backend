@@ -77,11 +77,12 @@ public class OrderServiceImpl implements OrderService {
         order.setMenuItems(menuItemMap);
         order.setCharity(orderCreateDTO.isCharity());
         order.setDeliveryDate(Instant.ofEpochMilli(orderCreateDTO.getDeliveryDate()));
-        order.setCreateAt(Instant.now().atZone(ZoneId.of("UTC")).toInstant());
+        order.setCreatedAt(Instant.now().atZone(ZoneId.of("UTC")).toInstant());
         order.setTotalPrice(orderCreateDTO.getTotalPrice());
         order.setDeliveryPrice(orderCreateDTO.getDeliveryPrice());
         order.setDonation(orderCreateDTO.getDonation());
         order.setSender(orderCreateDTO.getSender());
+        order.setPackages(orderCreateDTO.getPackages());
 
         return orderRepository.save(order);
     }
@@ -116,8 +117,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getMyOrders(Long userId) {
-        return orderRepository.findOrdersByUserId(userId);
+    public List<Order> getMyOrders(Long id) {
+        return orderRepository.findOrdersByUserIdSortedNatural(id);
+    }
+
+    @Override
+    public List<Order> getMyActiveOrders(Long id) {
+        return orderRepository.findOrdersByUserIdSortedActive(id);
     }
 
     /*@Override

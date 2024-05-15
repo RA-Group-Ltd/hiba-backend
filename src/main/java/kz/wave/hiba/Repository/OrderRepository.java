@@ -5,6 +5,8 @@ import kz.wave.hiba.Entities.Butcher;
 import kz.wave.hiba.Entities.Butchery;
 import kz.wave.hiba.Entities.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,5 +18,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Order findByButchery(Butchery butcheryId);
     List<Order> findOrdersByUserId(Long id);
     Order findOrderByUserId(Long id);
+    @Query("SELECT o FROM Order o WHERE o.user.id = :userId ORDER BY FIELD(o.orderStatus, 'DELIVERY_TOMORROW', 'ON_THE_WAY', 'PREPARING_FOR_DELIVERY', 'AWAITING_CONFIRMATION', 'DELIVERY_TOMORROW', 'IN_PROCESS', 'DELIVERED'), o.createdAt DESC")
+    List<Order> findOrdersByUserIdSortedNatural(@Param("userId") Long userId);
+
+    @Query("SELECT o FROM Order o WHERE o.user.id = :userId AND o.orderStatus <> 'DELIVERED' " +
+            "ORDER BY FIELD(o.orderStatus, 'DELIVERY_TOMORROW', 'ON_THE_WAY', 'PREPARING_FOR_DELIVERY', 'AWAITING_CONFIRMATION', 'IN_PROCESS'), o.createdAt DESC")
+    List<Order> findOrdersByUserIdSortedActive(@Param("userId") Long userId);
 
 }

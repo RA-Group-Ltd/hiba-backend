@@ -30,6 +30,7 @@ public class OrderReadWithoutUserDTO {
     private double totalPrice;
     private double deliveryPrice;
     private double donation;
+    private int packages;
 
 
 }

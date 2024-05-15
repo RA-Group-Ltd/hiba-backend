@@ -36,5 +36,6 @@ public class OrderCreateDTO {
     private double totalPrice;
     private Long deliveryDate;
     private String sender;
+    private int packages;
 
 }

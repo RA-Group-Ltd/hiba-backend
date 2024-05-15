@@ -10,13 +10,18 @@ import kz.wave.hiba.Repository.OrderRepository;
 import kz.wave.hiba.Repository.UserRepository;
 import kz.wave.hiba.Service.ChatService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
@@ -25,17 +30,13 @@ public class ChatServiceImpl implements ChatService {
     private final OrderRepository orderRepository;
 
     @Override
-    public Chat createChat(Long supportId, Long orderId, HttpServletRequest request) {
+    public Chat createChat(Long orderId, HttpServletRequest request) {
         String userToken = jwtUtils.getTokenFromRequest(request);
         String currentUser = jwtUtils.getUsernameFromToken(userToken);
         User user = userRepository.findByPhone(currentUser);
 
         Chat chat = new Chat();
         chat.setClientId(user.getId());
-        Optional<User> supportUserOptional = userRepository.findById(supportId);
-        if (supportUserOptional.isEmpty()) {
-            return null;
-        }
 
         Optional<Order> orderOptional = orderRepository.findById(orderId);
 
@@ -45,12 +46,51 @@ public class ChatServiceImpl implements ChatService {
 
         Order order = orderOptional.get();
 
-        User supportUser = supportUserOptional.get();
-        chat.setSupportId(supportUser.getId());
         chat.setArchive(false);
         chat.setRate(0);
         chat.setOrder(order);
         return chatRepository.save(chat);
+    }
+
+    @Override
+    public Chat startDialog(Long chatId, HttpServletRequest request) {
+        String token = jwtUtils.getTokenFromRequest(request);
+        String currentUser = jwtUtils.getUsernameFromToken(token);
+        User user = userRepository.findByPhone(currentUser);
+
+        Optional<Chat> chatOptional = chatRepository.findById(chatId);
+
+        if (chatOptional.isEmpty()) {
+            return null;
+        }
+
+        Chat chat = chatOptional.get();
+        chat.setSupportId(user.getId());
+
+        return chatRepository.save(chat);
+    }
+
+    @Override
+    public ResponseEntity<?> completeDialog(Long chatId, HttpServletRequest request) {
+        String token = jwtUtils.getTokenFromRequest(request);
+        String currentUser = jwtUtils.getUsernameFromToken(token);
+        User user = userRepository.findByPhone(currentUser);
+
+        Optional<Chat> chatOptional = chatRepository.findById(chatId);
+
+        if (chatOptional.isEmpty()) {
+            return null;
+        }
+
+        Chat chat = chatOptional.get();
+
+        if (!Objects.equals(chat.getSupportId(), user.getId())) {
+            return null;
+        }
+
+        chat.setArchive(true);
+
+        return new ResponseEntity<>(chatRepository.save(chat), HttpStatus.CREATED);
     }
 
     @Override

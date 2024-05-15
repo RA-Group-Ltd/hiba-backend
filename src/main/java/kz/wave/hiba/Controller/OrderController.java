@@ -129,12 +129,32 @@ public class OrderController {
         }
     }
 
+    @GetMapping(value = "/getMyActiveOrders")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getMyActiveOrders(HttpServletRequest request) {
+        try {
+            String token = jwtUtils.getTokenFromRequest(request);
+            String username = jwtUtils.getUsernameFromToken(token);
+            User user = userRepository.findByPhone(username);
+
+            List<OrderReadWithoutUserDTO> orderDtos = orderService.getMyActiveOrders(user.getId())
+                    .stream()
+                    .map(this::transformOrderToDTO)
+                    .collect(Collectors.toList());
+
+            return new ResponseEntity<>(orderDtos, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
+        }
+    }
+
     private OrderReadWithoutUserDTO transformOrderToDTO(Order order) {
         System.out.println(order.getMenuItems());
         return new OrderReadWithoutUserDTO(order.getId(), order.getOrderStatus(),
                 order.getAddress(), order.getButchery(),
                 order.isCharity(), order.getMenuItems(), order.getDeliveryDate(),
-                order.getTotalPrice(), order.getTotalPrice(), order.getDonation());
+                order.getTotalPrice(), order.getDeliveryPrice(), order.getDonation(), order.getPackages());
     }
 
     /*@PutMapping(value = "/updateOrderStatus/{id}")

@@ -43,7 +43,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     @Override
     public List<ChatMessage> getUnreadMessages(Chat chat, SenderType recipientType) {
-        return chatMessageRepository.findByChatAndRecipientTypeAndStatus(chat, recipientType, MessageStatus.RECEIVED);
+        return chatMessageRepository.findByChatAndSenderAndStatus(chat, recipientType, MessageStatus.RECEIVED);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     @Override
     public long countUnreadMessages(Chat chat, SenderType recipientType) {
-        return chatMessageRepository.countByChatAndRecipientTypeAndStatus(chat, recipientType, MessageStatus.RECEIVED);
+        return chatMessageRepository.countByChatAndSenderAndStatus(chat, recipientType, MessageStatus.RECEIVED);
     }
 
     @Override

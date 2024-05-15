@@ -20,5 +20,6 @@ public interface AuthService {
     boolean verifyCode(String phoneNumber, String code);
     ResponseEntity<?> confirmUser(String phoneNumber);
     User completeRegistration(String phoneNumber, String name, MultipartFile photo);
+    boolean isValidTokenForUser(String token, String username);
 
 }

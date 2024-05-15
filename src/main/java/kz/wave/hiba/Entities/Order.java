@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.naming.Name;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +54,7 @@ public class Order {
     private Instant deliveryDate = null;
 
     @Column(name = "created_at")
-    private Instant createAt;
+    private Instant createdAt;
 
     @Column(name = "total_price")
     private double totalPrice = 0.0;
@@ -66,4 +67,7 @@ public class Order {
 
     @Column(name = "sender")
     private String sender = null;
+
+    @Column(name = "packages")
+    private int packages = 1;
 }

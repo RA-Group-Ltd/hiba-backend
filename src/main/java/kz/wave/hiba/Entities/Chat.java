@@ -22,8 +22,9 @@ public class Chat {
     @Column(name = "client_id")
     private Long clientId;
 
+    @Builder.Default
     @Column(name = "support_id")
-    private Long supportId;
+    private Long supportId = null;
 
     @Column(name = "archive")
     private boolean archive;

@@ -1,5 +1,6 @@
 package kz.wave.hiba.Response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Entities.UserRole;
 import lombok.Data;
@@ -9,6 +10,7 @@ public class UserResponse {
 
     private User user;
     private String token;
+    @JsonIgnore
     private UserRole userRole;
 
     public User getUser() {

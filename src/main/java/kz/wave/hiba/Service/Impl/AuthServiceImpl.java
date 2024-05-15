@@ -126,6 +126,17 @@ public class AuthServiceImpl implements AuthService {
         return null;
     }
 
+    public boolean isValidTokenForUser(String token, String username) {
+        // Получаем пользователя из токена
+        User userFromToken = jwtUtils.validateAndGetUserFromToken(token);
+
+        // Получаем пользователя из базы данных
+        User userFromDB = userRepository.findByPhone(username);
+
+        // Проверяем, совпадают ли пользователи и токены
+        return userFromToken != null && userFromDB != null && userFromToken.getId().equals(userFromDB.getId());
+    }
+
     @Override
     public boolean checkPhone(AuthCheckDTO authCheckDTO) {
         return userRepository.findByPhone(authCheckDTO.getPhone()) != null;
