@@ -14,10 +14,10 @@ public class HibaApplication {
 		SpringApplication.run(HibaApplication.class, args);
 	}
 
-	@Bean
+	/*@Bean
 	public ServerEndpointExporter serverEndpointExporter()
 	{
 		return new ServerEndpointExporter();
-	}
+	}*/
 
 }

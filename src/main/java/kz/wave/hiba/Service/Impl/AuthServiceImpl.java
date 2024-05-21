@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -135,6 +136,26 @@ public class AuthServiceImpl implements AuthService {
 
         // Проверяем, совпадают ли пользователи и токены
         return userFromToken != null && userFromDB != null && userFromToken.getId().equals(userFromDB.getId());
+    }
+
+    @Override
+    public List<User> findConnectedUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public User findIdByPhoneNumber(String phone) {
+        return null;
+    }
+
+    @Override
+    public long quantityOfUsers() {
+        return userRepository.countUsers();
+    }
+
+    @Override
+    public Optional<Long> getUserIdByPhone(String phone) {
+        return userRepository.findIdByPhone(phone);
     }
 
     @Override

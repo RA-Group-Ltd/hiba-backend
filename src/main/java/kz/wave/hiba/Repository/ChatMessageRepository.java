@@ -15,13 +15,14 @@ import java.util.Optional;
 @Transactional
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
 
-    long countByChatAndSender(Chat chat, SenderType recipientType);
+    long countByChatAndSenderType(Long chat, SenderType senderType);
+//    List<ChatMessage> findByChat(Long chatId);
 
-    List<ChatMessage> findByChat(Chat chat);
+    List<ChatMessage> findByChat(Long chat);
 
-    List<ChatMessage> findByChatAndSenderAndStatus(Chat chat, SenderType sender, MessageStatus messageStatus);
+    List<ChatMessage> findByChatAndSenderTypeAndMessageStatus(Long chat, SenderType senderType, MessageStatus messageStatus);
 
-    Optional<ChatMessage> findTopByChatOrderByTimestampDesc(Chat chat);
+    Optional<ChatMessage> findTopByChatOrderByTimestampDesc(Long chat);
 
-    long countByChatAndSenderAndStatus(Chat chat, SenderType sender, MessageStatus messageStatus);
+    long countByChatAndSenderTypeAndMessageStatus(Long chat, SenderType senderType, MessageStatus messageStatus);
 }

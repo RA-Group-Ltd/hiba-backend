@@ -15,9 +15,18 @@ import kz.wave.hiba.Service.VerificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/auth")
@@ -151,4 +160,31 @@ public class AuthController {
         }
     }
 
+    @MessageMapping("/user.addUser")
+    @SendTo("/user/public")
+    public User addUser(@Payload Map<String, String> payload) {
+        String phone = payload.get("phone");
+        User existingUser = authService.findIdByPhoneNumber(phone);
+        if (existingUser != null) {
+            return existingUser;
+        } else {
+            return null; // Или бросайте исключение, если пользователь не найден
+        }
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> findConnectedUsers() {
+        List<User> users = authService.findConnectedUsers();
+        return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/userId")
+    public ResponseEntity<?> getUserIdByPhone(@RequestParam String phone) {
+        Optional<Long> userId = authService.getUserIdByPhone(phone);
+        if (userId.isPresent()) {
+            return ResponseEntity.ok(Collections.singletonMap("userId", userId.get()));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+    }
 }

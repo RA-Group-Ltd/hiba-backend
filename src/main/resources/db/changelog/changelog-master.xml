@@ -332,4 +332,24 @@
                  splitStatements="true"
                  stripComments="true" />
     </changeSet>
+
+    <changeSet id="2024_05_16_alter_chat_column1" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_05_16_alter_chat_column1.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_05_16_alter_chat_column2" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_05_16_alter_chat_column2.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
 </databaseChangeLog>

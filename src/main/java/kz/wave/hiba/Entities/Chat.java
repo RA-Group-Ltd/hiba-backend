@@ -1,6 +1,8 @@
 package kz.wave.hiba.Entities;
 
 import jakarta.persistence.*;
+import kz.wave.hiba.Enum.ChatStatus;
+import kz.wave.hiba.Enum.OrderStatus;
 import lombok.*;
 
 import javax.annotation.Nullable;
@@ -31,6 +33,10 @@ public class Chat {
 
     @Column(name = "rate")
     private int rate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "chat_status")
+    private ChatStatus chatStatus;
 
     @Nullable
     @OneToOne

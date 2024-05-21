@@ -7,6 +7,9 @@ import kz.wave.hiba.Entities.VerificationCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface AuthService {
 
     boolean checkPhone(AuthCheckDTO authCheckDTO);
@@ -21,5 +24,9 @@ public interface AuthService {
     ResponseEntity<?> confirmUser(String phoneNumber);
     User completeRegistration(String phoneNumber, String name, MultipartFile photo);
     boolean isValidTokenForUser(String token, String username);
+    public List<User> findConnectedUsers();
+    public User findIdByPhoneNumber(String phone);
+    public long quantityOfUsers();
+    public Optional<Long> getUserIdByPhone(String phone);
 
 }

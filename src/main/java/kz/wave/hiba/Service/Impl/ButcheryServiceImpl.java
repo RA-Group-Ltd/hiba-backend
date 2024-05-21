@@ -128,4 +128,9 @@ public class ButcheryServiceImpl implements ButcheryService {
     public void deleteButchery(Long id) {
         butcheryRepository.deleteById(id);
     }
+
+    @Override
+    public Long quantityOfButcheries() {
+        return butcheryRepository.countButcheries();
+    }
 }

@@ -1,5 +1,6 @@
 package kz.wave.hiba.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import kz.wave.hiba.Enum.MessageStatus;
 import kz.wave.hiba.Enum.SenderType;
@@ -16,6 +17,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ChatMessage {
 
     @Id
@@ -23,9 +25,9 @@ public class ChatMessage {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "chat")
-    private Chat chat;
+//    @ManyToOne
+    @Column(name = "chat_id")
+    private Long chat;
 
     @Column(name = "content")
     private String content;
@@ -34,9 +36,11 @@ public class ChatMessage {
     private Date timestamp;
 
     @Enumerated(EnumType.STRING)
-    private SenderType sender;
+    @Column(name = "recipient_type")
+    private SenderType senderType;
 
     @Enumerated(EnumType.STRING)
-    private MessageStatus status;
+    @Column(name = "status")
+    private MessageStatus messageStatus = MessageStatus.SEND;
 
 }

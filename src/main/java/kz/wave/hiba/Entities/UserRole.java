@@ -1,5 +1,6 @@
 package kz.wave.hiba.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,7 @@ public class UserRole{
     @EmbeddedId
     private UserRoleId id;
 
+    @JsonIgnore
     @MapsId("userId")
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")

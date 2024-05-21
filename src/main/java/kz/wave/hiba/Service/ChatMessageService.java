@@ -11,10 +11,11 @@ import java.util.Optional;
 public interface ChatMessageService {
 
     ChatMessage save(ChatMessage chatMessage);
-    List<ChatMessage> getMessagesByChat(Chat chat);
-    List<ChatMessage> getUnreadMessages(Chat chat, SenderType recipientType);
-    Optional<ChatMessage> getLastMessage(Chat chat);
-    long countUnreadMessages(Chat chat, SenderType recipientType);
+    public List<ChatMessage> findMessagesByChatId(Long chatId);
+    List<ChatMessage> getMessagesByChat(Long chatId);
+    List<ChatMessage> getUnreadMessages(Long chatId, SenderType recipientType);
+    Optional<ChatMessage> getLastMessage(Long chatId);
+    long countUnreadMessages(Long chatId, SenderType recipientType);
     void setMessageStatus(ChatMessage message, MessageStatus status);
     void deleteMessage(ChatMessage message);
 

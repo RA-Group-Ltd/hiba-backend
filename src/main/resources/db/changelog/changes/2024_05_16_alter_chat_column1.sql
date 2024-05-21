@@ -1,0 +1,2 @@
+ALTER TABLE chat
+    ADD COLUMN order_status VARCHAR(255) NULL;

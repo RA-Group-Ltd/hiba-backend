@@ -17,5 +17,6 @@ public interface ButcheryService {
     Butchery createButchery(ButcheryCreateDTO butcheryCreateDTO, City city);
     Butchery updateButchery(ButcheryUpdateDTO butcheryUpdateDTO, City city);
     void deleteButchery(Long id);
+    public Long quantityOfButcheries();
 
 }

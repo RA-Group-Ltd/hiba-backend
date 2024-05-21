@@ -10,7 +10,6 @@ public class UserResponse {
 
     private User user;
     private String token;
-    @JsonIgnore
     private UserRole userRole;
 
     public User getUser() {

@@ -126,6 +126,11 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findOrdersByUserIdSortedActive(id);
     }
 
+    @Override
+    public long quantityOfOrders() {
+        return orderRepository.countOrders();
+    }
+
     /*@Override
     public Order updateOrderStatus(OrderUpdateDTO orderUpdateDTO, HttpServletRequest request) {
         String token = jwtUtils.getTokenFromRequest(request);

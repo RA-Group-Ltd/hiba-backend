@@ -13,7 +13,9 @@ import java.util.Optional;
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     Optional<Chat> findByClientIdAndSupportId(Long clientId, Long supportId);
+//    Optional<Chat> findByClient
     List<Chat> findByClientId(Long clientId);
     List<Chat> findBySupportId(Long supportId);
+    List<Chat> findChatsBySupportIdIsNull();
 
 }

@@ -5,6 +5,8 @@ import kz.wave.hiba.Config.JwtUtils;
 import kz.wave.hiba.Entities.Chat;
 import kz.wave.hiba.Entities.Order;
 import kz.wave.hiba.Entities.User;
+import kz.wave.hiba.Enum.ChatStatus;
+import kz.wave.hiba.Enum.SenderType;
 import kz.wave.hiba.Repository.ChatRepository;
 import kz.wave.hiba.Repository.OrderRepository;
 import kz.wave.hiba.Repository.UserRepository;
@@ -49,6 +51,7 @@ public class ChatServiceImpl implements ChatService {
         chat.setArchive(false);
         chat.setRate(0);
         chat.setOrder(order);
+        chat.setChatStatus(ChatStatus.ACTIVE);
         return chatRepository.save(chat);
     }
 
@@ -89,16 +92,15 @@ public class ChatServiceImpl implements ChatService {
         }
 
         chat.setArchive(true);
+        chat.setChatStatus(ChatStatus.ARCHIVE);
 
         return new ResponseEntity<>(chatRepository.save(chat), HttpStatus.CREATED);
     }
 
-    @Override
-    public Optional<Chat> getChatByClientAndSupport(Long clientId, Long supportId) {
-//        clientId = userRepository
-//        supportId = userRepository
-        return chatRepository.findByClientIdAndSupportId(clientId, supportId);
-    }
+//    @Override
+//    public Optional<Chat> getChatByClientAndSupport(Long clientId, Long supportId) {
+//        return chatRepository.findByClientIdAndSupportId(clientId, supportId);
+//    }
 
     @Override
     public List<Chat> getChatsByClientId(Long clientId) {
@@ -132,6 +134,46 @@ public class ChatServiceImpl implements ChatService {
     public List<Chat> getAllChats() {
         return chatRepository.findAll();
     }
+
+    @Override
+    public List<Chat> getNewChats() {
+        return chatRepository.findChatsBySupportIdIsNull();
+    }
+
+    @Override
+    public Chat createChatIfNotExist(Long clientId, Long supportId) {
+        Optional<Chat> existingChat = chatRepository.findByClientIdAndSupportId(clientId, supportId);
+        if (existingChat.isPresent()) {
+            return existingChat.get();
+        } else {
+            Chat newChat = Chat.builder()
+                    .clientId(clientId)
+                    .supportId(supportId)
+                    .archive(false)
+                    .rate(0)
+                    .chatStatus(ChatStatus.ACTIVE)  // Убедитесь, что ChatStatus.ACTIVE существует
+                    .build();
+            return chatRepository.save(newChat);
+        }
+    }
+
+    /*@Override
+    public void addUserToChat(Chat chat, Long supportId) {
+        // Получаем текущий список пользователей чата
+        List<Long> users = chat.getUsers();
+
+        // Проверяем, не добавлен ли уже supportId
+        if (!users.contains(supportId)) {
+            // Добавляем supportId в список
+            users.add(supportId);
+        }
+
+        // Сохраняем обновленный список пользователей в чате
+        chat.setUsers(users);
+
+        // Сохранение обновленного чата в базу данных
+        chatRepository.save(chat);
+    }*/
 
     @Override
     public Optional<Chat> getChatById(Long id) {

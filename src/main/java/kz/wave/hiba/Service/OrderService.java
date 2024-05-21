@@ -20,5 +20,6 @@ public interface OrderService {
     Order updateOrderStatus(Long id, HttpServletRequest request, OrderStatus newOrderStatus);
     List<Order> getMyOrders(Long id);
     List<Order> getMyActiveOrders(Long id);
+    long quantityOfOrders();
 
 }

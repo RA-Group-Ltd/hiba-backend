@@ -10,7 +10,6 @@ import kz.wave.hiba.Service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,33 +31,41 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             throw new IllegalArgumentException("Не указан чат для сообщения");
         }
 
-        // Сохраняем сообщение в базе данных
-        return chatMessageRepository.save(chatMessage);
+//        var chatId = chatService.getChatByClientAndSupport(chatMessage.getChat().getClientId(), chatMessage.getChat().getSupportId()).orElseThrow();
+//        chatMessage.setChat(chatId);
+        chatMessageRepository.save(chatMessage);
+
+        return chatMessage;
     }
 
     @Override
-    public List<ChatMessage> getMessagesByChat(Chat chat) {
-        return chatMessageRepository.findByChat(chat);
+    public List<ChatMessage> findMessagesByChatId(Long chatId) {
+        return chatMessageRepository.findByChat(chatId);
     }
 
     @Override
-    public List<ChatMessage> getUnreadMessages(Chat chat, SenderType recipientType) {
-        return chatMessageRepository.findByChatAndSenderAndStatus(chat, recipientType, MessageStatus.RECEIVED);
+    public List<ChatMessage> getMessagesByChat(Long chatId) {
+        return chatMessageRepository.findByChat(chatId);
     }
 
     @Override
-    public Optional<ChatMessage> getLastMessage(Chat chat) {
-        return chatMessageRepository.findTopByChatOrderByTimestampDesc(chat);
+    public List<ChatMessage> getUnreadMessages(Long chatId, SenderType recipientType) {
+        return chatMessageRepository.findByChatAndSenderTypeAndMessageStatus(chatId, recipientType, MessageStatus.RECEIVED);
     }
 
     @Override
-    public long countUnreadMessages(Chat chat, SenderType recipientType) {
-        return chatMessageRepository.countByChatAndSenderAndStatus(chat, recipientType, MessageStatus.RECEIVED);
+    public Optional<ChatMessage> getLastMessage(Long chatId) {
+        return chatMessageRepository.findTopByChatOrderByTimestampDesc(chatId);
+    }
+
+    @Override
+    public long countUnreadMessages(Long chatId, SenderType recipientType) {
+        return chatMessageRepository.countByChatAndSenderTypeAndMessageStatus(chatId, recipientType, MessageStatus.RECEIVED);
     }
 
     @Override
     public void setMessageStatus(ChatMessage message, MessageStatus status) {
-        message.setStatus(status);
+        message.setMessageStatus(status);
         chatMessageRepository.save(message);
     }
 
