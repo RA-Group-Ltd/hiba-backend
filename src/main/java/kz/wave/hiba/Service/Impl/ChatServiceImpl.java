@@ -135,12 +135,8 @@ public class ChatServiceImpl implements ChatService {
         return chatRepository.findAll();
     }
 
-    @Override
-    public List<Chat> getNewChats() {
-        return chatRepository.findChatsBySupportIdIsNull();
-    }
 
-    @Override
+    /*@Override
     public Chat createChatIfNotExist(Long clientId, Long supportId) {
         Optional<Chat> existingChat = chatRepository.findByClientIdAndSupportId(clientId, supportId);
         if (existingChat.isPresent()) {
@@ -155,9 +151,18 @@ public class ChatServiceImpl implements ChatService {
                     .build();
             return chatRepository.save(newChat);
         }
-    }
+    }*/
 
-    /*@Override
+    @Override
+    public List<Chat> getChats(boolean isButchery, String type) {
+        return switch (type) {
+            case "archive" -> chatRepository.findChatsByArchiveIsTrueAndIsButchery(isButchery);
+            case "active" -> chatRepository.findChatsByArchiveIsFalseAndSupportIdNotNullAndIsButchery(isButchery);
+            default -> chatRepository.findChatsBySupportIdIsNullAndIsButcheryAndArchiveIsFalse(isButchery);
+        };
+
+    }
+/*@Override
     public void addUserToChat(Chat chat, Long supportId) {
         // Получаем текущий список пользователей чата
         List<Long> users = chat.getUsers();

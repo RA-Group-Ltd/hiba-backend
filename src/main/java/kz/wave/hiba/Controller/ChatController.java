@@ -3,6 +3,7 @@ package kz.wave.hiba.Controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kz.wave.hiba.Entities.ChatNotification;
 import kz.wave.hiba.Response.ChatResponse;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import jakarta.servlet.http.HttpServletRequest;
 import kz.wave.hiba.Config.JwtUtils;
@@ -68,21 +69,17 @@ public class ChatController {
 
             System.out.println(chat.getId());
 
+
             // Отправляем сообщение получателю
-            messagingTemplate.convertAndSendToUser(
-                    String.valueOf(chat.getSupportId()), "/queue/messages",
-                    new ChatNotification(
-                            savedMsg.getId(),
-                            chat.getClientId(),
-                            chat.getSupportId(),
-                            savedMsg.getContent()
-                    )
+            messagingTemplate.convertAndSend( "/queue/chat/"+chat.getId(),
+                    chatMessage
             );
         }catch (Exception e){
             e.printStackTrace();
             throw new RuntimeException();
         }
     }
+
 
     /*@MessageMapping("/chat")
     @SendTo("/topic/messages")
@@ -270,10 +267,10 @@ String userToken = jwtUtils.getTokenFromRequest(request);
         }
     }*/
 
-    @GetMapping("/getNew")
-    public List<Chat> getNewChats() {
+    @GetMapping("/get")
+    public List<Chat> getChats(@RequestParam("isButchery") boolean isButchery, @RequestParam("type") String type) {
         try {
-            return chatService.getNewChats();
+            return chatService.getChats(isButchery, type);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

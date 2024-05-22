@@ -352,4 +352,34 @@
                  splitStatements="true"
                  stripComments="true" />
     </changeSet>
+
+    <changeSet id="2024_05_21_alter_chat_column3" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_05_21_alter_chat_column3.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_05_21_create_courier_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_05_21_create_courier_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_05_22_alter_order_column" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_05_22_alter_order_column.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
 </databaseChangeLog>

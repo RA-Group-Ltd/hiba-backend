@@ -15,14 +15,10 @@ public interface ChatService {
     Chat createChat(Long orderId, HttpServletRequest request);
     Chat startDialog(Long chatId, HttpServletRequest request);
     ResponseEntity<?> completeDialog(Long chatId, HttpServletRequest request);
-//    Optional<Chat> getChatByClientAndSupport(Long clientId, Long supportId);
     List<Chat> getChatsByClientId(Long clientId);
     List<Chat> getChatsBySupportId(Long supportId);
     void archiveChat(Long chatId);
     void rateChat(Long chatId, int rate);
     List<Chat> getAllChats();
-    List<Chat> getNewChats();
-//    public void addUserToChat(Chat chat, SenderType sender);
-    public Chat createChatIfNotExist(Long clientId, Long supportId);
-
+    List<Chat> getChats(boolean isButchery, String type);
 }

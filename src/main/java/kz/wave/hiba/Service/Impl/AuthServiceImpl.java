@@ -72,6 +72,7 @@ public class AuthServiceImpl implements AuthService {
         if (user == null) {
             return false;
         }
+        verificationCodeRepository.deleteVerificationCodeByUserId(user.getId());
 
         // Найдем код подтверждения для пользователя, который еще не истек
         List<VerificationCode> validCodes = verificationCodeRepository.findByUserIdAndExpirationDateAfter(user.getId(), LocalDateTime.now());

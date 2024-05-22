@@ -16,6 +16,10 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
 //    Optional<Chat> findByClient
     List<Chat> findByClientId(Long clientId);
     List<Chat> findBySupportId(Long supportId);
-    List<Chat> findChatsBySupportIdIsNull();
+//    List<Chat> findChatsBySupportIdIsNull();
+
+    List<Chat> findChatsBySupportIdIsNullAndIsButcheryAndArchiveIsFalse(boolean isButchery);
+    List<Chat> findChatsByArchiveIsTrueAndIsButchery(boolean isButchery);
+    List<Chat> findChatsByArchiveIsFalseAndSupportIdNotNullAndIsButchery(boolean isButchery);
 
 }

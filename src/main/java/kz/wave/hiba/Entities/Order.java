@@ -70,4 +70,8 @@ public class Order {
 
     @Column(name = "packages")
     private int packages = 1;
+
+    @ManyToOne
+    @JoinColumn(name = "courier_id")
+    private Courier courier;
 }

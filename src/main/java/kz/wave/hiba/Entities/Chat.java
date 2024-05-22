@@ -24,6 +24,9 @@ public class Chat {
     @Column(name = "client_id")
     private Long clientId;
 
+    @Column(name = "is_butchery")
+    private Boolean isButchery;
+
     @Builder.Default
     @Column(name = "support_id")
     private Long supportId = null;
