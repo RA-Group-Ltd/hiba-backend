@@ -47,6 +47,9 @@ public class User implements UserDetails {
     @Column(name = "confirmed")
     private boolean confirmed = false;
 
+    @Column(name = "email")
+    private String email;
+
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<UserRole> roles = new HashSet<>();

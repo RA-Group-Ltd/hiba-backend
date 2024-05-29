@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import kz.wave.hiba.Entities.Chat;
 import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Enum.SenderType;
+import kz.wave.hiba.Response.SupportChatResponse;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -21,4 +22,5 @@ public interface ChatService {
     void rateChat(Long chatId, int rate);
     List<Chat> getAllChats();
     List<Chat> getChats(boolean isButchery, String type);
+    List<SupportChatResponse> filterChatsBySupportId(Long id, List<String> filter, Long startDate, Long endDate);
 }

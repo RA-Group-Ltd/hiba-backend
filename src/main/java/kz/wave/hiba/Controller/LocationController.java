@@ -4,6 +4,7 @@ import kz.wave.hiba.DTO.*;
 import kz.wave.hiba.Entities.City;
 import kz.wave.hiba.Entities.Country;
 import kz.wave.hiba.Entities.Region;
+import kz.wave.hiba.Repository.RegionRepository;
 import kz.wave.hiba.Service.CityService;
 import kz.wave.hiba.Service.CountryService;
 import kz.wave.hiba.Service.RegionService;
@@ -14,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/location")
@@ -27,6 +29,9 @@ public class LocationController {
 
     @Autowired
     private CityService cityService;
+
+    @Autowired
+    private RegionRepository regionRepository;
 
     @GetMapping(value = "/getAllCountries")
     @PreAuthorize("isAuthenticated()")
@@ -155,12 +160,15 @@ public class LocationController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERADMIN')")
     public ResponseEntity<?> createCity(@RequestBody CityCreateDTO cityCreateDTO) {
         Country country = countryService.getCountryById(cityCreateDTO.getCountryId());
-        Region region = regionService.getOneRegion(cityCreateDTO.getRegionId());
+        Region region = null;
         if (country == null) {
             return new ResponseEntity<>("Country not found", HttpStatus.BAD_REQUEST);
         }
-        if (region == null) {
-            return new ResponseEntity<>("Region not found", HttpStatus.BAD_REQUEST);
+        if (cityCreateDTO.getRegionId() != null ) {
+            region = regionService.getOneRegion(cityCreateDTO.getRegionId());
+            if(region == null){
+                return new ResponseEntity<>("Region not found", HttpStatus.BAD_REQUEST);
+            }
         }
 
         City city = cityService.createCity(cityCreateDTO, country, region);

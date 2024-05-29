@@ -1,7 +1,9 @@
 package kz.wave.hiba.Response;
 
+import kz.wave.hiba.Entities.Butchery;
 import kz.wave.hiba.Entities.Category;
 import kz.wave.hiba.Entities.City;
+import kz.wave.hiba.Entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,11 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ButcheryResponse {
-    private Long id;
-    private String name;
-    private float latitude;
-    private float longitude;
-    private String address;
-    private City city;
+    private Butchery butchery;
     private List<ButcheryCategoryResponse> categories;
+    private List<User> employees;
+    private int activeOrders;
+    private int deliveredOrders;
 }

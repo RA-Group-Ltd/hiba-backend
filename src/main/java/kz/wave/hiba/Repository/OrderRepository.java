@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import kz.wave.hiba.Entities.Butcher;
 import kz.wave.hiba.Entities.Butchery;
 import kz.wave.hiba.Entities.Order;
+import kz.wave.hiba.Enum.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,7 +16,6 @@ import java.util.List;
 @Repository
 @Transactional
 public interface OrderRepository extends JpaRepository<Order, Long> {
-
     Order findByButchery(Butchery butcheryId);
     List<Order> findOrdersByUserId(Long id);
     Order findOrderByUserId(Long id);
@@ -35,4 +35,34 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT COUNT(o) FROM Order o")
     long countOrders();
+
+
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.courier.id = :courierId AND o.orderStatus = kz.wave.hiba.Enum.OrderStatus.DELIVERED")
+    long countDeliveredOrdersByCourierId(@Param("courierId") Long courierId);
+
+    @Query("SELECT o FROM Order o " +
+            "WHERE o.courier.id = :courierId " +
+            "   AND o.orderStatus IN :statuses " +
+            "   AND ( :startDate IS NULL OR o.createdAt >= :startDate) " +
+            "   AND ( :endDate IS NULL OR  o.createdAt <= :endDate)")
+    List<Order> getCourierOrders(@Param("courierId") Long courierId,
+                                 @Param("statuses") List<String> statuses,
+                                 @Param("startDate") Instant startDate,
+                                 @Param("endDate") Instant endDate);
+
+    @Query("SELECT COUNT(o) FROM Order o where o.butchery = :butchery AND o.orderStatus != kz.wave.hiba.Enum.OrderStatus.DELIVERED")
+    int getActiveOrdersByButchery(@Param("butchery") Butchery butchery);
+
+    @Query("SELECT COUNT(o) FROM Order o where o.butchery = :butchery AND o.orderStatus = kz.wave.hiba.Enum.OrderStatus.DELIVERED")
+    int getDeliveredOrdersByButchery(@Param("butchery") Butchery butchery);
+
+    @Query("SELECT o FROM Order o " +
+            "WHERE ((cast(o.id as string ) ILIKE '%' || :q || '%') OR (o.butchery.name ILIKE '%' || :q || '%')) " +
+            "   AND ( :statuses IS NULL OR o.orderStatus IN :statuses ) " +
+            "   AND ( :startDate IS NULL OR o.createdAt >= :startDate) " +
+            "ORDER BY o.createdAt ASC")
+    List<Order> findOrders(@Param("q") String query, @Param("startDate") Instant startDate, @Param("statuses")List<String> statuses);
+
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.courier.id = :courierId AND o.orderStatus != kz.wave.hiba.Enum.OrderStatus.DELIVERED")
+    Long countActiveOrdersByCourierId(@Param("courierId") Long courierId);
 }

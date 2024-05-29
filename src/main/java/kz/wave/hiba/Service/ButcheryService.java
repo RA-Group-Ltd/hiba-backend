@@ -4,8 +4,6 @@ import kz.wave.hiba.DTO.ButcheryCreateDTO;
 import kz.wave.hiba.DTO.ButcheryUpdateDTO;
 import kz.wave.hiba.Entities.Butchery;
 import kz.wave.hiba.Entities.City;
-import kz.wave.hiba.Entities.Country;
-import kz.wave.hiba.Entities.Region;
 import kz.wave.hiba.Response.ButcheryResponse;
 
 import java.util.List;
@@ -18,5 +16,7 @@ public interface ButcheryService {
     Butchery updateButchery(ButcheryUpdateDTO butcheryUpdateDTO, City city);
     void deleteButchery(Long id);
     public Long quantityOfButcheries();
+    ButcheryResponse getButcheryInfoById(Long id);
+    List<Butchery> getButcheries(String sort, String filter, String query);
 
 }

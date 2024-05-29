@@ -382,4 +382,44 @@
                  splitStatements="true"
                  stripComments="true" />
     </changeSet>
+
+    <changeSet id="2024_05_25_add_role_column" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_05_25_add_role_column.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_05_25_create_working_hours_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_05_25_create_working_hours_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_05_25_alter_users_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_05_25_alter_users_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_05_28_alter_chat_column" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_05_28_alter_chat_column.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
 </databaseChangeLog>

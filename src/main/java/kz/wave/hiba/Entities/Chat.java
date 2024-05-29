@@ -6,6 +6,7 @@ import kz.wave.hiba.Enum.OrderStatus;
 import lombok.*;
 
 import javax.annotation.Nullable;
+import java.time.Instant;
 
 @Entity
 @Table(name = "chat")
@@ -36,6 +37,9 @@ public class Chat {
 
     @Column(name = "rate")
     private int rate;
+
+    @Column(name = "created_at")
+    private Instant createdAt;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "chat_status")

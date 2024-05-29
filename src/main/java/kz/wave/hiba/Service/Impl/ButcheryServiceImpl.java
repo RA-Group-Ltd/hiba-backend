@@ -1,22 +1,22 @@
 package kz.wave.hiba.Service.Impl;
 
+import kz.wave.hiba.Config.MailingUtils;
 import kz.wave.hiba.DTO.ButcheryCreateDTO;
 import kz.wave.hiba.DTO.ButcheryUpdateDTO;
 import kz.wave.hiba.Entities.*;
-import kz.wave.hiba.Repository.ButcheryRepository;
-import kz.wave.hiba.Repository.RoleRepository;
-import kz.wave.hiba.Repository.UserRepository;
-import kz.wave.hiba.Repository.UserRoleRepository;
+import kz.wave.hiba.Repository.*;
 import kz.wave.hiba.Response.ButcheryCategoryResponse;
 import kz.wave.hiba.Response.ButcheryResponse;
 import kz.wave.hiba.Service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +30,12 @@ public class ButcheryServiceImpl implements ButcheryService {
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
     private final ButcheryFileUploadCertificate butcheryFileUploadCertificate;
+    private final ButcherRepository butcherRepository;
+    private final OrderRepository orderRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final MailingUtils mailingUtils;
+    private final CountryRepository countryRepository;
+    private final CityRepository cityRepository;
 
     @Override
     public List<Butchery> getAllButchery() {
@@ -50,12 +56,7 @@ public class ButcheryServiceImpl implements ButcheryService {
             ButcheryCategoryResponse butcheryCategoryResponse = new ButcheryCategoryResponse(butcheryCategory.getId(), category, menuItems);
             cats.add(butcheryCategoryResponse);
         }
-        butcheryResponse.setId(butchery.getId());
-        butcheryResponse.setName(butchery.getName());
-        butcheryResponse.setLatitude(butchery.getLatitude());
-        butcheryResponse.setLongitude(butchery.getLongitude());
-        butcheryResponse.setAddress(butchery.getAddress());
-        butcheryResponse.setCity(butchery.getCity());
+        butcheryResponse.setButchery(butchery);
         butcheryResponse.setCategories(cats);
 
         return butcheryResponse;
@@ -63,21 +64,29 @@ public class ButcheryServiceImpl implements ButcheryService {
 
     @Override
     public Butchery createButchery(ButcheryCreateDTO butcheryCreateDTO, City city) {
-
+        System.out.println(butcheryCreateDTO.getPhone());
         Butchery newButchery = new Butchery();
 
         if (userRepository.findByPhone(butcheryCreateDTO.getPhone()) == null) {
+            String genPassword = generatePassword();
+
             User user = new User();
             user.setName(butcheryCreateDTO.getOwner());
             user.setPhone(butcheryCreateDTO.getPhone());
             user.setCreatedAt(Instant.now());
+            user.setPassword(passwordEncoder.encode(genPassword));
+            user.setEmail(butcheryCreateDTO.getEmail());
 
-            Role role = roleRepository.findByName("ROLE_BUTCHERY");
+            User newUser = userRepository.save(user);
+
+            Role role = roleRepository.findByName("ROLE_BUTCHER");
             UserRoleId userRoleId = new UserRoleId(user.getId(), role.getId());
             UserRole userRole = new UserRole(userRoleId, user, role);
             userRoleRepository.save(userRole);
 
-            User newUser = userRepository.save(user);
+
+            mailingUtils.sendPass(butcheryCreateDTO.getEmail(), genPassword);
+
             newButchery.setOwner(newUser);
         } else {
             User user = userRepository.findByPhone(butcheryCreateDTO.getPhone());
@@ -132,5 +141,50 @@ public class ButcheryServiceImpl implements ButcheryService {
     @Override
     public Long quantityOfButcheries() {
         return butcheryRepository.countButcheries();
+    }
+
+    @Override
+    public ButcheryResponse getButcheryInfoById(Long id) {
+
+        ButcheryResponse butcheryResponse = getOneButchery(id);
+
+        List<User> employees = butcherRepository.findAllUsersByButchery(butcheryResponse.getButchery());
+
+        int deliveredOrders = orderRepository.getDeliveredOrdersByButchery(butcheryResponse.getButchery());
+        int activeOrders = orderRepository.getActiveOrdersByButchery(butcheryResponse.getButchery());
+
+        butcheryResponse.setEmployees(employees);
+        butcheryResponse.setActiveOrders(activeOrders);
+        butcheryResponse.setDeliveredOrders(deliveredOrders);
+
+        return butcheryResponse;
+    }
+
+    @Override
+    public List<Butchery> getButcheries(String sort, String filter, String query) {
+        List<Long> cityList = new ArrayList<>();
+        if(!filter.isEmpty()){
+            String[] country_cities = filter.split(";");
+            for(String country_city : country_cities)       {
+                String[] country_and_cities = country_city.split(":");
+                if (country_and_cities.length > 1){
+                    String countryName = country_and_cities[0];
+                    String[] cityNames = country_and_cities[1].split(",");
+                    if(cityNames.length > 0){
+                        Country country = countryRepository.findByName(countryName);
+                        List<Long> cities = cityRepository.findAllIdsByCountryAndNameInList(country, cityNames);
+                        cityList.addAll(cities);
+                    }
+                }
+            }
+        }
+        if (cityList.isEmpty()){
+            cityList = null;
+        }
+        return butcheryRepository.findButcheries(sort, query, cityList);
+    }
+
+    private String generatePassword() {
+        return UUID.randomUUID().toString().substring(0, 8);
     }
 }

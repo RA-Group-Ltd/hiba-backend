@@ -7,8 +7,11 @@ import kz.wave.hiba.DTO.OrderUpdateDTO;
 import kz.wave.hiba.Entities.Order;
 import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Enum.OrderStatus;
+import kz.wave.hiba.Enum.StatPeriod;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 public interface OrderService {
@@ -21,5 +24,8 @@ public interface OrderService {
     List<Order> getMyOrders(Long id);
     List<Order> getMyActiveOrders(Long id);
     long quantityOfOrders();
+    public List<Order> getOrdersByCourier(Long courierId, List<String> filter, Long startDate, Long endDate);
+    long getDeliveredOrdersByCourierId(Long courierId);
+    List<Order> getOrders(String query, String period, List<String> statuses);
 
 }

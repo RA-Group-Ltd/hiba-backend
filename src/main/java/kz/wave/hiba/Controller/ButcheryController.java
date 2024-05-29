@@ -4,6 +4,7 @@ import kz.wave.hiba.DTO.ButcheryCreateDTO;
 import kz.wave.hiba.DTO.ButcheryUpdateDTO;
 import kz.wave.hiba.Entities.Butchery;
 import kz.wave.hiba.Entities.City;
+import kz.wave.hiba.Repository.ButcheryRepository;
 import kz.wave.hiba.Repository.CityRepository;
 import kz.wave.hiba.Repository.CountryRepository;
 import kz.wave.hiba.Repository.RegionRepository;
@@ -11,7 +12,10 @@ import kz.wave.hiba.Response.ButcheryResponse;
 import kz.wave.hiba.Service.ButcheryService;
 import kz.wave.hiba.Service.CityService;
 import kz.wave.hiba.Service.UserService;
+import kz.wave.hiba.Specification.ButcherySpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,6 +38,10 @@ public class ButcheryController {
     private CityRepository cityRepository;
 
     @Autowired
+    private ButcheryRepository butcheryRepository;
+
+
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -48,6 +56,28 @@ public class ButcheryController {
     public ResponseEntity<List<Butchery>> getAllButcheries() {
         List<Butchery> butcheries = butcheryService.getAllButchery();
         return ResponseEntity.ok(butcheries);
+    }
+
+
+
+    @GetMapping(value = "/")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> searchButcheries(@RequestParam(value = "q", required = false) String q,
+                                              @RequestParam(value = "categories", required = false) Integer[] categories,
+                                              @RequestParam(value = "latitude", required = false) Float latitude,
+                                              @RequestParam(value = "longitude", required = false) Float longitude,
+                                              @RequestParam(value = "sort", defaultValue = "name") String sort) {
+
+        Specification<Butchery> spec = Specification.where(ButcherySpecification.hasNameLike(q))
+                .and(ButcherySpecification.isCategoryIn(categories));
+
+        // Пример добавления дополнительных условий
+        // Здесь можете добавлять условия по latitude и longitude, если у вас есть соответствующая логика фильтрации
+
+        Sort sortOrder = sort.equalsIgnoreCase("name") ? Sort.by("name").descending() : Sort.unsorted();
+
+        List<Butchery> result = butcheryRepository.findAll(spec, sortOrder);
+        return ResponseEntity.ok().body(result);
     }
 
     @GetMapping(value = "/getOneButchery/{id}")

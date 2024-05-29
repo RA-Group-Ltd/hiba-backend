@@ -3,6 +3,7 @@ package kz.wave.hiba.Repository;
 import jakarta.transaction.Transactional;
 import kz.wave.hiba.Entities.Butcher;
 import kz.wave.hiba.Entities.Butchery;
+import kz.wave.hiba.Entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,6 +21,9 @@ public interface ButcherRepository extends JpaRepository<Butcher, Long> {
             "ORDER BY b.name")
     List<Butchery> findByCriteria(@Param("q") String q, @Param("categories") List<Integer> categories, @Param("latitude") Float latitude, @Param("longitude") Float longitude, @Param("sort") String sort);
 */
+
+    @Query("SELECT b.user FROM Butcher b WHERE b.butchery = :id")
+    List<User> findAllUsersByButchery(@Param("id") Butchery id);
 
     Butcher findByUserId(Long userId);
 

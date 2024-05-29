@@ -72,7 +72,6 @@ public class AuthServiceImpl implements AuthService {
         if (user == null) {
             return false;
         }
-        verificationCodeRepository.deleteVerificationCodeByUserId(user.getId());
 
         // Найдем код подтверждения для пользователя, который еще не истек
         List<VerificationCode> validCodes = verificationCodeRepository.findByUserIdAndExpirationDateAfter(user.getId(), LocalDateTime.now());
@@ -83,6 +82,8 @@ public class AuthServiceImpl implements AuthService {
                 return true;
             }
         }
+
+        verificationCodeRepository.deleteVerificationCodeByUserId(user.getId());
 
         return false;
     }
@@ -188,7 +189,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public User login(AuthDTO authDTO) {
-        User user = userRepository.findByPhone(authDTO.getPhone());
+        User user = userRepository.findByUsername(authDTO.getUsername());
         if (user != null) {
             if (passwordEncoder.matches(authDTO.getPassword(), user.getPassword())) {
                 return user;

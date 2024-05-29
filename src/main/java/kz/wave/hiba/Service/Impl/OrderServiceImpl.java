@@ -7,6 +7,7 @@ import kz.wave.hiba.Enum.OrderStatus;
 import kz.wave.hiba.DTO.OrderCreateDTO;
 import kz.wave.hiba.DTO.OrderUpdateDTO;
 import kz.wave.hiba.Entities.*;
+import kz.wave.hiba.Enum.StatPeriod;
 import kz.wave.hiba.Repository.*;
 import kz.wave.hiba.Service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.*;
+
 
 @Service
 @RequiredArgsConstructor
@@ -129,6 +132,44 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public long quantityOfOrders() {
         return orderRepository.countOrders();
+    }
+
+    @Override
+    public List<Order> getOrdersByCourier(Long courierId, List<String> filter, Long startDate, Long endDate) {
+        Instant stDate = null;
+        Instant edDate = null;
+
+        try {
+            if (startDate != null) {
+                stDate = Instant.ofEpochMilli(startDate);
+            }
+            if (endDate != null) {
+                edDate = Instant.ofEpochMilli(endDate);
+            }
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid date format", e);
+        }
+        return orderRepository.getCourierOrders(courierId, filter, stDate, edDate);
+    }
+
+    @Override
+    public long getDeliveredOrdersByCourierId(Long courierId) {
+        return orderRepository.countDeliveredOrdersByCourierId(courierId);
+    }
+
+    @Override
+    public List<Order> getOrders(String query, String period, List<String> statuses) {
+        Instant startDate = Instant.now();
+        startDate = switch (StatPeriod.valueOf(period)) {
+            default -> startDate.minusSeconds(60 * 60 * 24);
+            case WEEK -> startDate.minusSeconds(60 * 60 * 24 * 7);
+            case MONTH -> startDate.minusSeconds(60 * 60 * 24 * 30);
+            case QUARTER -> startDate.minusSeconds(60 * 60 * 24 * 91);
+            case HALFYEAR -> startDate.minusSeconds(60 * 60 * 24 * 183);
+            case YEAR -> startDate.minusSeconds(60 * 60 * 24 * 365);
+            case ALL -> null;
+        };
+        return orderRepository.findOrders(query, startDate, statuses);
     }
 
     /*@Override

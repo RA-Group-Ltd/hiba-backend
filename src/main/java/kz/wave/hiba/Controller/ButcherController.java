@@ -21,32 +21,6 @@ public class ButcherController {
     @Autowired
     private ButcherRepository butcherRepository;
 
-    @Autowired
-    private ButcheryRepository butcheryRepository;
-
-    @Autowired
-    private MenuRepository menuRepository;
-
-    @GetMapping(value = "/")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> searchButcheries(@RequestParam(value = "q", required = false) String q,
-                                              @RequestParam(value = "categories", required = false) Integer[] categories,
-                                              @RequestParam(value = "latitude", required = false) Float latitude,
-                                              @RequestParam(value = "longitude", required = false) Float longitude,
-                                              @RequestParam(value = "sort", defaultValue = "name") String sort) {
-
-        Specification<Butchery> spec = Specification.where(ButcherySpecification.hasNameLike(q))
-                .and(ButcherySpecification.isCategoryIn(categories));
-
-        // Пример добавления дополнительных условий
-        // Здесь можете добавлять условия по latitude и longitude, если у вас есть соответствующая логика фильтрации
-
-        Sort sortOrder = sort.equalsIgnoreCase("name") ? Sort.by("name").descending() : Sort.unsorted();
-
-        List<Butchery> result = butcheryRepository.findAll(spec, sortOrder);
-        return ResponseEntity.ok().body(result);
-    }
-
     @GetMapping(value = "/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getByButcherId(@PathVariable Long id) {

@@ -23,6 +23,7 @@ public class ButcheryCreateDTO {
     private String owner;
     private String regNumber;
     private String email;
+    private String password;
     private List<MultipartFile> documents;
 
 }

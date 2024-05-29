@@ -10,6 +10,7 @@ import kz.wave.hiba.Enum.SenderType;
 import kz.wave.hiba.Repository.ChatRepository;
 import kz.wave.hiba.Repository.OrderRepository;
 import kz.wave.hiba.Repository.UserRepository;
+import kz.wave.hiba.Response.SupportChatResponse;
 import kz.wave.hiba.Service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -161,6 +164,24 @@ public class ChatServiceImpl implements ChatService {
             default -> chatRepository.findChatsBySupportIdIsNullAndIsButcheryAndArchiveIsFalse(isButchery);
         };
 
+    }
+
+    @Override
+    public List<SupportChatResponse> filterChatsBySupportId(Long id, List<String> filter, Long startDate, Long endDate) {
+        Instant stDate = null;
+        Instant edDate = null;
+
+        try {
+            if (startDate != null) {
+                stDate = Instant.ofEpochMilli(startDate);
+            }
+            if (endDate != null) {
+                edDate = Instant.ofEpochMilli(endDate);
+            }
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid date format", e);
+        }
+        return chatRepository.findChatsBySupportId(id, filter, stDate, edDate);
     }
 /*@Override
     public void addUserToChat(Chat chat, Long supportId) {
