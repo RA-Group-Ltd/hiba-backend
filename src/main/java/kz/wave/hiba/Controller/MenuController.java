@@ -20,7 +20,7 @@ public class MenuController {
     @Autowired
     private MenuService menuService;
 
-    @GetMapping(value = "/getAllMenus")
+    @GetMapping(value = "/")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getAllMenus() {
         try {
@@ -44,7 +44,7 @@ public class MenuController {
         }
     }
 
-    @GetMapping(value = "/getOneMenu/{id}")
+    @GetMapping(value = "/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getOneMenuById(@PathVariable Long id) {
         try {
@@ -56,7 +56,7 @@ public class MenuController {
         }
     }
 
-    @PostMapping(value = "/createMenu")
+    @PostMapping
     @PreAuthorize("hasAnyRole('ROLE_BUTCHER', 'ROLE_SUPERADMIN')")
     public ResponseEntity<?> createMenu(@ModelAttribute MenuCreateDTO menuCreateDTO) {
         try {
@@ -68,7 +68,7 @@ public class MenuController {
         }
     }
 
-    @PutMapping(value = "/updateMenu")
+    @PutMapping
     @PreAuthorize("hasAnyRole('ROLE_BUTHCER')")
     public ResponseEntity<?> updateMenu(@RequestBody MenuUpdateDTO menuUpdateDTO) {
         try {
@@ -80,7 +80,7 @@ public class MenuController {
         }
     }
 
-    @DeleteMapping(value = "/deleteMenu/{id}")
+    @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasAnyRole('ROLE_BUTCHER')")
     public void deleteMenu(@PathVariable Long id) {
         try {

@@ -60,7 +60,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/send-or-verify-code")
+    @PostMapping("/sendOrVerifyCode")
     public ResponseEntity<?> sendOrVerifyCode(@RequestBody VerificationDTO verificationDTO) {
         // Проверяем, есть ли пользователь с таким номером телефона
 //        User user = authService.findByPhoneNumber(verificationDTO.getPhoneNumber());
@@ -76,7 +76,7 @@ public class AuthController {
         return ResponseEntity.ok(deepLink);
     }
 
-    @PostMapping("/confirm-code")
+    @PostMapping("/confirmCode")
     public ResponseEntity<?> confirmCode(@RequestBody VerificationDTO verificationDTO) {
         // Проверяем код
         boolean isCodeValid = authService.verifyCode(verificationDTO.getPhoneNumber(), verificationDTO.getCode());
@@ -88,7 +88,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/complete-registration")
+    @PostMapping("/completeRegistration")
     public ResponseEntity<?> completeRegistration(@ModelAttribute CompleteRegistrationDTO registrationDTO) {
         // Завершаем регистрацию пользователя
         User user = authService.completeRegistration(registrationDTO.getPhoneNumber(), registrationDTO.getName(), registrationDTO.getPhoto());
@@ -116,7 +116,7 @@ public class AuthController {
     }
 
     // Эндпоинт для подтверждения кода и завершения процесса логина
-    @PostMapping("/confirm-login")
+    @PostMapping("/confirmLogin")
     public ResponseEntity<?> confirmLogin(@RequestBody VerificationDTO verificationDTO) {
         boolean isCodeValid = authService.verifyCode(verificationDTO.getPhoneNumber(), verificationDTO.getCode());
         if (isCodeValid) {
@@ -144,7 +144,7 @@ public class AuthController {
         }
     }*/
 
-    @PostMapping("/admin-login")
+    @PostMapping("/adminLogin")
     public ResponseEntity<?> login(@RequestBody AuthDTO authDTO) {
         try {
             User user = authService.login(authDTO);

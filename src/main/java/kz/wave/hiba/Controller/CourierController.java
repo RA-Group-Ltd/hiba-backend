@@ -32,7 +32,7 @@ public class CourierController {
     private final UserRepository userRepository;
     private final OrderService orderService;
 
-    @GetMapping(value = "/getAllCouriers")
+    @GetMapping(value = "/")
     public ResponseEntity<?> getAllCouriers() {
         try {
             List<Courier> couriers = courierService.getAllCouriers();
@@ -42,7 +42,7 @@ public class CourierController {
         }
     }
 
-    @GetMapping(value = "/getCourier/{id}")
+    @GetMapping(value = "/{id}")
     @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN', 'ROLE_ADMIN', 'ROLE_SUPPORT')")
     public ResponseEntity<?> getCourier(@PathVariable Long id) {
         try {
@@ -54,7 +54,7 @@ public class CourierController {
         }
     }
 
-    @PostMapping(value = "/createCourier")
+    @PostMapping
     @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN', 'ROLE_ADMIN')")
     public ResponseEntity<?> createCourier(@RequestBody CourierCreateDTO courierCreateDTO) {
         try {
@@ -118,7 +118,7 @@ public class CourierController {
         }
     }
 
-    @DeleteMapping(value = "/deleteCourier/{id}")
+    @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteCourier(@PathVariable Long id) {
         try {
             courierService.deleteCourierById(id);

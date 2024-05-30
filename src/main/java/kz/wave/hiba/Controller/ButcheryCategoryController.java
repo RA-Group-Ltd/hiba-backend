@@ -21,7 +21,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping(value = "/butchery-category")
+@RequestMapping(value = "/butcheryCategory")
 @RequiredArgsConstructor
 public class ButcheryCategoryController {
 
@@ -30,7 +30,7 @@ public class ButcheryCategoryController {
     private final UserRepository userRepository;
     private final ButcherService butcherService;
 
-    @GetMapping(value = "/getCategoriesByButcheryId/{butcheryId}")
+    @GetMapping(value = "/{butcheryId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getCategoriesByButcheryId(@RequestParam Long butcheryId) {
         try {
@@ -61,7 +61,7 @@ public class ButcheryCategoryController {
     }
 
 
-    @PostMapping(value = "/createButcheryCategory")
+    @PostMapping
     @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN', 'ROLE_BUTCHER')")
     public ResponseEntity<?> createButcheryCategory(@RequestBody ButcheryCategoryCreateDTO butcheryCategoryCreateDTO) {
         try {

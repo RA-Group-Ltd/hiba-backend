@@ -304,7 +304,7 @@ String userToken = jwtUtils.getTokenFromRequest(request);
         return chatService.getAllChats();
     }
 
-    @GetMapping("/by-id/{id}")
+    @GetMapping("/byId/{id}")
     public ChatResponse getChatById(@PathVariable Long id) {
         Optional<Chat> chatOpt = chatService.getChatById(id);
         if(chatOpt.isPresent()){

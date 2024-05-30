@@ -34,7 +34,7 @@ public class OrderController {
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
 
-    @GetMapping(value = "/getOrders")
+    @GetMapping(value = "/")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Order>> getAllOrders() {
         try {
@@ -46,7 +46,7 @@ public class OrderController {
         }
     }
 
-    @GetMapping(value = "/getOrder/{orderId}")
+    @GetMapping(value = "/{orderId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getOneOrder(@PathVariable Long orderId) {
         try {
@@ -63,7 +63,7 @@ public class OrderController {
         }
     }
 
-    @PostMapping(value = "/createOrder")
+    @PostMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createOrder(@RequestBody OrderCreateDTO orderCreateDTO, HttpServletRequest request) {
         try {
@@ -81,7 +81,7 @@ public class OrderController {
 
     }
 
-    @PutMapping(value = "/updateOrder")
+    @PutMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> updateOrder(@RequestBody OrderUpdateDTO orderUpdateDTO, HttpServletRequest request) {
         try {

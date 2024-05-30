@@ -37,17 +37,17 @@ public class UserController {
     @Autowired
     private UserFileUploadService userFileUploadService;
 
-    @GetMapping(value = "/getOneUser/{id}")
+    @GetMapping(value = "/{id}")
     public User getOneUser(@PathVariable Long id) {
         return userService.getOneUser(id);
     }
 
-    @GetMapping(value = "/getAllUsers")
+    @GetMapping(value = "/")
     public List<User> getAllUser() {
         return userService.getAllUser();
     }
 
-    @PostMapping(value = "/update-user")
+    @PostMapping(value = "/updateUser")
     public ResponseEntity<Object> uploadImage(@ModelAttribute ModelUserDTO usersDTO, HttpServletRequest request) {
         try {
             String userToken = jwtUtils.getTokenFromRequest(request);
@@ -82,7 +82,7 @@ public class UserController {
         return userFileUploadService.getImage(id);
     }
 
-    @DeleteMapping(value = "/deleteUser/{id}")
+    @DeleteMapping(value = "/{id}")
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }

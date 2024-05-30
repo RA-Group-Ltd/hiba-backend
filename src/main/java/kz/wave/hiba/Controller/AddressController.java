@@ -28,7 +28,7 @@ public class AddressController {
     @Autowired
     private JwtUtils jwtUtils;
 
-    @GetMapping(value = "/getAllMyAddresses")
+    @GetMapping(value = "/")
     public ResponseEntity<?> getAllMyAddresses(HttpServletRequest request) {
         String userToken = jwtUtils.getTokenFromRequest(request);
         String currentUser = jwtUtils.getUsernameFromToken(userToken);
@@ -37,7 +37,7 @@ public class AddressController {
         return addressService.getMyAddresses(user);
     }
 
-    @GetMapping(value = "/getOneMyAddress/{id}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<?> getOneMyAddress(HttpServletRequest request) {
         String userToken = jwtUtils.getTokenFromRequest(request);
         String currentUser = jwtUtils.getUsernameFromToken(userToken);
@@ -46,7 +46,7 @@ public class AddressController {
         return addressService.getOneMyAddress(user.getId());
     }
 
-    @PostMapping(value = "/addMyNewAddress")
+    @PostMapping
     public ResponseEntity<?> addMyNewAddress(@RequestBody AddressCreateDTO addressCreateDTO, HttpServletRequest request) {
         String userToken = jwtUtils.getTokenFromRequest(request);
         String currentUser = jwtUtils.getUsernameFromToken(userToken);
@@ -55,7 +55,7 @@ public class AddressController {
         return addressService.createMyAddress(addressCreateDTO, user);
     }
 
-    @PutMapping(value = "/updateMyAddress")
+    @PutMapping
     public ResponseEntity<?> updateMyAddress(@RequestBody AddressUpdateDTO addressUpdateDTO, HttpServletRequest request) {
         String userToken = jwtUtils.getTokenFromRequest(request);
         String currentUser = jwtUtils.getUsernameFromToken(userToken);
@@ -64,7 +64,7 @@ public class AddressController {
         return addressService.updateMyAddress(addressUpdateDTO, user);
     }
 
-    @DeleteMapping(value = "/deleteMyAddress/{id}")
+    @DeleteMapping(value = "/{id}")
     public void deleteMyAddress(@PathVariable Long id) {
         addressService.deleteMyAddress(id);
     }

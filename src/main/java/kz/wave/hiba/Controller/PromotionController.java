@@ -19,7 +19,7 @@ public class PromotionController {
 
     private final PromotionService promotionService;
 
-    @GetMapping(value = "/getPromotions")
+    @GetMapping(value = "/")
     public ResponseEntity<?> getPromotions() {
         try {
             List<Promotion> promotionList = promotionService.getPromotions();
@@ -29,7 +29,7 @@ public class PromotionController {
         }
     }
 
-    @GetMapping(value = "/getPromotion/{id}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<?> getPromotion(@PathVariable Long id) {
         try {
             Promotion promotion = promotionService.getPromotion(id);
@@ -39,7 +39,7 @@ public class PromotionController {
         }
     }
 
-    @PostMapping(value = "/createPromotion")
+    @PostMapping
     @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN', 'ROLE_ADMIN')")
     public ResponseEntity<?> createPromotion(@ModelAttribute PromotionCreateDTO promotionCreateDTO) {
         try {
@@ -50,7 +50,7 @@ public class PromotionController {
         }
     }
 
-    @PutMapping(value = "/updatePromotion")
+    @PutMapping
     @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN', 'ROLE_ADMIN')")
     public ResponseEntity<?> updatePromotion(@ModelAttribute PromotionUpdateDTO promotionUpdateDTO) {
         try {
@@ -61,7 +61,7 @@ public class PromotionController {
         }
     }
 
-    @DeleteMapping(value = "/deletePromotion/{id}")
+    @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN', 'ROLE_ADMIN')")
     public ResponseEntity<?> deletePromotion(@PathVariable Long id) {
         try {

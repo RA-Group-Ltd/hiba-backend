@@ -8,6 +8,7 @@ import kz.wave.hiba.Repository.ButcheryRepository;
 import kz.wave.hiba.Repository.CityRepository;
 import kz.wave.hiba.Repository.CountryRepository;
 import kz.wave.hiba.Repository.RegionRepository;
+import kz.wave.hiba.Response.ButcheryAndUserResponse;
 import kz.wave.hiba.Response.ButcheryResponse;
 import kz.wave.hiba.Service.ButcheryService;
 import kz.wave.hiba.Service.CityService;

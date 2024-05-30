@@ -1,4 +1,4 @@
-package kz.wave.hiba.Controller;
+package kz.wave.hiba.Response;
 
 import kz.wave.hiba.DTO.ButcheryCategoryCreateDTO;
 import kz.wave.hiba.DTO.ButcheryCreateDTO;
