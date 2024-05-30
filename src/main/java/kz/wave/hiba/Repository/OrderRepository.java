@@ -27,7 +27,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findOrdersByUserIdSortedActive(@Param("userId") Long userId);
 
 
-    @Query("SELECT SUM(CASE WHEN o.isCharity = true THEN o.totalPrice ELSE o.donation END) FROM Order o WHERE o.createdAt >= :startDate")
+    @Query("SELECT SUM(CASE WHEN o.isCharity = true THEN o.totalPrice ELSE o.donation END) " +
+            "FROM Order o " +
+            "WHERE o.createdAt >= :startDate AND o.orderStatus = kz.wave.hiba.Enum.OrderStatus.DELIVERED")
     int getDonationsByPeriod(@Param("startDate") Instant startDate);
 
     @Query("SELECT SUM(o.totalPrice) FROM Order o WHERE o.createdAt >= :startDate")
@@ -65,4 +67,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT COUNT(o) FROM Order o WHERE o.courier.id = :courierId AND o.orderStatus != kz.wave.hiba.Enum.OrderStatus.DELIVERED")
     Long countActiveOrdersByCourierId(@Param("courierId") Long courierId);
+
+    @Query("SELECT SUM(o.totalPrice) " +
+            "FROM Order o " +
+            "WHERE o.createdAt >= :startDate AND o.orderStatus = kz.wave.hiba.Enum.OrderStatus.DELIVERED")
+    int getTotalSumByPeriod(@Param("startDate") Instant startDate);
 }

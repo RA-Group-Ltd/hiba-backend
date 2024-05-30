@@ -8,6 +8,7 @@ import kz.wave.hiba.Enum.StatPeriod;
 import kz.wave.hiba.Repository.OrderRepository;
 import kz.wave.hiba.Response.ButcheryResponse;
 import kz.wave.hiba.Response.CourierOrderResponse;
+import kz.wave.hiba.Response.StatisticsResponse;
 import kz.wave.hiba.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -57,8 +58,12 @@ public class AdminController {
                     startDate = startDate.minusSeconds(60 * 60 * 24 * 365);
             }
             int donations = orderRepository.getDonationsByPeriod(startDate);
+            int totalSum = orderRepository.getTotalSumByPeriod(startDate);
 
-            return new ResponseEntity<>(donations, HttpStatus.OK);
+
+            StatisticsResponse statisticsResponse = new StatisticsResponse(donations, totalSum);
+
+            return new ResponseEntity<>(statisticsResponse, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);

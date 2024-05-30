@@ -66,6 +66,7 @@ public class ButcheryServiceImpl implements ButcheryService {
     public Butchery createButchery(ButcheryCreateDTO butcheryCreateDTO, City city) {
         System.out.println(butcheryCreateDTO.getPhone());
         Butchery newButchery = new Butchery();
+        Butcher newButcher = new Butcher();
 
         if (userRepository.findByPhone(butcheryCreateDTO.getPhone()) == null) {
             String genPassword = generatePassword();
@@ -88,9 +89,11 @@ public class ButcheryServiceImpl implements ButcheryService {
             mailingUtils.sendPass(butcheryCreateDTO.getEmail(), genPassword);
 
             newButchery.setOwner(newUser);
+            newButcher.setUser(newUser);
+
         } else {
             User user = userRepository.findByPhone(butcheryCreateDTO.getPhone());
-
+            newButcher.setUser(user);
             newButchery.setOwner(user);
         }
 
@@ -109,7 +112,11 @@ public class ButcheryServiceImpl implements ButcheryService {
         newButchery.setCreatedAt(Instant.now());
         butcheryFileUploadCertificate.uploadDocuments(butcheryCreateDTO.getDocuments(), newButchery);
 
-        return butcheryRepository.save(newButchery);
+        Butchery butchery = butcheryRepository.save(newButchery);
+        newButcher.setButchery(butchery);
+        butcherRepository.save(newButcher);
+        return butchery;
+
     }
 
     @Override

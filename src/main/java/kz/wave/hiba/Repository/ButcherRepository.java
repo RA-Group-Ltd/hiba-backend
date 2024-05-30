@@ -25,6 +25,9 @@ public interface ButcherRepository extends JpaRepository<Butcher, Long> {
     @Query("SELECT b.user FROM Butcher b WHERE b.butchery = :id")
     List<User> findAllUsersByButchery(@Param("id") Butchery id);
 
+    @Query("SELECT b.butchery FROM Butcher b WHERE b.user.id = :id")
+    Butchery findButcheryByUserId(@Param("id") Long userId);
+
     Butcher findByUserId(Long userId);
 
 }
