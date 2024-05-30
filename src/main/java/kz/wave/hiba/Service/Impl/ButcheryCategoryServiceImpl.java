@@ -47,7 +47,7 @@ public class ButcheryCategoryServiceImpl implements ButcheryCategoryService {
             return;
         }
 
-        butcheryCategory.setCategoryId(category.getId());
+        butcheryCategory.setCategoryId(category);
 
         Optional<Butchery> butcheryOptional = butcheryRepository.findById(butcheryCategoryCreateDTO.getButcheryId());
 

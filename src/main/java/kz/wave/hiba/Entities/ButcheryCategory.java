@@ -23,8 +23,12 @@ public class ButcheryCategory {
     @Column(name = "butchery_id")
     private Long butcheryId;
 
-    @MapsId("categoryId")
-    @Column(name = "category_id")
-    private Long categoryId;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category categoryId;
+
+    /*public Long getCategoryId() {
+        return this.categoryId.getId();
+    }*/
 
 }

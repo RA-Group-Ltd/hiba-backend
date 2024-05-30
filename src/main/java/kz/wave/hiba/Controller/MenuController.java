@@ -1,5 +1,6 @@
 package kz.wave.hiba.Controller;
 
+import com.google.api.Http;
 import kz.wave.hiba.DTO.MenuCreateDTO;
 import kz.wave.hiba.DTO.MenuUpdateDTO;
 import kz.wave.hiba.Entities.Menu;
@@ -28,6 +29,18 @@ public class MenuController {
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/get/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getMenusByButcheryCategoryId(@PathVariable(name = "id") Long id) {
+        try {
+            List<Menu> menus = menuService.getMenuListByButcheryCategoryId(id);
+            return new ResponseEntity<>(menus, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Wrong", HttpStatus.BAD_REQUEST);
         }
     }
 

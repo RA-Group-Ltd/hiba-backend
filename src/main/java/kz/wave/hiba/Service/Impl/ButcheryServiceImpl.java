@@ -51,7 +51,8 @@ public class ButcheryServiceImpl implements ButcheryService {
         for (int i = 0; i < butcheryCategories.size(); i++) {
             ButcheryCategory butcheryCategory = butcheryCategories.get(i);
             List<Menu> menuItems = menuService.getMenuListByButcheryCategoryId(butcheryCategory.getId());
-            Category category = categoryService.getCategoryById(butcheryCategory.getCategoryId());
+            Long categoryId = butcheryCategory.getCategoryId().getId();
+            Category category = categoryService.getCategoryById(categoryId);
 
             ButcheryCategoryResponse butcheryCategoryResponse = new ButcheryCategoryResponse(butcheryCategory.getId(), category, menuItems);
             cats.add(butcheryCategoryResponse);

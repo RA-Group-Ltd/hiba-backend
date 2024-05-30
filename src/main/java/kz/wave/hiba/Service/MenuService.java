@@ -16,4 +16,5 @@ public interface MenuService {
 //    List<Menu> getMenusByIds(List<Long> ids);
     List<Menu> getMenuListByButcheryCategoryId(Long id);
 
+
 }

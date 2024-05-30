@@ -422,4 +422,14 @@
                  splitStatements="true"
                  stripComments="true" />
     </changeSet>
+
+    <changeSet id="2024_05_30_alter_butchery_category_column" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_05_30_alter_butchery_category_column.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
 </databaseChangeLog>
