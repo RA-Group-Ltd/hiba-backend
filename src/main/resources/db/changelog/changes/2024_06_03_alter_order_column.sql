@@ -1,0 +1,2 @@
+ALTER TABLE orders MODIFY COLUMN courier_id BIGINT NULL;
+

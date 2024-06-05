@@ -5,10 +5,12 @@ import kz.wave.hiba.Config.JwtUtils;
 import kz.wave.hiba.DTO.OrderCreateDTO;
 import kz.wave.hiba.DTO.OrderReadWithoutUserDTO;
 import kz.wave.hiba.DTO.OrderUpdateDTO;
+import kz.wave.hiba.Entities.Butchery;
 import kz.wave.hiba.Entities.Order;
 import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Enum.NotificationCategory;
 import kz.wave.hiba.Enum.OrderStatus;
+import kz.wave.hiba.Repository.ButcheryRepository;
 import kz.wave.hiba.Repository.OrderRepository;
 import kz.wave.hiba.Repository.UserRepository;
 import kz.wave.hiba.Service.NotificationService;
@@ -33,6 +35,7 @@ public class OrderController {
     private final NotificationService notificationService;
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
+    private final ButcheryRepository butcheryRepository;
 
     @GetMapping(value = "/")
     @PreAuthorize("isAuthenticated()")
@@ -155,6 +158,26 @@ public class OrderController {
                 order.getAddress(), order.getButchery(),
                 order.isCharity(), order.getMenuItems(), order.getDeliveryDate(),
                 order.getTotalPrice(), order.getDeliveryPrice(), order.getDonation(), order.getPackages());
+    }
+
+    @GetMapping(value = "/getButcheryOrders/{status}")
+    @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN', 'ROLE_BUTCHER')")
+    public ResponseEntity<?> getButcheryOrders(@PathVariable("status") String status, HttpServletRequest request){
+        try {
+            String token =  jwtUtils.getTokenFromRequest(request);
+            String currentUser = jwtUtils.getUsernameFromToken(token);
+            User user = userRepository.findByUsername(currentUser);
+            Butchery butchery = butcheryRepository.findButcheryByOwner(user);
+
+            OrderStatus orderStatus = status.equals("new") ? OrderStatus.IN_PROCESS : (status.equals("archive") ? OrderStatus.DELIVERED : null);
+
+            List<Order> orders = orderRepository.findOrdersByButcheryAndOrderStatus(butchery, orderStatus);
+
+            return new ResponseEntity<>(orders, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("", HttpStatus.BAD_REQUEST);
+        }
     }
 
     /*@PutMapping(value = "/updateOrderStatus/{id}")

@@ -60,7 +60,6 @@ public class ButcheryCategoryController {
         }
     }
 
-
     @PostMapping
     @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN', 'ROLE_BUTCHER')")
     public ResponseEntity<?> createButcheryCategory(@RequestBody ButcheryCategoryCreateDTO butcheryCategoryCreateDTO) {
@@ -72,6 +71,7 @@ public class ButcheryCategoryController {
             return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
         }
     }
+
     @PostMapping(value = "/createButcheryCategoryByOwner")
     @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN', 'ROLE_BUTCHER')")
     public ResponseEntity<?> createButcheryCategoryByOwner(@RequestBody ButcheryCategoryCreateDTO butcheryCategoryCreateDTO, HttpServletRequest request) {

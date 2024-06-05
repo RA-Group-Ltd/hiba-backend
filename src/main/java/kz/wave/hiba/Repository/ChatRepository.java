@@ -38,4 +38,7 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
                                                    @Param("startDate") Instant startDate,
                                                    @Param("endDate") Instant endDate);
 
+    @Query("SELECT c FROM Chat c " +
+            "   WHERE c.isButchery = TRUE AND c.clientId = :id")
+    List<Chat> findChatsByButcheryId(@Param("id") Long id);
 }

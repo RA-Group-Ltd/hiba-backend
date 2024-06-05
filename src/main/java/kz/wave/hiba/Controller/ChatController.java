@@ -1,14 +1,13 @@
 package kz.wave.hiba.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kz.wave.hiba.Entities.ChatNotification;
+import kz.wave.hiba.Entities.*;
+import kz.wave.hiba.Repository.ButcherRepository;
 import kz.wave.hiba.Response.ChatResponse;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import jakarta.servlet.http.HttpServletRequest;
 import kz.wave.hiba.Config.JwtUtils;
-import kz.wave.hiba.Entities.Chat;
-import kz.wave.hiba.Entities.ChatMessage;
 import kz.wave.hiba.Repository.UserRepository;
 import kz.wave.hiba.Service.ChatMessageService;
 import kz.wave.hiba.Service.ChatService;
@@ -47,6 +46,9 @@ public class ChatController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ButcherRepository butcherRepository;
 
     @MessageMapping("/chat")
     public void processMessage(@Payload byte[] payload, Principal principal) {
@@ -207,6 +209,17 @@ String userToken = jwtUtils.getTokenFromRequest(request);
     }*/
 
 
+    @PostMapping("/create/butchery")
+    public ResponseEntity<?> createButcheryChat(HttpServletRequest request){
+        try {
+            Chat chat = chatService.createButcheryChat(request);
+            return new ResponseEntity<>(chat, HttpStatus.CREATED);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping("/create")
     public ResponseEntity<?> createChat(@RequestParam("orderId") Long orderId, HttpServletRequest request) {
         try {
@@ -220,7 +233,7 @@ String userToken = jwtUtils.getTokenFromRequest(request);
 
     @PostMapping("/startDialog/{chatId}")
     @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN', 'ROLE_ADMIN', 'ROLE_SUPPORT')")
-    public ResponseEntity<?> startDialog(@RequestParam("chatId") Long chatId, HttpServletRequest request) {
+    public ResponseEntity<?> startDialog(@PathVariable Long chatId, HttpServletRequest request) {
         try {
             Chat chat = chatService.startDialog(chatId, request);
             return ResponseEntity.status(HttpStatus.CREATED).body(chat);
@@ -232,7 +245,7 @@ String userToken = jwtUtils.getTokenFromRequest(request);
 
     @PutMapping("/completeDialog/{chatId}")
     @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN', 'ROLE_ADMIN', 'ROLE_SUPPORT')")
-    public ResponseEntity<?> completeDialog(@RequestParam("chatId") Long chatId, HttpServletRequest request) {
+    public ResponseEntity<?> completeDialog(@PathVariable Long chatId, HttpServletRequest request) {
         try {
             return chatService.completeDialog(chatId, request);
         } catch (Exception e) {
@@ -275,6 +288,17 @@ String userToken = jwtUtils.getTokenFromRequest(request);
             e.printStackTrace();
             return null;
         }
+    }
+
+    @GetMapping("/butchery")
+    public List<Chat> getChatsByButchery(HttpServletRequest request){
+        String token = jwtUtils.getTokenFromRequest(request);
+        String username = jwtUtils.getUsernameFromToken(token);
+        User user = userRepository.findByUsername(username);
+
+        Butchery butchery = butcherRepository.findButcheryByUserId(user.getId());
+
+        return chatService.getChatsByButcheryId(butchery.getId());
     }
 
     @GetMapping("/client/{clientId}")

@@ -3,6 +3,7 @@ package kz.wave.hiba.Repository;
 import jakarta.transaction.Transactional;
 import kz.wave.hiba.Entities.Butchery;
 import kz.wave.hiba.Entities.City;
+import kz.wave.hiba.Entities.User;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,4 +30,6 @@ public interface ButcheryRepository extends JpaRepository<Butchery, Long> {
             "   CASE WHEN :sort = 'new' THEN b.createdAt END ASC," +
             "   CASE WHEN :sort = 'old' THEN b.createdAt END DESC")
     List<Butchery> findButcheries(@Param("sort") String sort, @Param("q") String q, @Param("cities") List<Long> cityList);
+
+    Butchery findButcheryByOwner(User owner);
 }

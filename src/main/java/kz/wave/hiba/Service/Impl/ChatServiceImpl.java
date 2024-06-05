@@ -2,11 +2,13 @@ package kz.wave.hiba.Service.Impl;
 
 import jakarta.servlet.http.HttpServletRequest;
 import kz.wave.hiba.Config.JwtUtils;
+import kz.wave.hiba.Entities.Butchery;
 import kz.wave.hiba.Entities.Chat;
 import kz.wave.hiba.Entities.Order;
 import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Enum.ChatStatus;
 import kz.wave.hiba.Enum.SenderType;
+import kz.wave.hiba.Repository.ButcherRepository;
 import kz.wave.hiba.Repository.ChatRepository;
 import kz.wave.hiba.Repository.OrderRepository;
 import kz.wave.hiba.Repository.UserRepository;
@@ -33,6 +35,7 @@ public class ChatServiceImpl implements ChatService {
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
     private final OrderRepository orderRepository;
+    private final ButcherRepository butcherRepository;
 
     @Override
     public Chat createChat(Long orderId, HttpServletRequest request) {
@@ -54,6 +57,24 @@ public class ChatServiceImpl implements ChatService {
         chat.setArchive(false);
         chat.setRate(0);
         chat.setOrder(order);
+        chat.setChatStatus(ChatStatus.ACTIVE);
+        return chatRepository.save(chat);
+    }
+
+    @Override
+    public Chat createButcheryChat(HttpServletRequest request) {
+        String userToken = jwtUtils.getTokenFromRequest(request);
+        String currentUser = jwtUtils.getUsernameFromToken(userToken);
+        User user = userRepository.findByPhone(currentUser);
+
+        Butchery butchery = butcherRepository.findButcheryByUserId(user.getId());
+
+        Chat chat = new Chat();
+        chat.setClientId(butchery.getId());
+        chat.setIsButchery(true);
+
+        chat.setArchive(false);
+        chat.setRate(0);
         chat.setChatStatus(ChatStatus.ACTIVE);
         return chatRepository.save(chat);
     }
@@ -182,6 +203,11 @@ public class ChatServiceImpl implements ChatService {
             throw new IllegalArgumentException("Invalid date format", e);
         }
         return chatRepository.findChatsBySupportId(id, filter, stDate, edDate);
+    }
+
+    @Override
+    public List<Chat> getChatsByButcheryId(Long id) {
+        return chatRepository.findChatsByButcheryId(id);
     }
 /*@Override
     public void addUserToChat(Chat chat, Long supportId) {

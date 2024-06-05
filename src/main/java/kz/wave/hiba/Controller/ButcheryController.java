@@ -1,19 +1,22 @@
 package kz.wave.hiba.Controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import kz.wave.hiba.Config.JwtUtils;
 import kz.wave.hiba.DTO.ButcheryCreateDTO;
 import kz.wave.hiba.DTO.ButcheryUpdateDTO;
 import kz.wave.hiba.Entities.Butchery;
 import kz.wave.hiba.Entities.City;
-import kz.wave.hiba.Repository.ButcheryRepository;
-import kz.wave.hiba.Repository.CityRepository;
-import kz.wave.hiba.Repository.CountryRepository;
-import kz.wave.hiba.Repository.RegionRepository;
+import kz.wave.hiba.Entities.Order;
+import kz.wave.hiba.Entities.User;
+import kz.wave.hiba.Enum.OrderStatus;
+import kz.wave.hiba.Repository.*;
 import kz.wave.hiba.Response.ButcheryAndUserResponse;
 import kz.wave.hiba.Response.ButcheryResponse;
 import kz.wave.hiba.Service.ButcheryService;
 import kz.wave.hiba.Service.CityService;
 import kz.wave.hiba.Service.UserService;
 import kz.wave.hiba.Specification.ButcherySpecification;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -41,6 +44,11 @@ public class ButcheryController {
     @Autowired
     private ButcheryRepository butcheryRepository;
 
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private UserService userService;
@@ -57,6 +65,24 @@ public class ButcheryController {
     public ResponseEntity<List<Butchery>> getAllButcheries() {
         List<Butchery> butcheries = butcheryService.getAllButchery();
         return ResponseEntity.ok(butcheries);
+    }
+
+    @GetMapping(value = "/getByButcheryOwner")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ButcheryResponse> getByButcheryOwner(HttpServletRequest request){
+        try {
+            String token =  jwtUtils.getTokenFromRequest(request);
+            String currentUser = jwtUtils.getUsernameFromToken(token);
+            User user = userRepository.findByUsername(currentUser);
+            Butchery butchery = butcheryRepository.findButcheryByOwner(user);
+
+            ButcheryResponse butcheryResponse = butcheryService.getButcheryInfoById(butchery.getId());
+
+            return new ResponseEntity<>(butcheryResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 
@@ -81,7 +107,7 @@ public class ButcheryController {
         return ResponseEntity.ok().body(result);
     }
 
-    @GetMapping(value = "/getOneButchery/{id}")
+    @GetMapping(value = "/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ButcheryResponse> getOneButchery(@PathVariable Long id) {
         if (butcheryService.getOneButchery(id) != null) {
@@ -92,7 +118,7 @@ public class ButcheryController {
         }
     }
 
-    @PostMapping(value = "/create-butchery")
+    @PostMapping(value = "/")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERADMIN')")
     public ResponseEntity<?> createButchery(@RequestBody ButcheryAndUserResponse butcheryAndUserResponse) {
         try {
@@ -117,7 +143,7 @@ public class ButcheryController {
         }
     }
 
-    @PutMapping(value = "/updateButchery")
+    @PutMapping(value = "/")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERADMIN')")
     public ResponseEntity<?> updateButchery(@RequestBody ButcheryUpdateDTO butcheryUpdateDTO) {
         try {
@@ -139,7 +165,7 @@ public class ButcheryController {
         }
     }
 
-    @DeleteMapping(value = "/deleteButchery/{id}")
+    @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERADMIN')")
     public void deleteButchery(@PathVariable Long id) {
         butcheryService.deleteButchery(id);

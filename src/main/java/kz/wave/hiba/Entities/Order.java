@@ -72,6 +72,6 @@ public class Order {
     private int packages = 1;
 
     @ManyToOne
-    @JoinColumn(name = "courier_id")
+    @JoinColumn(name = "courier_id", nullable = true)
     private Courier courier;
 }
