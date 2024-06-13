@@ -59,9 +59,12 @@ public class AdminController {
             }
             int donations = orderRepository.getDonationsByPeriod(startDate);
             int totalSum = orderRepository.getTotalSumByPeriod(startDate);
+            Long butcheryCount = butcheryService.quantityOfButcheries();
+            Long orderCount = orderService.quantityOfOrders();
+            Long clientCount = authService.quantityOfUsers();
 
 
-            StatisticsResponse statisticsResponse = new StatisticsResponse(donations, totalSum);
+            StatisticsResponse statisticsResponse = new StatisticsResponse(donations, totalSum, butcheryCount, orderCount, clientCount);
 
             return new ResponseEntity<>(statisticsResponse, HttpStatus.OK);
         } catch (Exception e) {

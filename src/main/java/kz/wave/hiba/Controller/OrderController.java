@@ -13,6 +13,7 @@ import kz.wave.hiba.Enum.OrderStatus;
 import kz.wave.hiba.Repository.ButcheryRepository;
 import kz.wave.hiba.Repository.OrderRepository;
 import kz.wave.hiba.Repository.UserRepository;
+import kz.wave.hiba.Response.OrderResponse;
 import kz.wave.hiba.Service.NotificationService;
 import kz.wave.hiba.Service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -53,9 +54,9 @@ public class OrderController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getOneOrder(@PathVariable Long orderId) {
         try {
-            Order order = orderService.getOneOrder(orderId);
+            OrderResponse order = orderService.getOneOrder(orderId);
 
-            if (order.getId() != null) {
+            if (order.getOrder() != null && order.getOrder().getId() != null) {
                 return ResponseEntity.ok(order);
             } else {
                 return new ResponseEntity<>("Order doesn't exist", HttpStatus.BAD_REQUEST);
@@ -99,7 +100,7 @@ public class OrderController {
     }
 
     @PutMapping(value = "/updateOrderStatus/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERADMIN', 'ROLE_BUTCHER')")
     public ResponseEntity<?> updateOrderStatus(@PathVariable Long id, HttpServletRequest request, @RequestParam("status") OrderStatus newOrderStatus) {
 
         try {
@@ -120,12 +121,9 @@ public class OrderController {
             String username = jwtUtils.getUsernameFromToken(token);
             User user = userRepository.findByPhone(username);
 
-            List<OrderReadWithoutUserDTO> orderDtos = orderService.getMyOrders(user.getId())
-                    .stream()
-                    .map(this::transformOrderToDTO)
-                    .collect(Collectors.toList());
+            List<OrderResponse> orderResponses = orderService.getMyOrders(user.getId());
 
-            return new ResponseEntity<>(orderDtos, HttpStatus.OK);
+            return new ResponseEntity<>(orderResponses, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
@@ -169,7 +167,7 @@ public class OrderController {
             User user = userRepository.findByUsername(currentUser);
             Butchery butchery = butcheryRepository.findButcheryByOwner(user);
 
-            OrderStatus orderStatus = status.equals("new") ? OrderStatus.IN_PROCESS : (status.equals("archive") ? OrderStatus.DELIVERED : null);
+            OrderStatus orderStatus = status.equals("new") ? OrderStatus.AWAITING_CONFIRMATION : (status.equals("archive") ? OrderStatus.DELIVERED : null);
 
             List<Order> orders = orderRepository.findOrdersByButcheryAndOrderStatus(butchery, orderStatus);
 
@@ -180,16 +178,5 @@ public class OrderController {
         }
     }
 
-    /*@PutMapping(value = "/updateOrderStatus/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERADMIN', 'ROLE_SUPPORT', 'ROLE_BUTCHER', 'ROLE_COURIER')")
-    public ResponseEntity<?> updateOrderStatus(@RequestBody OrderUpdateDTO orderUpdateDTO, HttpServletRequest request) {
-        try {
-            orderService.updateOrderStatus(orderUpdateDTO, request);
-            return new ResponseEntity<>("Accepted your request and changed status!", HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("You don't have privilege!", HttpStatus.BAD_REQUEST);
-        }
-    }*/
 
 }

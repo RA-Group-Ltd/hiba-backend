@@ -25,7 +25,7 @@ public class OrderReadWithoutUserDTO {
     private Address address;
     private Butchery butchery;
     private boolean isCharity;
-    private Map<Menu, Integer> menuItems;
+    private Map<Long, Integer> menuItems;
     private Instant deliveryDate;
     private double totalPrice;
     private double deliveryPrice;

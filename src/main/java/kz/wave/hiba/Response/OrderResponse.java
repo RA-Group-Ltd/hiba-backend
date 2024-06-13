@@ -1,21 +1,21 @@
 package kz.wave.hiba.Response;
 
+import kz.wave.hiba.Entities.Menu;
+import kz.wave.hiba.Entities.Order;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class StatisticsResponse {
+public class OrderResponse {
 
-    private int donations;
-    private int totalSum;
-    private Long butcheryCount;
-    private Long clientCount;
-    private Long orderCount;
-
+    private Order order;
+    private List<OrderMenuResponse> menuList;
 
 }

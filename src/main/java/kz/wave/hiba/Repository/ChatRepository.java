@@ -2,6 +2,7 @@ package kz.wave.hiba.Repository;
 
 import jakarta.transaction.Transactional;
 import kz.wave.hiba.Entities.Chat;
+import kz.wave.hiba.Response.ChatHistoryResponse;
 import kz.wave.hiba.Response.SupportChatResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,6 +20,11 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
     Optional<Chat> findByClientIdAndSupportId(Long clientId, Long supportId);
 //    Optional<Chat> findByClient
     List<Chat> findByClientId(Long clientId);
+
+    @Query("SELECT new kz.wave.hiba.Response.ChatHistoryResponse(c, s) FROM Chat c " +
+            "   LEFT JOIN User s ON s.id = c.supportId " +
+            "WHERE c.clientId = :clientId")
+    List<ChatHistoryResponse> findChatHistoryByClientId(@Param("clientId") Long clientId);
     List<Chat> findBySupportId(Long supportId);
 //    List<Chat> findChatsBySupportIdIsNull();
 

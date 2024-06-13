@@ -50,11 +50,3 @@ services:
       - "443:443"
     depends_on:
       - spring
-
-  flutter:
-    image: your_flutter_image  # Замените your_flutter_image на имя вашего образа Flutter
-    volumes:
-      - ./your_flutter_app:/app  # Путь к вашему приложению Flutter, который вы хотите смонтировать в контейнер
-    ports:
-      - "5000:5000"  # Порт, на котором будет доступно ваше мобильное приложение Flutter
-    # Здесь могут быть другие параметры вашего контейнера Flutter, если они необходимы

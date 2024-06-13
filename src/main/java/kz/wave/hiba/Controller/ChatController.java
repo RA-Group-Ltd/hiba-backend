@@ -3,6 +3,8 @@ package kz.wave.hiba.Controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kz.wave.hiba.Entities.*;
 import kz.wave.hiba.Repository.ButcherRepository;
+import kz.wave.hiba.Repository.OrderRepository;
+import kz.wave.hiba.Response.ChatHistoryResponse;
 import kz.wave.hiba.Response.ChatResponse;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -49,6 +51,9 @@ public class ChatController {
 
     @Autowired
     private ButcherRepository butcherRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @MessageMapping("/chat")
     public void processMessage(@Payload byte[] payload, Principal principal) {
@@ -221,11 +226,29 @@ String userToken = jwtUtils.getTokenFromRequest(request);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createChat(@RequestParam("orderId") Long orderId, HttpServletRequest request) {
+    public ResponseEntity<?> createChat(@RequestParam(value = "orderId", required = false) Long orderId, HttpServletRequest request) {
         try {
             Chat chat = chatService.createChat(orderId, request);
-            return new ResponseEntity<>("Created", HttpStatus.CREATED);
+            return new ResponseEntity<>(chat, HttpStatus.CREATED);
         } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/orders")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getOrdersForChat(HttpServletRequest request){
+        try {
+            String token = jwtUtils.getTokenFromRequest(request);
+            String username = jwtUtils.getUsernameFromToken(token);
+            User user = userRepository.findByUsername(username);
+
+            List<Order> orders = orderRepository.findOrdersByUserIdAndNotInChats(user.getId());
+
+            return new ResponseEntity<>(orders, HttpStatus.OK);
+
+        }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
         }
@@ -306,6 +329,26 @@ String userToken = jwtUtils.getTokenFromRequest(request);
         return chatService.getChatsByClientId(clientId);
     }
 
+    @GetMapping("/history")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getChatsHistory(HttpServletRequest request){
+        try{
+            String token = jwtUtils.getTokenFromRequest(request);
+            String username = jwtUtils.getUsernameFromToken(token);
+            User user = userRepository.findByUsername(username);
+
+            if(user == null){
+                return new ResponseEntity<>("User not found!", HttpStatus.NOT_FOUND);
+            }
+
+            List<ChatHistoryResponse> chats = chatService.getChatHistoryByClientId(user.getId());
+            return new ResponseEntity<>(chats, HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("/support/{supportId}")
     public List<Chat> getChatsBySupportId(@PathVariable Long supportId) {
         return chatService.getChatsBySupportId(supportId);
@@ -334,8 +377,10 @@ String userToken = jwtUtils.getTokenFromRequest(request);
         if(chatOpt.isPresent()){
             Chat chat = chatOpt.get();
             List<ChatMessage> messages =  chatMessageService.getMessagesByChat(chat.getId());
+            User client = userRepository.findUserById(chat.getClientId());
+            User support = userRepository.findUserById(chat.getSupportId());
 
-            return new ChatResponse(chat, messages);
+            return new ChatResponse(chat, messages, client, support);
         }
         return null;
     }

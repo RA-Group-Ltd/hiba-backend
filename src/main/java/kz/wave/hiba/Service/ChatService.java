@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import kz.wave.hiba.Entities.Chat;
 import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Enum.SenderType;
+import kz.wave.hiba.Response.ChatHistoryResponse;
 import kz.wave.hiba.Response.SupportChatResponse;
 import org.springframework.http.ResponseEntity;
 
@@ -18,6 +19,7 @@ public interface ChatService {
     Chat startDialog(Long chatId, HttpServletRequest request);
     ResponseEntity<?> completeDialog(Long chatId, HttpServletRequest request);
     List<Chat> getChatsByClientId(Long clientId);
+    List<ChatHistoryResponse> getChatHistoryByClientId(Long clientId);
     List<Chat> getChatsBySupportId(Long supportId);
     void archiveChat(Long chatId);
     void rateChat(Long chatId, int rate);

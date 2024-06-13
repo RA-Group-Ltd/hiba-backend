@@ -12,6 +12,7 @@ import kz.wave.hiba.Repository.ButcherRepository;
 import kz.wave.hiba.Repository.ChatRepository;
 import kz.wave.hiba.Repository.OrderRepository;
 import kz.wave.hiba.Repository.UserRepository;
+import kz.wave.hiba.Response.ChatHistoryResponse;
 import kz.wave.hiba.Response.SupportChatResponse;
 import kz.wave.hiba.Service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -46,17 +47,17 @@ public class ChatServiceImpl implements ChatService {
         Chat chat = new Chat();
         chat.setClientId(user.getId());
 
-        Optional<Order> orderOptional = orderRepository.findById(orderId);
-
-        if (orderOptional.isEmpty()) {
-            return null;
+        if (orderId != null){
+            Optional<Order> orderOptional = orderRepository.findById(orderId);
+            if (orderOptional.isPresent()) {
+                Order order = orderOptional.get();
+                chat.setOrder(order);
+            }
         }
 
-        Order order = orderOptional.get();
 
         chat.setArchive(false);
         chat.setRate(0);
-        chat.setOrder(order);
         chat.setChatStatus(ChatStatus.ACTIVE);
         return chatRepository.save(chat);
     }
@@ -129,6 +130,11 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public List<Chat> getChatsByClientId(Long clientId) {
         return chatRepository.findByClientId(clientId);
+    }
+
+    @Override
+    public List<ChatHistoryResponse> getChatHistoryByClientId(Long clientId) {
+        return chatRepository.findChatHistoryByClientId(clientId);
     }
 
     @Override

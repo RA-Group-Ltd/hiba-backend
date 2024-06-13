@@ -74,6 +74,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     int getTotalSumByPeriod(@Param("startDate") Instant startDate);
 
     @Query("SELECT o FROM Order o " +
-            "   WHERE o.butchery = :butchery AND ( :status IS NULL OR o.orderStatus = :status)")
+            "   WHERE o.butchery = :butchery AND (" +
+            "   ( :status IS NULL " +
+            "       AND o.orderStatus != kz.wave.hiba.Enum.OrderStatus.AWAITING_CONFIRMATION " +
+            "       AND o.orderStatus != kz.wave.hiba.Enum.OrderStatus.DELIVERED) " +
+            "   OR o.orderStatus = :status)")
     List<Order> findOrdersByButcheryAndOrderStatus(@Param("butchery") Butchery butchery, @Param("status") OrderStatus status);
+
+
+    @Query("SELECT o FROM Order o" +
+            "   WHERE o.user.id = :id AND o.id NOT IN (SELECT c.order.id FROM Chat c)")
+    List<Order> findOrdersByUserIdAndNotInChats(@Param("id") Long id);
+
 }

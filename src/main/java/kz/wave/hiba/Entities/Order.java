@@ -48,7 +48,7 @@ public class Order {
     @ElementCollection
     @CollectionTable(name = "order_menu_items", joinColumns = @JoinColumn(name = "order_id"))
     @Column(name = "count", nullable = false)
-    private Map<Menu, Integer> menuItems = new HashMap<>();
+    private Map<Long, Integer> menuItems = new HashMap<>();
 
     @Column(name = "delivery_date")
     private Instant deliveryDate = null;

@@ -2,13 +2,14 @@ package kz.wave.hiba.Service.Impl;
 
 import jakarta.servlet.http.HttpServletRequest;
 import kz.wave.hiba.Config.JwtUtils;
-import kz.wave.hiba.DTO.OrderReadWithoutUserDTO;
 import kz.wave.hiba.Enum.OrderStatus;
 import kz.wave.hiba.DTO.OrderCreateDTO;
 import kz.wave.hiba.DTO.OrderUpdateDTO;
 import kz.wave.hiba.Entities.*;
 import kz.wave.hiba.Enum.StatPeriod;
 import kz.wave.hiba.Repository.*;
+import kz.wave.hiba.Response.OrderMenuResponse;
+import kz.wave.hiba.Response.OrderResponse;
 import kz.wave.hiba.Service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class OrderServiceImpl implements OrderService {
     private final AddressRepository addressRepository;
     private final ButcheryRepository butcheryRepository;
     private final MenuRepository menuRepository;
+    private final ButcheryCategoryRepository butcheryCategoryRepository;
 
     @Override
     public List<Order> getAllOrders() {
@@ -36,8 +38,36 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order getOneOrder(Long id) {
-        return orderRepository.findById(id).orElseThrow();
+    public OrderResponse getOneOrder(Long id) {
+        Order order = orderRepository.findById(id).orElseThrow();
+        List<OrderMenuResponse> menuList = new ArrayList<>();
+        Long menuId;
+
+        for (Map.Entry<Long, Integer> el : order.getMenuItems().entrySet()){
+            menuId = el.getKey();
+            Optional<Menu> menuOptional= menuRepository.findById(menuId);
+            Menu menu = menuOptional.get();
+
+            OrderMenuResponse menuResponse = new OrderMenuResponse();
+            menuResponse.setId(menu.getId());
+            menuResponse.setName(menu.getName());
+            menuResponse.setDescription(menu.getDescription());
+            menuResponse.setWeight(menu.getWeight());
+            menuResponse.setIsWholeAnimal(menu.getIsWholeAnimal());
+            menuResponse.setPrice(menu.getPrice());
+            menuResponse.setImage(menu.getImage());
+            menuResponse.setQuantity(el.getValue());
+
+            Optional<ButcheryCategory> butcheryCategoryOptional = butcheryCategoryRepository.findById(menu.getButcheryCategoryId());
+            if(butcheryCategoryOptional.isPresent()){
+                ButcheryCategory butcheryCategory = butcheryCategoryOptional.get();
+                menuResponse.setButcheryCategory(butcheryCategory);
+            }
+
+            menuList.add(menuResponse);
+        }
+
+        return new OrderResponse(order, menuList);
     }
 
     @Override
@@ -52,7 +82,7 @@ public class OrderServiceImpl implements OrderService {
             return null;
         }
 
-        Map<Menu, Integer> menuItemMap = new HashMap<>();
+        Map<Long, Integer> menuItemMap = new HashMap<>();
 
         for (Map.Entry<Long, Integer> entry : orderCreateDTO.getMenuItemsId().entrySet()) {
             Long menuId = entry.getKey();
@@ -61,13 +91,13 @@ public class OrderServiceImpl implements OrderService {
             Menu menuItem = menuRepository.findById(menuId)
                     .orElseThrow(() -> new IllegalArgumentException("Menu item not found"));
 
-            menuItemMap.put(menuItem, count);
+            menuItemMap.put(menuItem.getId(), count);
         }
 
         Butchery butchery = butcheryOptional.get();
 
         Order order = new Order();
-        order.setOrderStatus(OrderStatus.IN_PROCESS);
+        order.setOrderStatus(OrderStatus.AWAITING_CONFIRMATION);
         order.setUser(user);
         if (orderCreateDTO.isCharity()) {
             order.setAddress(null);
@@ -120,8 +150,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getMyOrders(Long id) {
-        return orderRepository.findOrdersByUserIdSortedNatural(id);
+    public List<OrderResponse> getMyOrders(Long id) {
+        List<Order> orders = orderRepository.findOrdersByUserIdSortedNatural(id);
+
+        List<OrderResponse> responses = new ArrayList<>();
+        for(Order order : orders){
+            OrderResponse orderResponse = getOneOrder(order.getId());
+            orderResponse.getOrder().setUser(null);
+            responses.add(orderResponse);
+        }
+
+        return responses;
     }
 
     @Override
