@@ -1,0 +1,3 @@
+ALTER TABLE butcheries
+    ADD COLUMN phone VARCHAR(255) NOT NULL,
+    ADD COLUMN image LONGBLOB NULL;

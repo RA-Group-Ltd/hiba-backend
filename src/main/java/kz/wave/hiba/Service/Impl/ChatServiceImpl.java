@@ -7,7 +7,6 @@ import kz.wave.hiba.Entities.Chat;
 import kz.wave.hiba.Entities.Order;
 import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Enum.ChatStatus;
-import kz.wave.hiba.Enum.SenderType;
 import kz.wave.hiba.Repository.ButcherRepository;
 import kz.wave.hiba.Repository.ChatRepository;
 import kz.wave.hiba.Repository.OrderRepository;
@@ -39,7 +38,7 @@ public class ChatServiceImpl implements ChatService {
     private final ButcherRepository butcherRepository;
 
     @Override
-    public Chat createChat(Long orderId, HttpServletRequest request) {
+    public ChatHistoryResponse createChat(Long orderId, HttpServletRequest request) {
         String userToken = jwtUtils.getTokenFromRequest(request);
         String currentUser = jwtUtils.getUsernameFromToken(userToken);
         User user = userRepository.findByPhone(currentUser);
@@ -59,11 +58,13 @@ public class ChatServiceImpl implements ChatService {
         chat.setArchive(false);
         chat.setRate(0);
         chat.setChatStatus(ChatStatus.ACTIVE);
-        return chatRepository.save(chat);
+        Chat savedChat = chatRepository.save(chat);
+        User nullUser = null;
+        return new ChatHistoryResponse(savedChat, nullUser);
     }
 
     @Override
-    public Chat createButcheryChat(HttpServletRequest request) {
+    public ChatHistoryResponse createButcheryChat(HttpServletRequest request) {
         String userToken = jwtUtils.getTokenFromRequest(request);
         String currentUser = jwtUtils.getUsernameFromToken(userToken);
         User user = userRepository.findByPhone(currentUser);
@@ -77,8 +78,12 @@ public class ChatServiceImpl implements ChatService {
         chat.setArchive(false);
         chat.setRate(0);
         chat.setChatStatus(ChatStatus.ACTIVE);
-        return chatRepository.save(chat);
+        Chat savedChat = chatRepository.save(chat);
+        User nullUser = null;
+        return new ChatHistoryResponse(savedChat, nullUser);
     }
+
+
 
     @Override
     public Chat startDialog(Long chatId, HttpServletRequest request) {
@@ -96,6 +101,11 @@ public class ChatServiceImpl implements ChatService {
         chat.setSupportId(user.getId());
 
         return chatRepository.save(chat);
+    }
+
+    @Override
+    public Chat startDialog(Long chatId) {
+        return null;
     }
 
     @Override
@@ -120,6 +130,22 @@ public class ChatServiceImpl implements ChatService {
         chat.setChatStatus(ChatStatus.ARCHIVE);
 
         return new ResponseEntity<>(chatRepository.save(chat), HttpStatus.CREATED);
+    }
+
+    @Override
+    public Chat completeDialog(Long id) {
+        Optional<Chat> chatOptional = chatRepository.findById(id);
+
+        if (chatOptional.isEmpty()) {
+            return null;
+        }
+
+        Chat chat = chatOptional.get();
+
+        chat.setArchive(true);
+        chat.setChatStatus(ChatStatus.ARCHIVE);
+
+        return chatRepository.save(chat);
     }
 
 //    @Override
@@ -184,12 +210,22 @@ public class ChatServiceImpl implements ChatService {
     }*/
 
     @Override
-    public List<Chat> getChats(boolean isButchery, String type) {
-        return switch (type) {
-            case "archive" -> chatRepository.findChatsByArchiveIsTrueAndIsButchery(isButchery);
-            case "active" -> chatRepository.findChatsByArchiveIsFalseAndSupportIdNotNullAndIsButchery(isButchery);
-            default -> chatRepository.findChatsBySupportIdIsNullAndIsButcheryAndArchiveIsFalse(isButchery);
-        };
+    public List<ChatHistoryResponse> getChats(boolean isButchery, String type) {
+        if(isButchery){
+            return switch (type) {
+                case "archive" -> chatRepository.findChatsByArchiveIsTrueAndIsButchery();
+                case "active" -> chatRepository.findChatsByArchiveIsFalseAndSupportIdNotNullAndIsButchery();
+                default -> chatRepository.findChatsBySupportIdIsNullAndIsButcheryAndArchiveIsFalse();
+            };
+        }
+        else{
+            return switch (type) {
+                case "archive" -> chatRepository.findChatsByArchiveIsTrueAndIsButcheryFalse();
+                case "active" -> chatRepository.findChatsByArchiveIsFalseAndSupportIdNotNullAndIsButcheryFalse();
+                default -> chatRepository.findChatsBySupportIdIsNullAndIsButcheryFalseAndArchiveIsFalse();
+            };
+        }
+
 
     }
 
@@ -212,7 +248,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public List<Chat> getChatsByButcheryId(Long id) {
+    public List<ChatHistoryResponse> getChatsByButcheryId(Long id) {
         return chatRepository.findChatsByButcheryId(id);
     }
 /*@Override

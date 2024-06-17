@@ -12,11 +12,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ButcheryResponse {
-    private Butchery butchery;
-    private List<ButcheryCategoryResponse> categories;
-    private List<User> employees;
+public class ButcheryOrderStats {
     private int activeOrders;
+    private int newOrders;
     private int deliveredOrders;
-    private List<WorkingHours> workingHours;
 }

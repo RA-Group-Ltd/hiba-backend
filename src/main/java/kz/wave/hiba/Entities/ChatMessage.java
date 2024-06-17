@@ -2,6 +2,7 @@ package kz.wave.hiba.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import kz.wave.hiba.Enum.ChatMessageType;
 import kz.wave.hiba.Enum.MessageStatus;
 import kz.wave.hiba.Enum.SenderType;
 import lombok.AllArgsConstructor;
@@ -42,5 +43,9 @@ public class ChatMessage {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private MessageStatus messageStatus = MessageStatus.SEND;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "message_type")
+    private ChatMessageType chatMessageType = ChatMessageType.MESSAGE;
 
 }

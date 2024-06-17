@@ -39,6 +39,12 @@ public class Butchery extends BaseEntity{
     @Column(name = "created_at")
     private Instant createdAt;
 
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "image")
+    private byte[] image;
+
     @OneToMany(mappedBy = "butchery", cascade = CascadeType.ALL)
     private List<ButcheryDocument> documents = new ArrayList<>();
 

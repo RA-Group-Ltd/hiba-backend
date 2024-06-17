@@ -12,14 +12,19 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Butcher extends BaseEntity{
+public class Butcher {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "userId", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "butcheryId", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "butchery_id")
     private Butchery butchery;
 
 }

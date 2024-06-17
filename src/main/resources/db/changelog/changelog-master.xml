@@ -442,4 +442,44 @@
                  splitStatements="true"
                  stripComments="true" />
     </changeSet>
+
+    <changeSet id="2024_06_13_alter_working_hours_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_06_13_alter_working_hours_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_06_13_alter_butchery_column" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_06_13_alter_butchery_column.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_06_13_alter_working_hours_column" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_06_13_alter_working_hours_column.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_06_14_alter_chat_message_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_06_14_alter_chat_message_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
 </databaseChangeLog>

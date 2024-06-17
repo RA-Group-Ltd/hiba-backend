@@ -211,6 +211,26 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findOrders(query, startDate, statuses);
     }
 
+    @Override
+    public Order cancelOrder(Long id) {
+
+        Optional<Order> orderOptional = orderRepository.findById(id);
+
+        if (orderOptional.isEmpty()) {
+            return null;
+        }
+
+        Order updateOrder = orderOptional.get();
+
+        if (OrderStatus.AWAITING_CONFIRMATION.equals(updateOrder.getOrderStatus())) {
+            updateOrder.setOrderStatus(OrderStatus.CANCEL);
+            orderRepository.save(updateOrder);
+        }
+
+
+        return updateOrder;
+    }
+
     /*@Override
     public Order updateOrderStatus(OrderUpdateDTO orderUpdateDTO, HttpServletRequest request) {
         String token = jwtUtils.getTokenFromRequest(request);

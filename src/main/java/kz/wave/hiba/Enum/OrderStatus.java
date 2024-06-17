@@ -6,5 +6,6 @@ public enum OrderStatus {
     PREPARING_FOR_DELIVERY,
     ON_THE_WAY,
     DELIVERED,
-    DELIVERY_TOMORROW
+    DELIVERY_TOMORROW,
+    CANCEL;
 }

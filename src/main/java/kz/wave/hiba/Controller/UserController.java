@@ -5,6 +5,7 @@ import kz.wave.hiba.DTO.ModelUserDTO;
 import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Entities.UserRole;
 import kz.wave.hiba.Repository.UserRepository;
+import kz.wave.hiba.Response.UserResponse;
 import kz.wave.hiba.Service.UserFileUploadService;
 import kz.wave.hiba.Service.UserRoleService;
 import kz.wave.hiba.Service.UserService;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,17 +50,23 @@ public class UserController {
     }
 
     @PostMapping(value = "/updateUser")
-    public ResponseEntity<Object> uploadImage(@ModelAttribute ModelUserDTO usersDTO, HttpServletRequest request) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Object> uploadImage(@ModelAttribute ModelUserDTO userDTO, HttpServletRequest request) {
         try {
             String userToken = jwtUtils.getTokenFromRequest(request);
-            String currentUser = jwtUtils.getUsernameFromToken(userToken);
-            User user = userRepository.findByPhone(currentUser);
+            String username = jwtUtils.getUsernameFromToken(userToken);
+            User user = userRepository.findByUsername(username);
+
+            System.out.println(userDTO);
 
             if (user != null) {
-                if(usersDTO.getImage() != null)
-                    user = userFileUploadService.uploadImage(usersDTO.getImage(), user);
+                if(userDTO.getAvatar() != null)
+                    user = userFileUploadService.uploadImage(userDTO.getAvatar(), user);
 
                 if(user != null){
+                    user.setName(userDTO.getName());
+                    user.setPhone(userDTO.getPhone());
+
                     userRepository.save(user);
 
                     UserRole userRole = userRoleService.getUserRoleByUserId(user.getId());

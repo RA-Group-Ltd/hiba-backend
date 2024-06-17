@@ -14,11 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class PromotionUpdateDTO {
 
-    @JsonIgnore
     private Long id;
     private String title;
     private String description;
     private Audience audience;
-    private MultipartFile image;
 
 }

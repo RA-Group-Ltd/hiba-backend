@@ -23,4 +23,5 @@ public interface OrderService {
     long getDeliveredOrdersByCourierId(Long courierId);
     List<Order> getOrders(String query, String period, List<String> statuses);
 
+    Order cancelOrder(Long id);
 }

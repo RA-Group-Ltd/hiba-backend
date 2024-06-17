@@ -2,10 +2,14 @@ package kz.wave.hiba.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kz.wave.hiba.Entities.*;
+import kz.wave.hiba.Enum.ChatMessageType;
+import kz.wave.hiba.Enum.SenderType;
 import kz.wave.hiba.Repository.ButcherRepository;
+import kz.wave.hiba.Repository.ButcheryRepository;
 import kz.wave.hiba.Repository.OrderRepository;
 import kz.wave.hiba.Response.ChatHistoryResponse;
 import kz.wave.hiba.Response.ChatResponse;
+import kz.wave.hiba.Response.ChatSupportNotification;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,15 +59,17 @@ public class ChatController {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private ButcheryRepository butcheryRepository;
+
     @MessageMapping("/chat")
     public void processMessage(@Payload byte[] payload, Principal principal) {
         try {
-            System.out.println(Arrays.toString(payload));
-
             ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
-            System.out.println(chatMessage);
 
             chatMessage.setTimestamp(new Date());
+
+
 
             // Получаем существующий чат по chatId, который был передан клиентом
             Chat chat = chatService.getChatById(chatMessage.getChat())
@@ -72,15 +78,36 @@ public class ChatController {
             // Устанавливаем чат для сообщения
             chatMessage.setChat(chat.getId());
 
-            ChatMessage savedMsg = chatMessageService.save(chatMessage);
+            if (chatMessage.getChatMessageType() == ChatMessageType.MESSAGE){
+                ChatMessage savedMsg = chatMessageService.save(chatMessage);
 
-            System.out.println(chat.getId());
+                // Отправляем сообщение получателю
+                messagingTemplate.convertAndSend( "/queue/chat/"+chat.getId(),
+                    savedMsg
+                );
 
+                if(savedMsg.getSenderType() == SenderType.CLIENT){
+                    ChatSupportNotification chatSupportNotification = new ChatSupportNotification();
+                    chatSupportNotification.setContent(savedMsg.getContent());
+                    chatSupportNotification.setIsButchery(chat.getIsButchery());
+                    String chatType = chat.isArchive() ? "archive" : chat.getSupportId() == null ? "new" : "active";
+                    chatSupportNotification.setChatType(chatType);
+                    chatSupportNotification.setChat(chat.getId());
 
-            // Отправляем сообщение получателю
-            messagingTemplate.convertAndSend( "/queue/chat/"+chat.getId(),
+                    messagingTemplate.convertAndSend("/queue/notification",
+                        chatSupportNotification
+                    );
+                }
+            } else if (chatMessage.getChatMessageType() == ChatMessageType.END_DIALOG) {
+                Chat chat1 = chatService.completeDialog(chat.getId());
+                if (chat1 == null){
+                    throw new RuntimeException();
+                }
+                messagingTemplate.convertAndSend( "/queue/chat/"+chat.getId(),
                     chatMessage
-            );
+                );
+            }
+
         }catch (Exception e){
             e.printStackTrace();
             throw new RuntimeException();
@@ -88,137 +115,11 @@ public class ChatController {
     }
 
 
-    /*@MessageMapping("/chat")
-    @SendTo("/topic/messages")
-    public void processMessage(@Payload ChatMessage chatMessage) {
-        ChatMessage savedMsg = chatMessageService.save(chatMessage);
-        messagingTemplate.convertAndSendToUser(
-                String.valueOf(chatMessage.getChat().getSupportId()), "/queue/messages",
-                new ChatNotification(
-                        savedMsg.getId(),
-                        savedMsg.getChat().getClientId(),
-                        savedMsg.getChat().getSupportId(),
-                        savedMsg.getContent()
-                )
-        );
-    }*/
-
-    /*@MessageMapping("/chat.sendMessage")
-    @SendTo("/topic/public")
-    public ChatMessage sendMessage(@Payload byte[] messageBytes) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        ChatMessage chatMessage = mapper.readValue(messageBytes, ChatMessage.class);
-        chatMessage.setTimestamp(new Date());  // Установите текущую дату и время
-        chatMessageService.save(chatMessage);  // Сохраните сообщение
-        return chatMessage;
-    }
-
-    @MessageMapping("/chat.sendNewMessage") // Изменили путь
-    @SendTo("/topic/public")
-    public ChatMessage processMessage(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
-        String userToken = headerAccessor.getSessionAttributes().get("token").toString();
-        User user = jwtUtils.validateAndGetUserFromToken(userToken);
-
-        if (user.getRoles().contains("ROLE_SUPPORT")) {
-            chatMessage.setSender(SenderType.SUPPORT);
-        } else if (user.getRoles().contains("ROLE_USER")) {
-            chatMessage.setSender(SenderType.CLIENT);
-        } else {
-            chatMessage.setSender(SenderType.BOT);
-        }
-
-        chatMessage.setTimestamp(new Date());  // Установите текущую дату и время
-        Chat chat = chatService.getChatById(chatMessage.getChat().getId()).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Chat not found or not active")
-        );
-
-        chatMessage.setChat(chat);
-        ChatMessage savedMessage = chatMessageService.save(chatMessage);
-        messagingTemplate.convertAndSend("/topic/messages/" + chat.getId(), savedMessage);
-        return savedMessage;
-    }
-
-    @MessageMapping("/chat.addUser")
-    @SendTo("/topic/public")
-    public ChatMessage addUser(@Payload ChatMessage chatMessage,
-                               SimpMessageHeaderAccessor headerAccessor) {
-        // Add username in web socket session
-//        headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
-//        chatService.addUserToChat(chatMessage.getChat(), chatMessage.getSender());
-        return chatMessage;
-    }*/
-
-/*    @MessageMapping("/chat.sendMessage")
-    @SendTo("topic/message")
-    public String processMessage(@Payload String message) {
-        System.out.println(message);
-        return message;
-String userToken = jwtUtils.getTokenFromRequest(request);
-        String currentUser = jwtUtils.getUsernameFromToken(userToken);
-        User user = userRepository.findByPhone(currentUser);
-
-        // Получаем чат для данного сообщения
-        Chat chat = chatMessage.getChat();
-//        Long recipientId;
-        Long senderId;
-
-        // Определяем идентификаторы отправителя и получателя в зависимости от типа отправителя
-        if (chatMessage.getSender() == SenderType.CLIENT) {
-            senderId = chat.getClientId();
-//            recipientId = chat.getSupportId();
-        } else {
-            senderId = chat.getSupportId();
-//            recipientId = chat.getClientId();
-        }
-
-        // Сохранение сообщения в базу данных
-//        ChatMessage savedMessage = chatMessageService.save(chatMessage);
-        chatMessageService.save(chatMessage);
-//        String senderName = user.getName();
-
-        // Отправка уведомления получателю
-        messagingTemplate.convertAndSendToUser(
-                String.valueOf(recipientId), "/queue/messages",
-                new ChatNotification(
-                        savedMessage.getId(),
-                        senderId,
-                        senderName)); // Предположим, что вы хотите отправить имя отправителя
-
-    }*/
-
-
-
-    /*@MessageMapping("/chat.sendMessage")
-    @SendTo("/topic/public")
-    public ChatMessage processMessage(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
-        String userToken = headerAccessor.getSessionAttributes().get("token").toString();
-        User user = jwtUtils.validateAndGetUserFromToken(userToken);
-
-        // Определение SenderType на основе роли пользователя
-        if (user.getRoles().equals("ROLE_SUPPORT")) {
-            chatMessage.setSender(SenderType.SUPPORT);
-        } else if (user.getRoles().equals("ROLE_USER")) {
-            chatMessage.setSender(SenderType.CLIENT);
-        } else {
-            chatMessage.setSender(SenderType.BOT);  // Все остальные роли как BOT (или другая логика)
-        }
-
-        Chat chat = chatService.getChatById(chatMessage.getChat().getId()).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Chat not found or not active")
-        );
-
-        chatMessage.setChat(chat);
-        ChatMessage savedMessage = chatMessageService.save(chatMessage);
-        messagingTemplate.convertAndSend("/topic/messages/" + chat.getId(), savedMessage);
-        return savedMessage;
-    }*/
-
-
     @PostMapping("/create/butchery")
     public ResponseEntity<?> createButcheryChat(HttpServletRequest request){
         try {
-            Chat chat = chatService.createButcheryChat(request);
-            return new ResponseEntity<>(chat, HttpStatus.CREATED);
+            ChatHistoryResponse chatHistoryResponse = chatService.createButcheryChat(request);
+            return new ResponseEntity<>(chatHistoryResponse, HttpStatus.CREATED);
         }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
@@ -228,8 +129,8 @@ String userToken = jwtUtils.getTokenFromRequest(request);
     @PostMapping("/create")
     public ResponseEntity<?> createChat(@RequestParam(value = "orderId", required = false) Long orderId, HttpServletRequest request) {
         try {
-            Chat chat = chatService.createChat(orderId, request);
-            return new ResponseEntity<>(chat, HttpStatus.CREATED);
+            ChatHistoryResponse chatHistoryResponse = chatService.createChat(orderId, request);
+            return new ResponseEntity<>(chatHistoryResponse, HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
@@ -277,34 +178,9 @@ String userToken = jwtUtils.getTokenFromRequest(request);
         }
     }
 
-    /*@GetMapping("/client/{clientId}/support/{supportId}")
-    public ResponseEntity<?> getChatByClientAndSupport(@PathVariable Long clientId, @PathVariable Long supportId) {
-        try {
-            Optional<Chat> chat = chatService.getChatByClientAndSupport(clientId, supportId);
-            return chat.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
-        }
-    }*/
-
-    /*@GetMapping("/client/{clientId}/support/{supportId}")
-    public ResponseEntity<?> getChatByClientAndSupport(@PathVariable Long clientId, @PathVariable Long supportId) {
-        System.out.println("Received request for clientId: " + clientId + " and supportId: " + supportId);
-        try {
-            Chat chat = chatService.createChatIfNotExist(clientId, supportId);
-            System.out.println("Chat found or created: " + chat);
-
-            List<ChatMessage> messages = chatMessageService.findMessagesByChatId(chat.getId());
-            return ResponseEntity.ok(messages);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
-        }
-    }*/
 
     @GetMapping("/get")
-    public List<Chat> getChats(@RequestParam("isButchery") boolean isButchery, @RequestParam("type") String type) {
+    public List<ChatHistoryResponse> getChats(@RequestParam("isButchery") boolean isButchery, @RequestParam("type") String type) {
         try {
             return chatService.getChats(isButchery, type);
         } catch (Exception e) {
@@ -314,7 +190,8 @@ String userToken = jwtUtils.getTokenFromRequest(request);
     }
 
     @GetMapping("/butchery")
-    public List<Chat> getChatsByButchery(HttpServletRequest request){
+    public List<ChatHistoryResponse> getChatsByButchery(HttpServletRequest request){
+
         String token = jwtUtils.getTokenFromRequest(request);
         String username = jwtUtils.getUsernameFromToken(token);
         User user = userRepository.findByUsername(username);
@@ -377,10 +254,18 @@ String userToken = jwtUtils.getTokenFromRequest(request);
         if(chatOpt.isPresent()){
             Chat chat = chatOpt.get();
             List<ChatMessage> messages =  chatMessageService.getMessagesByChat(chat.getId());
-            User client = userRepository.findUserById(chat.getClientId());
             User support = userRepository.findUserById(chat.getSupportId());
 
-            return new ChatResponse(chat, messages, client, support);
+            if(chat.getIsButchery()){
+                Optional<Butchery> butcheryOptional = butcheryRepository.findById(chat.getClientId());
+                if(butcheryOptional.isPresent()){
+                    Butchery butchery = butcheryOptional.get();
+                    return new ChatResponse(chat, messages, null, support, butchery);
+                }
+            }else{
+                User client = userRepository.findUserById(chat.getClientId());
+                return new ChatResponse(chat, messages, client, support, null);
+            }
         }
         return null;
     }

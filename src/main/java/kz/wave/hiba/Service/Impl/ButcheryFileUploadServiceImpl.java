@@ -3,7 +3,7 @@ package kz.wave.hiba.Service.Impl;
 import kz.wave.hiba.Entities.Butchery;
 import kz.wave.hiba.Entities.ButcheryDocument;
 import kz.wave.hiba.Repository.ButcheryRepository;
-import kz.wave.hiba.Service.ButcheryFileUploadCertificate;
+import kz.wave.hiba.Service.ButcheryFileUploadService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +19,7 @@ import java.io.InputStream;
 import java.util.List;
 
 @Service
-public class ButcheryFileUploadCertificateServiceImpl implements ButcheryFileUploadCertificate {
+public class ButcheryFileUploadServiceImpl implements ButcheryFileUploadService {
 
     @Autowired
     private ButcheryRepository butcheryRepository;
@@ -29,6 +29,25 @@ public class ButcheryFileUploadCertificateServiceImpl implements ButcheryFileUpl
 
     @Value("${loadButcheryDocumentURL}")
     private String myLoadDocumentURL;
+
+    @Override
+    public Butchery uploadImage(MultipartFile file, Butchery butchery) {
+        try{
+            if(file == null)
+                return butchery;
+            InputStream inputStream = file.getInputStream();
+            BufferedImage img = ImageIO.read(inputStream);
+            byte[] imageBytes = convertImageToByteArray(img);
+
+
+            butchery.setImage(imageBytes);
+
+            return butcheryRepository.save(butchery);
+
+        }catch (Exception e){
+            return butchery;
+        }
+    }
 
     @Override
     public void uploadDocuments(List<MultipartFile> files, Butchery butchery) {

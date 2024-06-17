@@ -52,8 +52,14 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                                  @Param("startDate") Instant startDate,
                                  @Param("endDate") Instant endDate);
 
-    @Query("SELECT COUNT(o) FROM Order o where o.butchery = :butchery AND o.orderStatus != kz.wave.hiba.Enum.OrderStatus.DELIVERED")
+    @Query("SELECT COUNT(o) FROM Order o where o.butchery = :butchery " +
+            "   AND o.orderStatus != kz.wave.hiba.Enum.OrderStatus.DELIVERED " +
+            "   AND o.orderStatus != kz.wave.hiba.Enum.OrderStatus.AWAITING_CONFIRMATION " +
+            "   AND o.orderStatus != kz.wave.hiba.Enum.OrderStatus.CANCEL ")
     int getActiveOrdersByButchery(@Param("butchery") Butchery butchery);
+
+    @Query("SELECT COUNT(o) FROM Order o where o.butchery = :butchery AND o.orderStatus = kz.wave.hiba.Enum.OrderStatus.AWAITING_CONFIRMATION")
+    int getNewOrdersByButchery(@Param("butchery") Butchery butchery);
 
     @Query("SELECT COUNT(o) FROM Order o where o.butchery = :butchery AND o.orderStatus = kz.wave.hiba.Enum.OrderStatus.DELIVERED")
     int getDeliveredOrdersByButchery(@Param("butchery") Butchery butchery);

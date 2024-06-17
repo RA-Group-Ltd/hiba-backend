@@ -9,8 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class ModelUserDTO {
     @JsonIgnore
     private Long id;
+    private String name;
     private String phone;
-    private String username;
-    private MultipartFile image;
+    private String email;
+    private MultipartFile avatar;
 
 }

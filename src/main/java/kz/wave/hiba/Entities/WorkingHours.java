@@ -1,5 +1,6 @@
 package kz.wave.hiba.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import kz.wave.hiba.Enum.DayOfWeek;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Time;
 import java.time.Instant;
 
 @Entity
@@ -22,8 +24,9 @@ public class WorkingHours {
     @Column(name = "id")
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "butchery_id")
+    @JoinColumn(name = "butcher_id")
     private Butchery butchery;
 
     @Enumerated(EnumType.STRING)
@@ -34,8 +37,8 @@ public class WorkingHours {
     private boolean isClosed;
 
     @Column(name = "open_time")
-    private Instant openTime;
+    private String openTime;
 
     @Column(name = "close_time")
-    private Instant closeTime;
+    private String closeTime;
 }

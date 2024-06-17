@@ -51,6 +51,7 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     public Promotion updatePromotion(PromotionUpdateDTO promotionUpdateDTO) {
+        System.out.println(promotionUpdateDTO.getId());
         Optional<Promotion> promotionOptional = promotionRepository.findById(promotionUpdateDTO.getId());
 
         if (promotionOptional.isEmpty()) {
@@ -63,7 +64,6 @@ public class PromotionServiceImpl implements PromotionService {
         updatePromotion.setTitle(promotionUpdateDTO.getTitle());
         updatePromotion.setAudience(promotionUpdateDTO.getAudience());
 
-        promotionUploadService.uploadImage(promotionUpdateDTO.getImage(), updatePromotion);
 
         return promotionRepository.save(updatePromotion);
     }

@@ -11,6 +11,7 @@ import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Enum.OrderStatus;
 import kz.wave.hiba.Repository.*;
 import kz.wave.hiba.Response.ButcheryAndUserResponse;
+import kz.wave.hiba.Response.ButcheryOrderStats;
 import kz.wave.hiba.Response.ButcheryResponse;
 import kz.wave.hiba.Service.ButcheryService;
 import kz.wave.hiba.Service.CityService;
@@ -65,6 +66,25 @@ public class ButcheryController {
     public ResponseEntity<List<Butchery>> getAllButcheries() {
         List<Butchery> butcheries = butcheryService.getAllButchery();
         return ResponseEntity.ok(butcheries);
+    }
+
+    @GetMapping("/stats")
+    @PreAuthorize("hasAnyRole('ROLE_BUTCHER', 'ROLE_BUTCHERY_EMPLOYEE')")
+    public ResponseEntity<ButcheryOrderStats> getButcheryOrderStats(HttpServletRequest request) {
+        try {
+            String token =  jwtUtils.getTokenFromRequest(request);
+            String currentUser = jwtUtils.getUsernameFromToken(token);
+            User user = userRepository.findByUsername(currentUser);
+            Butchery butchery = butcheryRepository.findButcheryByOwner(user);
+            ButcheryOrderStats butcheryOrderStats = butcheryService.getOrderStat(butchery);
+
+            return new ResponseEntity<>(butcheryOrderStats, HttpStatus.OK);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+
+        }
     }
 
     @GetMapping(value = "/getByButcheryOwner")
@@ -143,11 +163,11 @@ public class ButcheryController {
         }
     }
 
-    @PutMapping(value = "/")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERADMIN')")
-    public ResponseEntity<?> updateButchery(@RequestBody ButcheryUpdateDTO butcheryUpdateDTO) {
+    @PutMapping
+    @PreAuthorize("hasAnyRole('ROLE_BUTCHER')")
+    public ResponseEntity<?> updateButchery(@ModelAttribute ButcheryUpdateDTO butcheryUpdateDTO) {
         try {
-            City city = cityService.getOneCity(butcheryUpdateDTO.getCityId());
+            City city = cityService.getOneCity(butcheryUpdateDTO.getCity());
 
             if (city == null) {
                 return ResponseEntity.badRequest().body("City not found");

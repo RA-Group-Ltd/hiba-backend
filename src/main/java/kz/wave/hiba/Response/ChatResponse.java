@@ -1,5 +1,6 @@
 package kz.wave.hiba.Response;
 
+import kz.wave.hiba.Entities.Butchery;
 import kz.wave.hiba.Entities.Chat;
 import kz.wave.hiba.Entities.ChatMessage;
 import kz.wave.hiba.Entities.User;
@@ -17,4 +18,6 @@ public class ChatResponse {
     private List<ChatMessage> messages;
     private User client;
     private User support;
+    private Butchery butchery;
+
 }

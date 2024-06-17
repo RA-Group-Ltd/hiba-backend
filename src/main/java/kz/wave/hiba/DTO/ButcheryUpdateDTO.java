@@ -1,5 +1,7 @@
 package kz.wave.hiba.DTO;
 
+import kz.wave.hiba.Entities.City;
+import kz.wave.hiba.Entities.WorkingHours;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,11 +15,10 @@ import java.util.List;
 public class ButcheryUpdateDTO {
 
     private Long id;
-    private String name;
-    private Float latitude;
-    private Float longitude;
+    private String phone;
     private String address;
-    private Long cityId;
-    private List<MultipartFile> documents;
+    private Long city;
+    private MultipartFile image;
+    private List<WorkingHourDTO> workingHours;
 
 }

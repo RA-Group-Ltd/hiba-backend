@@ -52,7 +52,7 @@ public class PromotionController {
 
     @PutMapping
     @PreAuthorize("hasAnyRole('ROLE_SUPERADMIN', 'ROLE_ADMIN')")
-    public ResponseEntity<?> updatePromotion(@ModelAttribute PromotionUpdateDTO promotionUpdateDTO) {
+    public ResponseEntity<?> updatePromotion(@RequestBody PromotionUpdateDTO promotionUpdateDTO) {
         try {
             promotionService.updatePromotion(promotionUpdateDTO);
             return new ResponseEntity<>("Promotion updated successfully", HttpStatus.OK);

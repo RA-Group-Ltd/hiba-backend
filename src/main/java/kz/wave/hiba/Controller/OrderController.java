@@ -2,6 +2,7 @@ package kz.wave.hiba.Controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import kz.wave.hiba.Config.JwtUtils;
+import kz.wave.hiba.DTO.CancelOrderDTO;
 import kz.wave.hiba.DTO.OrderCreateDTO;
 import kz.wave.hiba.DTO.OrderReadWithoutUserDTO;
 import kz.wave.hiba.DTO.OrderUpdateDTO;
@@ -110,6 +111,19 @@ public class OrderController {
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("You don't have privilege!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @PutMapping(value = "/cancel/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_BUTCHER','ROLE_ADMIN', 'ROLE_SUPERADMIN')")
+    public ResponseEntity<?> cancelOrder(@PathVariable(name = "id") Long id, @RequestBody CancelOrderDTO cancelOrderDTO) {
+        try {
+            orderService.cancelOrder(id);
+            return new ResponseEntity<>("Order Status changed to CANCEL", HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
         }
     }
 

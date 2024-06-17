@@ -1,5 +1,6 @@
 package kz.wave.hiba.Response;
 
+import kz.wave.hiba.Entities.Butchery;
 import kz.wave.hiba.Entities.Chat;
 import kz.wave.hiba.Entities.User;
 import lombok.AllArgsConstructor;
@@ -17,10 +18,18 @@ public class ChatHistoryResponse {
     Chat chat;
     User support;
     User client;
+    Butchery butchery;
 
-    ChatHistoryResponse(Chat chat, User support){
+
+
+    public ChatHistoryResponse(Chat chat, User support){
         this.chat = chat;
         this.support = support;
+    }
+
+    public ChatHistoryResponse(Chat chat, Butchery butchery){
+        this.chat = chat;
+        this.butchery = butchery;
     }
 
 }

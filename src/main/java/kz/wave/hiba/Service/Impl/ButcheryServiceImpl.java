@@ -3,20 +3,23 @@ package kz.wave.hiba.Service.Impl;
 import kz.wave.hiba.Config.MailingUtils;
 import kz.wave.hiba.DTO.ButcheryCreateDTO;
 import kz.wave.hiba.DTO.ButcheryUpdateDTO;
+import kz.wave.hiba.DTO.WorkingHourDTO;
 import kz.wave.hiba.Entities.*;
+import kz.wave.hiba.Enum.DayOfWeek;
 import kz.wave.hiba.Repository.*;
 import kz.wave.hiba.Response.ButcheryCategoryResponse;
+import kz.wave.hiba.Response.ButcheryOrderStats;
 import kz.wave.hiba.Response.ButcheryResponse;
 import kz.wave.hiba.Service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -29,13 +32,14 @@ public class ButcheryServiceImpl implements ButcheryService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
-    private final ButcheryFileUploadCertificate butcheryFileUploadCertificate;
+    private final ButcheryFileUploadService butcheryFileUploadService;
     private final ButcherRepository butcherRepository;
     private final OrderRepository orderRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailingUtils mailingUtils;
     private final CountryRepository countryRepository;
     private final CityRepository cityRepository;
+    private final WorkingHoursRepository workingHoursRepository;
 
     @Override
     public List<Butchery> getAllButchery() {
@@ -65,7 +69,6 @@ public class ButcheryServiceImpl implements ButcheryService {
 
     @Override
     public Butchery createButchery(ButcheryCreateDTO butcheryCreateDTO, City city) {
-        System.out.println(butcheryCreateDTO.getPhone());
         Butchery newButchery = new Butchery();
         Butcher newButcher = new Butcher();
 
@@ -107,15 +110,31 @@ public class ButcheryServiceImpl implements ButcheryService {
             newButchery.setLatitude(butcheryCreateDTO.getLatitude());
         }
         newButchery.setCity(city);
+        newButchery.setPhone(butcheryCreateDTO.getPhone());
         newButchery.setEmail(butcheryCreateDTO.getEmail());
         newButchery.setMeatType(butcheryCreateDTO.getMeatType());
         newButchery.setRegNumber(butcheryCreateDTO.getRegNumber());
         newButchery.setCreatedAt(Instant.now());
-        butcheryFileUploadCertificate.uploadDocuments(butcheryCreateDTO.getDocuments(), newButchery);
+        butcheryFileUploadService.uploadDocuments(butcheryCreateDTO.getDocuments(), newButchery);
 
         Butchery butchery = butcheryRepository.save(newButchery);
         newButcher.setButchery(butchery);
         butcherRepository.save(newButcher);
+
+        for(DayOfWeek day : DayOfWeek.values()){
+            WorkingHours workingHours = new WorkingHours();
+            workingHours.setButchery(butchery);
+            workingHours.setDayOfWeek(day);
+            if(day == DayOfWeek.SUNDAY){
+                workingHours.setClosed(true);
+            }else{
+                workingHours.setOpenTime("00:00");
+                workingHours.setCloseTime("00:00");
+                workingHours.setClosed(false);
+            }
+            workingHoursRepository.save(workingHours);
+        }
+
         return butchery;
 
     }
@@ -127,13 +146,43 @@ public class ButcheryServiceImpl implements ButcheryService {
         if (butcheryOptional.isPresent()) {
             Butchery updateButchery = butcheryOptional.get();
 
-            updateButchery.setName(butcheryUpdateDTO.getName());
             updateButchery.setAddress(butcheryUpdateDTO.getAddress());
-            updateButchery.setLongitude(butcheryUpdateDTO.getLongitude());
-            updateButchery.setLatitude(butcheryUpdateDTO.getLatitude());
             updateButchery.setCity(city);
+            updateButchery.setPhone(butcheryUpdateDTO.getPhone());
 
-            butcheryFileUploadCertificate.uploadDocuments(butcheryUpdateDTO.getDocuments(), updateButchery);
+            updateButchery = butcheryFileUploadService.uploadImage(butcheryUpdateDTO.getImage(), updateButchery);
+
+            for(WorkingHourDTO workingHourDto : butcheryUpdateDTO.getWorkingHours()){
+                WorkingHours existing = workingHoursRepository.findWorkingHoursByButcheryIdAndDayOfWeek(butcheryUpdateDTO.getId(), workingHourDto.getDayOfWeek());
+                if(existing == null){
+                    WorkingHours newWorkingHour = new WorkingHours();
+                    newWorkingHour.setClosed(workingHourDto.isClosed());
+                    newWorkingHour.setDayOfWeek(workingHourDto.getDayOfWeek());
+
+                    if(workingHourDto.isClosed()){
+                        newWorkingHour.setOpenTime(null);
+                        newWorkingHour.setCloseTime(null);
+                        newWorkingHour.setClosed(true);
+                    }else{
+                        newWorkingHour.setOpenTime(workingHourDto.getOpenTime());
+                        newWorkingHour.setCloseTime(workingHourDto.getCloseTime());
+                        newWorkingHour.setClosed(false);
+                    }
+                    newWorkingHour.setButchery(updateButchery);
+                    workingHoursRepository.save(newWorkingHour);
+                }else{
+                    if(workingHourDto.isClosed()){
+                        existing.setOpenTime(null);
+                        existing.setCloseTime(null);
+                        existing.setClosed(true);
+                    }else{
+                        existing.setOpenTime(workingHourDto.getOpenTime());
+                        existing.setCloseTime(workingHourDto.getCloseTime());
+                        existing.setClosed(false);
+                    }
+                    workingHoursRepository.save(existing);
+                }
+            }
 
             return butcheryRepository.save(updateButchery);
         } else {
@@ -165,6 +214,8 @@ public class ButcheryServiceImpl implements ButcheryService {
         butcheryResponse.setActiveOrders(activeOrders);
         butcheryResponse.setDeliveredOrders(deliveredOrders);
 
+        butcheryResponse.setWorkingHours(workingHoursRepository.findAllByButcheryId(id));
+
         return butcheryResponse;
     }
 
@@ -192,7 +243,18 @@ public class ButcheryServiceImpl implements ButcheryService {
         return butcheryRepository.findButcheries(sort, query, cityList);
     }
 
+    @Override
+    public ButcheryOrderStats getOrderStat(Butchery butchery) {
+        int deliveredOrders = orderRepository.getDeliveredOrdersByButchery(butchery);
+        int activeOrders = orderRepository.getActiveOrdersByButchery(butchery);
+        int newOrders = orderRepository.getNewOrdersByButchery(butchery);
+
+
+        return new ButcheryOrderStats(activeOrders, newOrders, deliveredOrders);
+    }
+
     private String generatePassword() {
         return UUID.randomUUID().toString().substring(0, 8);
     }
+
 }

@@ -22,12 +22,12 @@ public interface ButcherRepository extends JpaRepository<Butcher, Long> {
     List<Butchery> findByCriteria(@Param("q") String q, @Param("categories") List<Integer> categories, @Param("latitude") Float latitude, @Param("longitude") Float longitude, @Param("sort") String sort);
 */
 
+    Butcher findByUserId(Long user_id);
+
     @Query("SELECT b.user FROM Butcher b WHERE b.butchery = :id")
     List<User> findAllUsersByButchery(@Param("id") Butchery id);
 
     @Query("SELECT b.butchery FROM Butcher b WHERE b.user.id = :id")
     Butchery findButcheryByUserId(@Param("id") Long userId);
-
-    Butcher findByUserId(Long userId);
 
 }
