@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class UserController {
 
     @PostMapping(value = "/updateUser")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Object> uploadImage(@ModelAttribute ModelUserDTO userDTO, HttpServletRequest request) {
+    public ResponseEntity<?> uploadImage(@ModelAttribute ModelUserDTO userDTO, HttpServletRequest request) {
         try {
             String userToken = jwtUtils.getTokenFromRequest(request);
             String username = jwtUtils.getUsernameFromToken(userToken);
@@ -59,26 +60,7 @@ public class UserController {
 
             System.out.println(userDTO);
 
-            if (user != null) {
-                if(userDTO.getAvatar() != null)
-                    user = userFileUploadService.uploadImage(userDTO.getAvatar(), user);
-
-                if(user != null){
-                    user.setName(userDTO.getName());
-                    user.setPhone(userDTO.getPhone());
-
-                    userRepository.save(user);
-
-                    UserRole userRole = userRoleService.getUserRoleByUserId(user.getId());
-                    String token = jwtUtils.generateToken(user);
-
-                    return new ResponseEntity<>(new UserResponse(token, user, userRole), HttpStatus.OK);
-                } else {
-                    return new ResponseEntity<>("Unable to upload image", HttpStatus.BAD_REQUEST);
-                }
-            } else {
-                return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
-            }
+            return userService.updateUser(userDTO, user);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);

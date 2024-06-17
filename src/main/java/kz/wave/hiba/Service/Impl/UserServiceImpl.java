@@ -1,11 +1,19 @@
 package kz.wave.hiba.Service.Impl;
 
+import kz.wave.hiba.Config.JwtUtils;
 import kz.wave.hiba.DTO.AuthDTO;
+import kz.wave.hiba.DTO.ModelUserDTO;
 import kz.wave.hiba.DTO.UserDTO;
 import kz.wave.hiba.Entities.User;
+import kz.wave.hiba.Entities.UserRole;
 import kz.wave.hiba.Repository.UserRepository;
+import kz.wave.hiba.Response.UserResponse;
+import kz.wave.hiba.Service.UserFileUploadService;
+import kz.wave.hiba.Service.UserRoleService;
 import kz.wave.hiba.Service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +28,9 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserFileUploadService userFileUploadService;
+    private final UserRoleService userRoleService;
+    private final JwtUtils jwtUtils;
 
     @Override
     public List<User> getAllUser() {
@@ -60,8 +71,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(User user) {
-        return userRepository.save(user);
+    public ResponseEntity<?> updateUser(ModelUserDTO userDTO, User user) {
+
+        if (user != null) {
+            if(userDTO.getAvatar() != null)
+                user = userFileUploadService.uploadImage(userDTO.getAvatar(), user);
+
+            if (user != null) {
+                user.setName(userDTO.getName());
+
+                if (userDTO.getNewPassword().equals(userDTO.getReTypeNewPassword())) {
+
+                    user.setPassword(passwordEncoder.encode(userDTO.getNewPassword()));
+
+                } else {
+
+                    return new ResponseEntity<>("Passwords doesn't match", HttpStatus.CONFLICT);
+
+                }
+
+                userRepository.save(user);
+
+                UserRole userRole = userRoleService.getUserRoleByUserId(user.getId());
+                String token = jwtUtils.generateToken(user);
+
+                return new ResponseEntity<>(new UserResponse(token, user, userRole), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Unable to upload image", HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @Override
