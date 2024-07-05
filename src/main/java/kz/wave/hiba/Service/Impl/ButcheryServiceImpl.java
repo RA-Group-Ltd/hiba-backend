@@ -63,6 +63,7 @@ public class ButcheryServiceImpl implements ButcheryService {
         }
         butcheryResponse.setButchery(butchery);
         butcheryResponse.setCategories(cats);
+        butcheryResponse.setWorkingHours(workingHoursRepository.findAllByButcheryId(id));
 
         return butcheryResponse;
     }

@@ -58,7 +58,6 @@ public class UserController {
             String username = jwtUtils.getUsernameFromToken(userToken);
             User user = userRepository.findByUsername(username);
 
-            System.out.println(userDTO);
 
             return userService.updateUser(userDTO, user);
         } catch (Exception e) {

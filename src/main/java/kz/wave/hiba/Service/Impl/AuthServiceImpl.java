@@ -115,8 +115,11 @@ public class AuthServiceImpl implements AuthService {
             user.setCreatedAt(Instant.now());
             user.setConfirmed(true);
             // TODO: first of all  we need to test this code !
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            if(user.getPassword() != null){
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
             //
+
             userFileUploadService.uploadImage(photo, user);
             Role role = roleRepository.findByName("ROLE_USER");
             UserRoleId userRoleId = new UserRoleId(user.getId(), role.getId());

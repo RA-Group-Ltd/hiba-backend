@@ -79,16 +79,18 @@ public class UserServiceImpl implements UserService {
 
             if (user != null) {
                 user.setName(userDTO.getName());
+                if(!userDTO.getPhone().isEmpty())
+                    user.setPhone(userDTO.getPhone());
 
-                if (userDTO.getNewPassword().equals(userDTO.getReTypeNewPassword())) {
-
-                    user.setPassword(passwordEncoder.encode(userDTO.getNewPassword()));
-
-                } else {
-
-                    return new ResponseEntity<>("Passwords doesn't match", HttpStatus.CONFLICT);
-
-                }
+//                if (userDTO.getNewPassword().equals(userDTO.getReTypeNewPassword())) {
+//
+//                    user.setPassword(passwordEncoder.encode(userDTO.getNewPassword()));
+//
+//                } else {
+//
+//                    return new ResponseEntity<>("Passwords doesn't match", HttpStatus.CONFLICT);
+//
+//                }
 
                 userRepository.save(user);
 

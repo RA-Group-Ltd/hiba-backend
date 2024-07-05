@@ -3,6 +3,7 @@ package kz.wave.hiba.Controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kz.wave.hiba.Entities.*;
 import kz.wave.hiba.Enum.ChatMessageType;
+import kz.wave.hiba.Enum.NotificationCategory;
 import kz.wave.hiba.Enum.SenderType;
 import kz.wave.hiba.Repository.ButcherRepository;
 import kz.wave.hiba.Repository.ButcheryRepository;
@@ -10,6 +11,7 @@ import kz.wave.hiba.Repository.OrderRepository;
 import kz.wave.hiba.Response.ChatHistoryResponse;
 import kz.wave.hiba.Response.ChatResponse;
 import kz.wave.hiba.Response.ChatSupportNotification;
+import kz.wave.hiba.Service.NotificationService;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +28,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -62,6 +65,9 @@ public class ChatController {
     @Autowired
     private ButcheryRepository butcheryRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @MessageMapping("/chat")
     public void processMessage(@Payload byte[] payload, Principal principal) {
         try {
@@ -97,6 +103,10 @@ public class ChatController {
                     messagingTemplate.convertAndSend("/queue/notification",
                         chatSupportNotification
                     );
+                } else {
+
+                    notificationService.sendChatNotificationToUser(chat, savedMsg);
+
                 }
             } else if (chatMessage.getChatMessageType() == ChatMessageType.END_DIALOG) {
                 Chat chat1 = chatService.completeDialog(chat.getId());

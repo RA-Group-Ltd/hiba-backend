@@ -1,9 +1,19 @@
 package kz.wave.hiba.Service.Impl;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import javassist.compiler.NoFieldException;
 import kz.wave.hiba.DTO.PromotionCreateDTO;
 import kz.wave.hiba.DTO.PromotionUpdateDTO;
+import kz.wave.hiba.Entities.Notification;
 import kz.wave.hiba.Entities.Promotion;
+import kz.wave.hiba.Entities.User;
+import kz.wave.hiba.Enum.NotificationCategory;
+import kz.wave.hiba.Repository.NotificationRepository;
 import kz.wave.hiba.Repository.PromotionRepository;
+import kz.wave.hiba.Repository.UserRepository;
+import kz.wave.hiba.Service.NotificationService;
 import kz.wave.hiba.Service.PromotionService;
 import kz.wave.hiba.Service.PromotionUploadService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +29,7 @@ public class PromotionServiceImpl implements PromotionService {
 
     private final PromotionRepository promotionRepository;
     private final PromotionUploadService promotionUploadService;
+    private final NotificationService notificationService;
 
     @Override
     public List<Promotion> getPromotions() {
@@ -43,7 +54,10 @@ public class PromotionServiceImpl implements PromotionService {
 
             promotionUploadService.uploadImage(promotionCreateDTO.getImage(), newPromotion);
 
+            notificationService.sendNotificationPromotion(promotionCreateDTO.getTitle());
+
             return promotionRepository.save(newPromotion);
+
         } else {
             return null;
         }

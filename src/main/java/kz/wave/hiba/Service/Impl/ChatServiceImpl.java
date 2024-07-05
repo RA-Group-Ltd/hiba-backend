@@ -2,11 +2,9 @@ package kz.wave.hiba.Service.Impl;
 
 import jakarta.servlet.http.HttpServletRequest;
 import kz.wave.hiba.Config.JwtUtils;
-import kz.wave.hiba.Entities.Butchery;
-import kz.wave.hiba.Entities.Chat;
-import kz.wave.hiba.Entities.Order;
-import kz.wave.hiba.Entities.User;
+import kz.wave.hiba.Entities.*;
 import kz.wave.hiba.Enum.ChatStatus;
+import kz.wave.hiba.Enum.NotificationCategory;
 import kz.wave.hiba.Repository.ButcherRepository;
 import kz.wave.hiba.Repository.ChatRepository;
 import kz.wave.hiba.Repository.OrderRepository;
@@ -54,7 +52,8 @@ public class ChatServiceImpl implements ChatService {
             }
         }
 
-
+        chat.setCreatedAt(Instant.now());
+        chat.setIsButchery(false);
         chat.setArchive(false);
         chat.setRate(0);
         chat.setChatStatus(ChatStatus.ACTIVE);

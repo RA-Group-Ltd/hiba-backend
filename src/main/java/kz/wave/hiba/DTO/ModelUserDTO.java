@@ -12,6 +12,7 @@ public class ModelUserDTO {
 
     private String name;
     private String newPassword;
+    private String phone;
     private String reTypeNewPassword;
     private MultipartFile avatar;
 

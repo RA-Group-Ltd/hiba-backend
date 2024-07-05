@@ -23,7 +23,7 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     @Query("SELECT new kz.wave.hiba.Response.ChatHistoryResponse(c, s) FROM Chat c " +
             "   LEFT JOIN User s ON s.id = c.supportId " +
-            "WHERE c.clientId = :clientId AND c.isButchery = FALSE ")
+            "WHERE c.clientId = :clientId AND ( c.isButchery = FALSE OR c.isButchery IS NULL ) ")
     List<ChatHistoryResponse> findChatHistoryByClientId(@Param("clientId") Long clientId);
     List<Chat> findBySupportId(Long supportId);
 //    List<Chat> findChatsBySupportIdIsNull();
