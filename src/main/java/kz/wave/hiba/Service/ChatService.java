@@ -17,10 +17,8 @@ public interface ChatService {
     ChatHistoryResponse createChat(Long orderId, HttpServletRequest request);
     ChatHistoryResponse createButcheryChat(HttpServletRequest request);
     Chat startDialog(Long chatId, HttpServletRequest request);
-
     Chat startDialog(Long chatId);
     ResponseEntity<?> completeDialog(Long chatId, HttpServletRequest request);
-
     Chat completeDialog(Long id);
     List<Chat> getChatsByClientId(Long clientId);
     List<ChatHistoryResponse> getChatHistoryByClientId(Long clientId);
@@ -30,7 +28,6 @@ public interface ChatService {
     List<Chat> getAllChats();
     List<ChatHistoryResponse> getChats(boolean isButchery, String type);
     List<SupportChatResponse> filterChatsBySupportId(Long id, List<String> filter, Long startDate, Long endDate);
-
     List<ChatHistoryResponse> getChatsByButcheryId(Long id);
 
 

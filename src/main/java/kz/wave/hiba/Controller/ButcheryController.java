@@ -118,9 +118,6 @@ public class ButcheryController {
         Specification<Butchery> spec = Specification.where(ButcherySpecification.hasNameLike(q))
                 .and(ButcherySpecification.isCategoryIn(categories));
 
-        // Пример добавления дополнительных условий
-        // Здесь можете добавлять условия по latitude и longitude, если у вас есть соответствующая логика фильтрации
-
         Sort sortOrder = sort.equalsIgnoreCase("name") ? Sort.by("name").descending() : Sort.unsorted();
 
         List<Butchery> result = butcheryRepository.findAll(spec, sortOrder);
