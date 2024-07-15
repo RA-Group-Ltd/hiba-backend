@@ -231,27 +231,4 @@ public class OrderServiceImpl implements OrderService {
         return updateOrder;
     }
 
-    /*@Override
-    public Order updateOrderStatus(OrderUpdateDTO orderUpdateDTO, HttpServletRequest request) {
-        String token = jwtUtils.getTokenFromRequest(request);
-        String currentUser = jwtUtils.getUsernameFromToken(token);
-        User user = userRepository.findByPhone(currentUser);
-        Order order = orderRepository.findById(orderUpdateDTO.getId()).orElseThrow();
-        UserRole userRole = userRoleRepository.getByUserId(user.getId());
-
-        if (userRole.getRole().getName().equals("ROLE_SUPERADMIN")) {
-            order.setOrderStatus(OrderStatus.AWAITING_CONFIRMATION);
-        } else if (userRole.getRole().getName().equals("ROLE_ADMIN")) {
-            order.setOrderStatus(OrderStatus.PREPARING_FOR_DELIVERY);
-        } else if (userRole.getRole().getName().equals("ROLE_SUPPORT")) {
-            order.setOrderStatus(OrderStatus.ON_THE_WAY);
-        } else if (userRole.getRole().getName().equals("ROLE_COURIER")) {
-            order.setOrderStatus(OrderStatus.DELIVERED);
-        } else {
-            order.setOrderStatus(OrderStatus.DELIVERY_TOMORROW);
-        }
-
-        return orderRepository.save(order);
-    }*/
-
 }

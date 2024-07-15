@@ -44,7 +44,6 @@ public class AuthServiceImpl implements AuthService {
     public User createUserWithPhoneNumber(String phoneNumber) {
         User newUser = new User();
         newUser.setPhone(phoneNumber);
-//        newUser.setTelegramChatId(newUser.getTelegramChatId());
         return userRepository.save(newUser);
     }
 
@@ -94,7 +93,6 @@ public class AuthServiceImpl implements AuthService {
         if (user != null) {
             verificationCodeRepository.deleteVerificationCodeByUserId(user.getId());
             if (!user.isConfirmed()){
-//                user.setConfirmed(true); // Предполагается, что у вас есть поле confirmed в сущности User
                 userRepository.save(user);
                 return new ResponseEntity<>("", HttpStatus.OK);
             } else {
@@ -176,7 +174,6 @@ public class AuthServiceImpl implements AuthService {
 
         User newUser = new User();
         newUser.setPhone(authDTO.getPhone());
-//        newUser.setName(authDTO.getUsername());
         newUser.setCreatedAt(Instant.now());
         newUser.setPassword(passwordEncoder.encode(authDTO.getPassword()));
 

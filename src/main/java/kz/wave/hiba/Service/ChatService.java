@@ -2,8 +2,6 @@ package kz.wave.hiba.Service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import kz.wave.hiba.Entities.Chat;
-import kz.wave.hiba.Entities.User;
-import kz.wave.hiba.Enum.SenderType;
 import kz.wave.hiba.Response.ChatHistoryResponse;
 import kz.wave.hiba.Response.SupportChatResponse;
 import org.springframework.http.ResponseEntity;

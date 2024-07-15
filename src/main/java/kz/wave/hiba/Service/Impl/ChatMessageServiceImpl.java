@@ -1,6 +1,5 @@
 package kz.wave.hiba.Service.Impl;
 
-import kz.wave.hiba.Entities.Chat;
 import kz.wave.hiba.Entities.ChatMessage;
 import kz.wave.hiba.Enum.MessageStatus;
 import kz.wave.hiba.Enum.SenderType;
@@ -31,8 +30,6 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             throw new IllegalArgumentException("Не указан чат для сообщения");
         }
 
-//        var chatId = chatService.getChatByClientAndSupport(chatMessage.getChat().getClientId(), chatMessage.getChat().getSupportId()).orElseThrow();
-//        chatMessage.setChat(chatId);
         chatMessageRepository.save(chatMessage);
 
         return chatMessage;

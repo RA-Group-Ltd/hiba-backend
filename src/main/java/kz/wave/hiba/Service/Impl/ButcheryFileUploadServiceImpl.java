@@ -72,12 +72,6 @@ public class ButcheryFileUploadServiceImpl implements ButcheryFileUploadService 
         try {
             Butchery butchery = butcheryRepository.getById(id);
 
-//            byte[] image = butchery.getDocuments();
-
-            /*if (image != null && image.length > 0) {
-                System.out.println(image.toString());
-                return image;
-            }*/
         } catch (Exception e) {
             e.printStackTrace();
         }

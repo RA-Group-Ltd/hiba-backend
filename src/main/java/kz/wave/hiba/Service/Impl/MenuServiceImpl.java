@@ -118,13 +118,6 @@ public class MenuServiceImpl implements MenuService {
         menuRepository.deleteById(id);
     }
 
-    /*@Override
-    public List<Menu> getMenusByIds(List<Long> ids) {
-        for (int i = 0; i < ids.size(); i++) {
-            menuRepository.getMenuById(i);
-        }
-    }*/
-
     @Override
     public List<Menu> getMenuListByButcheryCategoryId(Long id) {
         return menuRepository.getMenusByButcheryCategoryId(id);

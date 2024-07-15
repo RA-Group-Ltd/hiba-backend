@@ -8,11 +8,9 @@ import kz.wave.hiba.Repository.ButcheryCategoryRepository;
 import kz.wave.hiba.Repository.ButcheryRepository;
 import kz.wave.hiba.Repository.CategoryRepository;
 import kz.wave.hiba.Service.ButcheryCategoryService;
-import kz.wave.hiba.Service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,16 +63,5 @@ public class ButcheryCategoryServiceImpl implements ButcheryCategoryService {
     public List<ButcheryCategory> getCategoriesByButcheryId(Long butcheryId) {
         List<ButcheryCategory> bcs = butcheryCategoryRepository.getButcheryCategoriesByButcheryId(butcheryId);
         return bcs;
-//        List<Category> list = new ArrayList<>();
-//        for (int i = 0; i < bcs.size(); i++) {
-//            long catId = bcs.get(i).getCategoryId();
-//            Optional<Category> cat = categoryRepository.findById(catId);
-//
-//            if (cat.isEmpty())
-//                continue;
-//
-//            list.add(cat.get());
-//        }
-//        return list;
     }
 }

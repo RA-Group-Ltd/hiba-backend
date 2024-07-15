@@ -1,7 +1,6 @@
 package kz.wave.hiba.Service;
 
 import kz.wave.hiba.DTO.EmployeeDTO;
-import kz.wave.hiba.Entities.Role;
 import kz.wave.hiba.Entities.User;
 
 import java.util.List;

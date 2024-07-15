@@ -1,7 +1,6 @@
 package kz.wave.hiba.Service.Impl;
 
 import kz.wave.hiba.Entities.Menu;
-import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Repository.MenuRepository;
 import kz.wave.hiba.Service.MenuFileUploadService;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +35,7 @@ public class MenuFileUploadServiceImpl implements MenuFileUploadService {
         try {
             BufferedImage resizedImage = resizeImage(file, 150, 150);
             byte[] imageBytes = convertImageToByteArray(resizedImage);
-//            String base64Image = encodeImageToBase64(resizedImage);
-//            user.setImage(base64Image);
             menu.setImage(imageBytes);
-//            user.setGooglePicture(null);
             return menuRepository.save(menu);
         } catch (Exception e) {
             return null;

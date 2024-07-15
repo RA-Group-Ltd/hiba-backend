@@ -34,10 +34,7 @@ public class UserFileUploadServiceImpl implements UserFileUploadService {
         try {
             BufferedImage resizedImage = resizeImage(file, 150, 150);
             byte[] imageBytes = convertImageToByteArray(resizedImage);
-//            String base64Image = encodeImageToBase64(resizedImage);
-//            user.setImage(base64Image);
             user.setAvatar(imageBytes);
-//            user.setGooglePicture(null);
             return userRepository.save(user);
         } catch (Exception e) {
             return null;

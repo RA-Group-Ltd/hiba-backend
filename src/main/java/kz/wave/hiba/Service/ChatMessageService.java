@@ -1,6 +1,5 @@
 package kz.wave.hiba.Service;
 
-import kz.wave.hiba.Entities.Chat;
 import kz.wave.hiba.Entities.ChatMessage;
 import kz.wave.hiba.Enum.MessageStatus;
 import kz.wave.hiba.Enum.SenderType;

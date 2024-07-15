@@ -1,7 +1,6 @@
 package kz.wave.hiba.Service.Impl;
 
 import kz.wave.hiba.Service.TelegramService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;

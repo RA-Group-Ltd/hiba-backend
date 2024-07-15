@@ -2,14 +2,11 @@ package kz.wave.hiba.Controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import kz.wave.hiba.Config.JwtUtils;
-import kz.wave.hiba.Entities.Role;
 import kz.wave.hiba.Entities.User;
-import kz.wave.hiba.Entities.UserRole;
 import kz.wave.hiba.Repository.ChatRepository;
 import kz.wave.hiba.Repository.RoleRepository;
 import kz.wave.hiba.Repository.UserRepository;
 import kz.wave.hiba.Repository.UserRoleRepository;
-import kz.wave.hiba.Response.SupportChatResponse;
 import kz.wave.hiba.Response.EmployeeResponse;
 import kz.wave.hiba.Service.ChatService;
 import kz.wave.hiba.Service.EmployeesService;

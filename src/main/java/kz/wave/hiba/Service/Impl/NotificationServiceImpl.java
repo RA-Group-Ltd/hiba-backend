@@ -3,7 +3,6 @@ package kz.wave.hiba.Service.Impl;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
-import kz.wave.hiba.DTO.OrderUpdateDTO;
 import kz.wave.hiba.Entities.*;
 import kz.wave.hiba.Enum.NotificationCategory;
 import kz.wave.hiba.Repository.NotificationRepository;
@@ -12,9 +11,6 @@ import kz.wave.hiba.Repository.PromotionRepository;
 import kz.wave.hiba.Repository.UserRepository;
 import kz.wave.hiba.Service.NotificationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -47,7 +43,6 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setMessage(message);
         notification.setUser(user);
         notification.setNotificationCategory(notificationCategory);
-//        notification.setRead();
 
         notificationRepository.save(notification);
 

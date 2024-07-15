@@ -2,7 +2,6 @@ package kz.wave.hiba.Service;
 
 import kz.wave.hiba.DTO.AddressCreateDTO;
 import kz.wave.hiba.DTO.AddressUpdateDTO;
-import kz.wave.hiba.Entities.Address;
 import kz.wave.hiba.Entities.User;
 import org.springframework.http.ResponseEntity;
 

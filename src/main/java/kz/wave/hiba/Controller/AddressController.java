@@ -4,12 +4,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import kz.wave.hiba.Config.JwtUtils;
 import kz.wave.hiba.DTO.AddressCreateDTO;
 import kz.wave.hiba.DTO.AddressUpdateDTO;
-import kz.wave.hiba.Entities.Address;
 import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Repository.UserRepository;
 import kz.wave.hiba.Service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

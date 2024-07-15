@@ -33,12 +33,8 @@ public class PromotionUploadServiceImpl implements PromotionUploadService {
     @Override
     public Promotion uploadImage(MultipartFile file, Promotion promotion) {
         try {
-//            BufferedImage resizedImage = resizeImage(file, 300, 300);
             byte[] imageBytes = convertImageToByteArray(ImageIO.read(file.getInputStream()));
-//            String base64Image = encodeImageToBase64(resizedImage);
-//            user.setImage(base64Image);
             promotion.setImage(imageBytes);
-//            user.setGooglePicture(null);
             return promotionRepository.save(promotion);
         } catch (Exception e) {
             return null;

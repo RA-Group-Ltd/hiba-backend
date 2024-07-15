@@ -53,7 +53,6 @@ public class UserServiceImpl implements UserService {
         newUser.setPhone(userDTO.getPhone());
         newUser.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         newUser.setCreatedAt(Instant.now());
-//        newUser.setAvatar(userDTO.getAvatar());
 
         return userRepository.save(newUser);
     }
@@ -81,16 +80,6 @@ public class UserServiceImpl implements UserService {
                 user.setName(userDTO.getName());
                 if(!userDTO.getPhone().isEmpty())
                     user.setPhone(userDTO.getPhone());
-
-//                if (userDTO.getNewPassword().equals(userDTO.getReTypeNewPassword())) {
-//
-//                    user.setPassword(passwordEncoder.encode(userDTO.getNewPassword()));
-//
-//                } else {
-//
-//                    return new ResponseEntity<>("Passwords doesn't match", HttpStatus.CONFLICT);
-//
-//                }
 
                 userRepository.save(user);
 

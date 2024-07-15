@@ -1,7 +1,6 @@
 package kz.wave.hiba.Service;
 
 import kz.wave.hiba.DTO.CategoryCreateDTO;
-import kz.wave.hiba.DTO.CategoryReadDTO;
 import kz.wave.hiba.DTO.CategoryUpdateDTO;
 import kz.wave.hiba.Entities.Category;
 
