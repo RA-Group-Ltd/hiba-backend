@@ -1,12 +1,46 @@
 package kz.wave.hiba.Enum;
 
+/**
+ * The enum represents different categories of notifications.
+ */
 public enum NotificationCategory {
-    SYSTEM_ALERTS,    // Системные оповещения
-    USER_MESSAGES,    // Сообщения пользователю
-    REMINDERS,        // Напоминания
-    PROMOTIONS,       // Акции и предложения
-    WARNINGS,         // Предупреждения
-    NEWS,             // Новости
-    UPDATES,           // Обновления
+    /**
+     * System alerts.
+     */
+    SYSTEM_ALERTS,
+
+    /**
+     * User messages.
+     */
+    USER_MESSAGES,
+
+    /**
+     * Reminders.
+     */
+    REMINDERS,
+
+    /**
+     * Promotions and offers.
+     */
+    PROMOTIONS,
+
+    /**
+     * Warnings.
+     */
+    WARNINGS,
+
+    /**
+     * News.
+     */
+    NEWS,
+
+    /**
+     * Updates.
+     */
+    UPDATES,
+
+    /**
+     * Orders.
+     */
     ORDERS
 }
