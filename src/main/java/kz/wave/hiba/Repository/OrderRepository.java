@@ -1,7 +1,6 @@
 package kz.wave.hiba.Repository;
 
 import jakarta.transaction.Transactional;
-import kz.wave.hiba.Entities.Butcher;
 import kz.wave.hiba.Entities.Butchery;
 import kz.wave.hiba.Entities.Order;
 import kz.wave.hiba.Enum.OrderStatus;

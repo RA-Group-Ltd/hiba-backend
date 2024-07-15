@@ -5,6 +5,9 @@ import kz.wave.hiba.Entities.Region;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Repository interface for {@link Region} entities.
+ */
 @Repository
 @Transactional
 public interface RegionRepository extends JpaRepository<Region, Long> {
