@@ -6,6 +6,7 @@ import kz.wave.hiba.DTO.CourierUpdateDTO;
 import kz.wave.hiba.Entities.*;
 import kz.wave.hiba.Repository.*;
 import kz.wave.hiba.Response.CourierOrderResponse;
+import kz.wave.hiba.Response.CourierOrdersByButcheryResponse;
 import kz.wave.hiba.Response.CourierResponse;
 import kz.wave.hiba.Service.CourierService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class CourierServiceImpl implements CourierService {
     private final MailingUtils mailingUtils;
     private final CountryRepository countryRepository;
     private final OrderRepository orderRepository;
+    private final ButcheryRepository butcheryRepository;
 
     @Override
     public List<Courier> getAllCouriers() {
@@ -111,6 +113,19 @@ public class CourierServiceImpl implements CourierService {
     @Override
     public void deleteCourierById(Long id) {
         courierRepository.deleteById(id);
+    }
+
+    @Override
+    public List<CourierOrdersByButcheryResponse> getApplicationsByButchery() {
+        List<Butchery> butcheries = butcheryRepository.findAll();
+        List<CourierOrdersByButcheryResponse> response = new ArrayList<>();
+
+        for (Butchery butchery : butcheries) {
+            int activeOrders = orderRepository.getNewOrdersByButchery(butchery);
+            CourierOrdersByButcheryResponse resp = new CourierOrdersByButcheryResponse(butchery, activeOrders);
+            response.add(resp);
+        }
+        return response;
     }
 
     @Override

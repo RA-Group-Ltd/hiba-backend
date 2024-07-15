@@ -7,6 +7,7 @@ import kz.wave.hiba.Entities.Courier;
 import kz.wave.hiba.Entities.Order;
 import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Repository.UserRepository;
+import kz.wave.hiba.Response.CourierOrdersByButcheryResponse;
 import kz.wave.hiba.Response.CourierResponse;
 import kz.wave.hiba.Service.AuthService;
 import kz.wave.hiba.Service.CourierService;
@@ -129,4 +130,14 @@ public class CourierController {
         }
     }
 
+    @GetMapping(value = "/applications/by-butchery")
+    public ResponseEntity<?> getApplicationsByButchery() {
+        try {
+            List<CourierOrdersByButcheryResponse> courierOrdersByButcheryResponses = courierService.getApplicationsByButchery();
+            return new ResponseEntity<>(courierOrdersByButcheryResponses, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

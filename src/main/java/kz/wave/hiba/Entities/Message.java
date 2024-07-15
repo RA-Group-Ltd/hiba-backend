@@ -8,8 +8,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.util.List;
 
+/**
+ * The class represents a message.
+ */
 @Entity
 @Table(name = "message")
 @Getter
@@ -18,26 +20,44 @@ import java.util.List;
 @NoArgsConstructor
 public class Message {
 
+    /**
+     * The unique identifier of the message.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
+    /**
+     * The chat to which this message belongs.
+     */
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "chat")
     private Chat chat;
 
+    /**
+     * The user who sent the message.
+     */
     @OneToOne
     @JoinColumn(name = "sender")
     private User sender;
 
+    /**
+     * The content of the message.
+     */
     @Column(name = "content")
     private String content;
 
+    /**
+     * The images associated with the message.
+     */
     @Column(name = "images")
     private byte[] images;
 
+    /**
+     * The timestamp when the message was created.
+     */
     @Column(name = "created_at")
     private Instant createAt;
 
