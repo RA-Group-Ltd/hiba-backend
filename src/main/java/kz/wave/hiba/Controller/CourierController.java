@@ -9,6 +9,7 @@ import kz.wave.hiba.Entities.User;
 import kz.wave.hiba.Repository.UserRepository;
 import kz.wave.hiba.Response.CourierOrdersByButcheryResponse;
 import kz.wave.hiba.Response.CourierResponse;
+import kz.wave.hiba.Response.OrderResponse;
 import kz.wave.hiba.Service.AuthService;
 import kz.wave.hiba.Service.CourierService;
 import kz.wave.hiba.Service.OrderService;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.Name;
 import java.util.List;
 
 @RestController
@@ -128,11 +130,68 @@ public class CourierController {
         }
     }
 
-    @GetMapping(value = "/applications/by-butchery")
-    public ResponseEntity<?> getApplicationsByButchery() {
+    @GetMapping(value = "/activeOrders/byButchery")
+    public ResponseEntity<?> getActiveOrdersByButchery(HttpServletRequest request) {
         try {
-            List<CourierOrdersByButcheryResponse> courierOrdersByButcheryResponses = courierService.getApplicationsByButchery();
+            List<CourierOrdersByButcheryResponse> courierOrdersByButcheryResponses = courierService.getActiveOrdersByButchery(request);
             return new ResponseEntity<>(courierOrdersByButcheryResponses, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/waitingOrders/byButchery")
+    public ResponseEntity<?> getWaitingOrdersByButchery() {
+        try {
+            List<CourierOrdersByButcheryResponse> courierOrdersByButcheryResponses = courierService.getWaitingOrdersByButchery();
+            return new ResponseEntity<>(courierOrdersByButcheryResponses, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/activeOrders/byButchery/{id}")
+    public ResponseEntity<?> getActiveOrdersByButchery(@PathVariable(name = "id") Long id, HttpServletRequest request) {
+        try {
+            List<OrderResponse> orderResponses = courierService.getActiveOrdersByButcheryId(id, request);
+            return new ResponseEntity<>(orderResponses, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/waitingOrders/byButchery/{id}")
+    public ResponseEntity<?> getWaitingOrdersByButchery(@PathVariable(name = "id") Long id) {
+        try {
+            List<OrderResponse> orderResponses = courierService.getWaitingOrdersByButcheryId(id);
+            return new ResponseEntity<>(orderResponses, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/activeOrders")
+    @PreAuthorize("hasAnyRole('ROLE_COURIER')")
+    public ResponseEntity<?> getActiveOrders(HttpServletRequest request) {
+        try {
+            List<OrderResponse> orderList = courierService.getActiveOrders(request);
+            return new ResponseEntity<>(orderList, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/waitingOrders")
+    @PreAuthorize("hasAnyRole('ROLE_COURIER')")
+    public ResponseEntity<?> getWaitingOrders() {
+        try {
+            List<OrderResponse> orderList = courierService.getWaitingOrders();
+            return new ResponseEntity<>(orderList, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);

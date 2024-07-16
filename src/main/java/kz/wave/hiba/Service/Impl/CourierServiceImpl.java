@@ -1,14 +1,19 @@
 package kz.wave.hiba.Service.Impl;
 
+import jakarta.servlet.http.HttpServletRequest;
+import kz.wave.hiba.Config.JwtUtils;
 import kz.wave.hiba.Config.MailingUtils;
 import kz.wave.hiba.DTO.CourierCreateDTO;
 import kz.wave.hiba.DTO.CourierUpdateDTO;
 import kz.wave.hiba.Entities.*;
+import kz.wave.hiba.Enum.OrderStatus;
 import kz.wave.hiba.Repository.*;
 import kz.wave.hiba.Response.CourierOrderResponse;
 import kz.wave.hiba.Response.CourierOrdersByButcheryResponse;
 import kz.wave.hiba.Response.CourierResponse;
+import kz.wave.hiba.Response.OrderResponse;
 import kz.wave.hiba.Service.CourierService;
+import kz.wave.hiba.Service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,6 +38,8 @@ public class CourierServiceImpl implements CourierService {
     private final CountryRepository countryRepository;
     private final OrderRepository orderRepository;
     private final ButcheryRepository butcheryRepository;
+    private final JwtUtils jwtUtils;
+    private final OrderService orderService;
 
     @Override
     public List<Courier> getAllCouriers() {
@@ -116,12 +123,65 @@ public class CourierServiceImpl implements CourierService {
     }
 
     @Override
-    public List<CourierOrdersByButcheryResponse> getApplicationsByButchery() {
+    public List<CourierOrdersByButcheryResponse> getWaitingOrdersByButchery() {
         List<Butchery> butcheries = butcheryRepository.findAll();
         List<CourierOrdersByButcheryResponse> response = new ArrayList<>();
 
         for (Butchery butchery : butcheries) {
-            int activeOrders = orderRepository.getNewOrdersByButchery(butchery);
+            int activeOrders = orderRepository.countOrdersByButcheryAndCourierIsNullAndOrderStatus(butchery, OrderStatus.PREPARING_FOR_DELIVERY);
+
+            if (activeOrders == 0) {
+                continue;
+            }
+
+            CourierOrdersByButcheryResponse resp = new CourierOrdersByButcheryResponse(butchery, activeOrders);
+            response.add(resp);
+        }
+        return response;
+    }
+
+    @Override
+    public List<OrderResponse> getActiveOrdersByButcheryId(Long id, HttpServletRequest request) {
+        User user = jwtUtils.getUserFromRequest(request);
+        Courier courier = courierRepository.findByUserId(user.getId());
+        List<Order> orderList = orderRepository.findOrdersByCourierAndButcheryId(courier, id);
+
+        List<OrderResponse> responses = new ArrayList<>();
+        for (Order order : orderList) {
+            OrderResponse orderResponse = orderService.getOneOrder(order.getId());
+            responses.add(orderResponse);
+        }
+
+        return responses;
+    }
+
+    @Override
+    public List<OrderResponse> getWaitingOrdersByButcheryId(Long id) {
+        List<Order> orderList = orderRepository.findOrdersByCourierIsNullAndButcheryIdAndOrderStatus(id, OrderStatus.PREPARING_FOR_DELIVERY);
+
+        List<OrderResponse> responses = new ArrayList<>();
+        for (Order order : orderList) {
+            OrderResponse orderResponse = orderService.getOneOrder(order.getId());
+            responses.add(orderResponse);
+        }
+
+        return responses;
+    }
+
+    @Override
+    public List<CourierOrdersByButcheryResponse> getActiveOrdersByButchery(HttpServletRequest request) {
+        User user = jwtUtils.getUserFromRequest(request);
+        Courier courier = courierRepository.findByUserId(user.getId());
+        List<Butchery> butcheries = butcheryRepository.findAll();
+        List<CourierOrdersByButcheryResponse> response = new ArrayList<>();
+
+        for (Butchery butchery : butcheries) {
+            int activeOrders = orderRepository.countOrdersByButcheryAndCourier(butchery, courier);
+
+            if (activeOrders == 0) {
+                continue;
+            }
+
             CourierOrdersByButcheryResponse resp = new CourierOrdersByButcheryResponse(butchery, activeOrders);
             response.add(resp);
         }
@@ -151,6 +211,34 @@ public class CourierServiceImpl implements CourierService {
         }
 
         return courierRepository.findCouriers(query, sort, cityList);
+    }
+
+    @Override
+    public List<OrderResponse> getActiveOrders(HttpServletRequest request) {
+        User user = jwtUtils.getUserFromRequest(request);
+        Courier courier = courierRepository.findByUserId(user.getId());
+        List<Order> orderList = orderRepository.findOrdersByCourier(courier);
+
+        List<OrderResponse> responses = new ArrayList<>();
+        for (Order order : orderList) {
+            OrderResponse orderResponse = orderService.getOneOrder(order.getId());
+            responses.add(orderResponse);
+        }
+
+        return responses;
+    }
+
+    @Override
+    public List<OrderResponse> getWaitingOrders() {
+        List<Order> orderList = orderRepository.findOrdersByCourierIsNullAndOrderStatus(OrderStatus.PREPARING_FOR_DELIVERY);
+
+        List<OrderResponse> responses = new ArrayList<>();
+        for (Order order : orderList) {
+            OrderResponse orderResponse = orderService.getOneOrder(order.getId());
+            responses.add(orderResponse);
+        }
+
+        return responses;
     }
 
     private String generatePassword() {

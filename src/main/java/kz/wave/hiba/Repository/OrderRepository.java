@@ -2,6 +2,7 @@ package kz.wave.hiba.Repository;
 
 import jakarta.transaction.Transactional;
 import kz.wave.hiba.Entities.Butchery;
+import kz.wave.hiba.Entities.Courier;
 import kz.wave.hiba.Entities.Order;
 import kz.wave.hiba.Enum.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -91,4 +92,13 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "   WHERE o.user.id = :id AND o.id NOT IN (SELECT c.order.id FROM Chat c)")
     List<Order> findOrdersByUserIdAndNotInChats(@Param("id") Long id);
 
+    List<Order> findOrdersByCourier(Courier courier);
+
+    List<Order> findOrdersByCourierIsNullAndOrderStatus(OrderStatus orderStatus);
+
+    int countOrdersByButcheryAndCourier(Butchery butchery, Courier courier);
+    int countOrdersByButcheryAndCourierIsNullAndOrderStatus(Butchery butchery, OrderStatus orderStatus);
+
+    List<Order> findOrdersByCourierAndButcheryId(Courier courier, Long id);
+    List<Order> findOrdersByCourierIsNullAndButcheryIdAndOrderStatus(Long id, OrderStatus orderStatus);
 }

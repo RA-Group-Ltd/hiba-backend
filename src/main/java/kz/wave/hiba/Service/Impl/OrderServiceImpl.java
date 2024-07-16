@@ -1,6 +1,7 @@
 package kz.wave.hiba.Service.Impl;
 
 import jakarta.servlet.http.HttpServletRequest;
+import kotlin._Assertions;
 import kz.wave.hiba.Config.JwtUtils;
 import kz.wave.hiba.Enum.OrderStatus;
 import kz.wave.hiba.DTO.OrderCreateDTO;
@@ -31,6 +32,7 @@ public class OrderServiceImpl implements OrderService {
     private final ButcheryRepository butcheryRepository;
     private final MenuRepository menuRepository;
     private final ButcheryCategoryRepository butcheryCategoryRepository;
+    private final CourierRepository courierRepository;
 
     @Override
     public List<Order> getAllOrders() {
@@ -139,10 +141,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public Order updateOrderStatus(Long id, HttpServletRequest request, OrderStatus newOrderStatus) {
-        String token = jwtUtils.getTokenFromRequest(request);
-        String currentUser = jwtUtils.getUsernameFromToken(token);
-        User user = userRepository.findByPhone(currentUser);
+        User user = jwtUtils.getUserFromRequest(request);
+        Courier courier = courierRepository.findByUserId(user.getId());
+
         Order order = orderRepository.findById(id).orElseThrow();
+
+        if (Objects.equals(order.getCourier().getId(), courier.getId())) {
+            if (newOrderStatus.equals(OrderStatus.DELIVERED)) {
+
+            }
+        }
 
         order.setOrderStatus(newOrderStatus);
 

@@ -105,4 +105,10 @@ public class JwtUtils {
         }
     }
 
+    public User getUserFromRequest(HttpServletRequest request) {
+        String token = getTokenFromRequest(request);
+        String currentUser = getUsernameFromToken(token);
+        return userRepository.findByUsername(currentUser);
+    }
+
 }
