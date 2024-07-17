@@ -101,9 +101,8 @@ public class OrderController {
     }
 
     @PutMapping(value = "/updateOrderStatus/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERADMIN', 'ROLE_BUTCHER')")
-    public ResponseEntity<?> updateOrderStatus(@PathVariable Long id, HttpServletRequest request, @RequestParam("status") OrderStatus newOrderStatus) {
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERADMIN', 'ROLE_BUTCHER', 'ROLE_COURIER')")
+    public ResponseEntity<?> updateOrderStatus(@PathVariable(name = "id") Long id, HttpServletRequest request, @RequestParam("status") OrderStatus newOrderStatus) {
         try {
             orderService.updateOrderStatus(id, request, newOrderStatus);
             notificationService.sendNotificationToUser(id, NotificationCategory.ORDERS);

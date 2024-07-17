@@ -9,17 +9,31 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Implementation of the {@link CountryService} interface.
+ */
 @Service
 @RequiredArgsConstructor
 public class CountryServiceImpl implements CountryService {
 
     private final CountryRepository countryRepository;
 
+    /**
+     * Retrieves all countries.
+     *
+     * @return a list of all countries
+     */
     @Override
     public List<Country> getAllCountries() {
         return countryRepository.findAll();
     }
 
+    /**
+     * Retrieves a country by its ID.
+     *
+     * @param id the ID of the country to retrieve
+     * @return the retrieved country, or null if not found
+     */
     @Override
     public Country getCountryById(Long id) {
         if (countryRepository.findById(id).isPresent()) {
@@ -29,6 +43,12 @@ public class CountryServiceImpl implements CountryService {
         }
     }
 
+    /**
+     * Creates a new country.
+     *
+     * @param countryDTO the data transfer object containing country creation data
+     * @return the created country, or null if a country with the same name already exists
+     */
     @Override
     public Country createCountry(CountryDTO countryDTO) {
         if (countryRepository.findByName(countryDTO.getName()) != null) {
@@ -41,6 +61,12 @@ public class CountryServiceImpl implements CountryService {
         return countryRepository.save(newCountry);
     }
 
+    /**
+     * Updates an existing country.
+     *
+     * @param country the country to update
+     * @return the updated country, or null if not found
+     */
     @Override
     public Country updateCountry(Country country) {
         if (countryRepository.findById(country.getId()).isPresent()) {
@@ -50,6 +76,11 @@ public class CountryServiceImpl implements CountryService {
         }
     }
 
+    /**
+     * Deletes a country by its ID.
+     *
+     * @param id the ID of the country to delete
+     */
     @Override
     public void deleteCountry(Long id) {
         countryRepository.deleteById(id);

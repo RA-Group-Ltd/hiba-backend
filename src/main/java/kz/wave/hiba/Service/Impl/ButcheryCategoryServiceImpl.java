@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation of the {@link ButcheryCategoryService} interface.
+ */
 @Service
 public class ButcheryCategoryServiceImpl implements ButcheryCategoryService {
 
@@ -30,6 +33,12 @@ public class ButcheryCategoryServiceImpl implements ButcheryCategoryService {
     @Autowired
     private ButcheryRepository butcheryRepository;
 
+    /**
+     * Create new Butchery Category
+     *
+     * @param butcheryCategoryCreateDTO the butchery category creation data transfer object
+     * @return the created new butchery category
+     */
     @Override
     public void createButcheryCategory(ButcheryCategoryCreateDTO butcheryCategoryCreateDTO) {
         ButcheryCategory butcheryCategory = new ButcheryCategory();
@@ -59,6 +68,12 @@ public class ButcheryCategoryServiceImpl implements ButcheryCategoryService {
         butcheryCategoryRepository.save(butcheryCategory);
     }
 
+    /**
+     * Get categories by butchery id
+     *
+     * @param butcheryId gets category by butchery id
+     * @return butchery category
+     */
     @Override
     public List<ButcheryCategory> getCategoriesByButcheryId(Long butcheryId) {
         List<ButcheryCategory> bcs = butcheryCategoryRepository.getButcheryCategoriesByButcheryId(butcheryId);

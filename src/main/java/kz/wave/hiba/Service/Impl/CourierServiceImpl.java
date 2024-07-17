@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Implementation of the {@link CourierService} interface.
+ */
 @Service
 @RequiredArgsConstructor
 public class CourierServiceImpl implements CourierService {
@@ -40,12 +43,24 @@ public class CourierServiceImpl implements CourierService {
     private final ButcheryRepository butcheryRepository;
     private final JwtUtils jwtUtils;
     private final OrderService orderService;
+    private final ConfirmationCodeRepository confirmationCodeRepository;
 
+    /**
+     * Retrieves all couriers.
+     *
+     * @return a list of all couriers
+     */
     @Override
     public List<Courier> getAllCouriers() {
         return courierRepository.findAll();
     }
 
+    /**
+     * Retrieves a courier by its ID.
+     *
+     * @param id the ID of the courier
+     * @return the courier response containing courier details, active and delivered orders count
+     */
     @Override
     public CourierResponse getCourier(Long id) {
         Courier courier = courierRepository.findById(id).orElseThrow();
@@ -55,11 +70,24 @@ public class CourierServiceImpl implements CourierService {
         return new CourierResponse(courier, delOrders, actOrders);
     }
 
+    /**
+     * Retrieves a courier by full name or phone or email.
+     *
+     * @param userName the name of the user
+     * @param userPhone the phone number of the user
+     * @return the courier found by full name or phone
+     */
     @Override
     public Courier getCourierByFullNameOrPhoneOrEmail(String userName, String userPhone) {
         return courierRepository.findCourierByUserNameOrUserPhone(userName, userPhone);
     }
 
+    /**
+     * Creates a new courier.
+     *
+     * @param courierCreateDTO the data transfer object containing courier creation data
+     * @return the created courier
+     */
     @Override
     public Courier createCourier(CourierCreateDTO courierCreateDTO) {
         Courier newCourier = new Courier();
@@ -107,21 +135,43 @@ public class CourierServiceImpl implements CourierService {
         return courierRepository.save(newCourier);
     }
 
+    /**
+     * Updates an existing courier.
+     *
+     * @param courierUpdateDTO the data transfer object containing courier update data
+     * @return the updated courier, or null if not found
+     */
     @Override
     public Courier udpateCourier(CourierUpdateDTO courierUpdateDTO) {
         return null;
     }
 
+    /**
+     * Retrieves a courier by user ID.
+     *
+     * @param userId the ID of the user
+     * @return the courier found by user ID
+     */
     @Override
     public Courier getCourierByUserId(Long userId) {
         return courierRepository.findByUserId(userId);
     }
 
+    /**
+     * Deletes a courier by its ID.
+     *
+     * @param id the ID of the courier to delete
+     */
     @Override
     public void deleteCourierById(Long id) {
         courierRepository.deleteById(id);
     }
 
+    /**
+     * Retrieves waiting orders by butchery.
+     *
+     * @return a list of courier orders by butchery response
+     */
     @Override
     public List<CourierOrdersByButcheryResponse> getWaitingOrdersByButchery() {
         List<Butchery> butcheries = butcheryRepository.findAll();
@@ -140,6 +190,13 @@ public class CourierServiceImpl implements CourierService {
         return response;
     }
 
+    /**
+     * Retrieves active orders by butchery ID.
+     *
+     * @param id the ID of the butchery
+     * @param request the HTTP request
+     * @return a list of active order responses
+     */
     @Override
     public List<OrderResponse> getActiveOrdersByButcheryId(Long id, HttpServletRequest request) {
         User user = jwtUtils.getUserFromRequest(request);
@@ -155,6 +212,12 @@ public class CourierServiceImpl implements CourierService {
         return responses;
     }
 
+    /**
+     * Retrieves waiting orders by butchery ID.
+     *
+     * @param id the ID of the butchery
+     * @return a list of waiting order responses
+     */
     @Override
     public List<OrderResponse> getWaitingOrdersByButcheryId(Long id) {
         List<Order> orderList = orderRepository.findOrdersByCourierIsNullAndButcheryIdAndOrderStatus(id, OrderStatus.PREPARING_FOR_DELIVERY);
@@ -168,6 +231,12 @@ public class CourierServiceImpl implements CourierService {
         return responses;
     }
 
+    /**
+     * Retrieves active orders by butchery for the courier.
+     *
+     * @param request the HTTP request
+     * @return a list of courier orders by butchery response
+     */
     @Override
     public List<CourierOrdersByButcheryResponse> getActiveOrdersByButchery(HttpServletRequest request) {
         User user = jwtUtils.getUserFromRequest(request);
@@ -188,17 +257,25 @@ public class CourierServiceImpl implements CourierService {
         return response;
     }
 
+    /**
+     * Retrieves couriers based on sorting, filtering, and search query.
+     *
+     * @param sort the sorting order
+     * @param filter the filtering criteria
+     * @param query the search query
+     * @return a list of courier order responses
+     */
     @Override
     public List<CourierOrderResponse> getCouriers(String sort, String filter, String query) {
         List<Long> cityList = new ArrayList<>();
-        if(!filter.isEmpty()) {
+        if (!filter.isEmpty()) {
             String[] country_cities = filter.split(";");
-            for(String country_city : country_cities) {
+            for (String country_city : country_cities) {
                 String[] country_and_cities = country_city.split(":");
                 if (country_and_cities.length > 1) {
                     String countryName = country_and_cities[0];
                     String[] cityNames = country_and_cities[1].split(",");
-                    if(cityNames.length > 0) {
+                    if (cityNames.length > 0) {
                         Country country = countryRepository.findByName(countryName);
                         List<Long> cities = cityRepository.findAllIdsByCountryAndNameInList(country, cityNames);
                         cityList.addAll(cities);
@@ -206,13 +283,19 @@ public class CourierServiceImpl implements CourierService {
                 }
             }
         }
-        if (cityList.isEmpty()){
+        if (cityList.isEmpty()) {
             cityList = null;
         }
 
         return courierRepository.findCouriers(query, sort, cityList);
     }
 
+    /**
+     * Retrieves active orders for the current courier.
+     *
+     * @param request the HTTP request
+     * @return a list of active order responses
+     */
     @Override
     public List<OrderResponse> getActiveOrders(HttpServletRequest request) {
         User user = jwtUtils.getUserFromRequest(request);
@@ -228,6 +311,11 @@ public class CourierServiceImpl implements CourierService {
         return responses;
     }
 
+    /**
+     * Retrieves waiting orders for the current courier.
+     *
+     * @return a list of waiting order responses
+     */
     @Override
     public List<OrderResponse> getWaitingOrders() {
         List<Order> orderList = orderRepository.findOrdersByCourierIsNullAndOrderStatus(OrderStatus.PREPARING_FOR_DELIVERY);
@@ -241,6 +329,34 @@ public class CourierServiceImpl implements CourierService {
         return responses;
     }
 
+    @Override
+    public Courier verifyCode(Long id, String code, HttpServletRequest request) {
+        User user = jwtUtils.getUserFromRequest(request);
+        Courier courier = courierRepository.findByUserId(user.getId());
+
+        Optional<Order> orderOptional = orderRepository.findById(id);
+
+        if (orderOptional.isEmpty()) {
+            return null;
+        }
+
+        Order order = orderOptional.get();
+
+        if (order.getCourier().equals(courier)) {
+            ConfirmationCode confirmationCode = confirmationCodeRepository.getConfirmationCodeByUserId(order.getUser().getId());
+            if (confirmationCode.getToken().equals(code)) {
+                return courier;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Generates a random password.
+     *
+     * @return a random password
+     */
     private String generatePassword() {
         return UUID.randomUUID().toString().substring(0, 8);
     }

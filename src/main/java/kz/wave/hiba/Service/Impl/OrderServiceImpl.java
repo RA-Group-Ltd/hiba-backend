@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -32,6 +33,7 @@ public class OrderServiceImpl implements OrderService {
     private final MenuRepository menuRepository;
     private final ButcheryCategoryRepository butcheryCategoryRepository;
     private final CourierRepository courierRepository;
+    private final ConfirmationCodeRepository confirmationCodeRepository;
 
     @Override
     public List<Order> getAllOrders() {
@@ -145,9 +147,20 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = orderRepository.findById(id).orElseThrow();
 
-        if (Objects.equals(order.getCourier().getId(), courier.getId())) {
-            if (newOrderStatus.equals(OrderStatus.DELIVERED)) {
-
+        if (courier != null) {
+            if (order.getCourier() == null && order.getOrderStatus().equals(OrderStatus.PREPARING_FOR_DELIVERY)) {
+                order.setCourier(courier);
+            } else if (Objects.equals(order.getCourier().getId(), courier.getId())) {
+                if (newOrderStatus.equals(OrderStatus.DELIVERED)) {
+                    ConfirmationCode code = new ConfirmationCode();
+                    String verificationCode = String.format("%04d", new Random().nextInt(10000)); // generates a 4-digit code
+                    code.setToken(verificationCode);
+                    // Set expirationDate using LocalDateTime
+                    code.setExpirationDate(LocalDateTime.now().plusMinutes(10)); // code is valid for 10 minutes
+                    code.setUser(order.getUser());
+                    code.setOrder(order);
+                    confirmationCodeRepository.save(code);
+                }
             }
         }
 

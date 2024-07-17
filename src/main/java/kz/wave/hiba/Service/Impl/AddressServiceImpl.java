@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation of the {@link AddressService} interface.
+ */
 @Service
 @RequiredArgsConstructor
 public class AddressServiceImpl implements AddressService {
@@ -27,16 +30,28 @@ public class AddressServiceImpl implements AddressService {
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
 
+    /**
+     * Retrieves the addresses associated with the given user.
+     *
+     * @param user the user whose addresses are to be retrieved
+     * @return a {@link ResponseEntity} containing the list of addresses and HTTP status
+     */
     @Override
     public ResponseEntity<?> getMyAddresses(User user) {
         try {
             List<Address> addressList = addressRepository.findAddressesByUserId(user.getId());
-            return new ResponseEntity<> (addressList, HttpStatus.OK);
+            return new ResponseEntity<>(addressList, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Addresses didn't find!", HttpStatus.NOT_FOUND);
         }
     }
 
+    /**
+     * Retrieves a specific address by its ID.
+     *
+     * @param id the ID of the address to be retrieved
+     * @return a {@link ResponseEntity} containing the address and HTTP status
+     */
     @Override
     public ResponseEntity<?> getOneMyAddress(Long id) {
         try {
@@ -47,6 +62,13 @@ public class AddressServiceImpl implements AddressService {
         }
     }
 
+    /**
+     * Creates a new address for the given user.
+     *
+     * @param addressCreateDTO the address creation data transfer object
+     * @param user the user for whom the address is to be created
+     * @return a {@link ResponseEntity} containing the created address and HTTP status
+     */
     @Override
     public ResponseEntity<?> createMyAddress(AddressCreateDTO addressCreateDTO, User user) {
         try {
@@ -70,6 +92,13 @@ public class AddressServiceImpl implements AddressService {
         }
     }
 
+    /**
+     * Updates an existing address for the given user.
+     *
+     * @param addressUpdateDTO the address update data transfer object
+     * @param user the user for whom the address is to be updated
+     * @return a {@link ResponseEntity} containing the updated address and HTTP status
+     */
     @Override
     public ResponseEntity<?> updateMyAddress(AddressUpdateDTO addressUpdateDTO, User user) {
         try {
@@ -97,6 +126,12 @@ public class AddressServiceImpl implements AddressService {
         }
     }
 
+    /**
+     * Deletes an address by its ID.
+     *
+     * @param id the ID of the address to be deleted
+     * @return a {@link ResponseEntity} containing a success message and HTTP status
+     */
     @Override
     public ResponseEntity<?> deleteMyAddress(Long id) {
         try {

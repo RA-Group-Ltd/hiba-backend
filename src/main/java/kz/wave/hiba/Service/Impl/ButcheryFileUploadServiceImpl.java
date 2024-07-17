@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+/**
+ * Implementation of the {@link ButcheryFileUploadService} interface.
+ */
 @Service
 public class ButcheryFileUploadServiceImpl implements ButcheryFileUploadService {
 
@@ -30,25 +33,38 @@ public class ButcheryFileUploadServiceImpl implements ButcheryFileUploadService 
     @Value("${loadButcheryDocumentURL}")
     private String myLoadDocumentURL;
 
+    /**
+     * Uploads an image to the butchery.
+     *
+     * @param file the image file to be uploaded
+     * @param butchery the butchery entity to which the image belongs
+     * @return the updated butchery entity
+     */
     @Override
     public Butchery uploadImage(MultipartFile file, Butchery butchery) {
-        try{
-            if(file == null)
+        try {
+            if (file == null) {
                 return butchery;
+            }
             InputStream inputStream = file.getInputStream();
             BufferedImage img = ImageIO.read(inputStream);
             byte[] imageBytes = convertImageToByteArray(img);
-
 
             butchery.setImage(imageBytes);
 
             return butcheryRepository.save(butchery);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return butchery;
         }
     }
 
+    /**
+     * Uploads documents to the butchery.
+     *
+     * @param files the list of document files to be uploaded
+     * @param butchery the butchery entity to which the documents belong
+     */
     @Override
     public void uploadDocuments(List<MultipartFile> files, Butchery butchery) {
         if (files != null) {
@@ -67,6 +83,13 @@ public class ButcheryFileUploadServiceImpl implements ButcheryFileUploadService 
         }
     }
 
+    /**
+     * Retrieves the documents of a butchery by its ID.
+     *
+     * @param id the ID of the butchery
+     * @return the byte array of the documents
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     public byte[] getDocuments(Long id) throws IOException {
         try {
@@ -82,6 +105,13 @@ public class ButcheryFileUploadServiceImpl implements ButcheryFileUploadService 
         return IOUtils.toByteArray(in);
     }
 
+    /**
+     * Converts a BufferedImage to a byte array.
+     *
+     * @param image the BufferedImage to be converted
+     * @return the byte array of the image
+     * @throws IOException if an I/O error occurs
+     */
     private byte[] convertImageToByteArray(BufferedImage image) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             ImageIO.write(image, "png", baos);

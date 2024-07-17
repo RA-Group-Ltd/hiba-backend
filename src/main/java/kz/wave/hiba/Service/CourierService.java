@@ -28,4 +28,5 @@ public interface CourierService {
     List<CourierOrderResponse> getCouriers(String sort, String filter, String query);
     List<OrderResponse> getActiveOrders(HttpServletRequest request);
     List<OrderResponse> getWaitingOrders();
+    Courier verifyCode(Long id, String code, HttpServletRequest request);
 }

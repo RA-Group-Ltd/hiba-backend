@@ -197,4 +197,15 @@ public class CourierController {
             return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @PostMapping(value = "/confirmationCode/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_COURIER')")
+    public ResponseEntity<?> verifyCode(@PathVariable(name = "id") Long id, @RequestParam String code, HttpServletRequest request) {
+        try {
+            courierService.verifyCode(id, code, request);
+            return new ResponseEntity<>("Verified code matched successfully!", HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Verify code doesn't match!", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

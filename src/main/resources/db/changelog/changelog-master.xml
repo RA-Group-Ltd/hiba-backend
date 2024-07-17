@@ -462,4 +462,26 @@
                  splitStatements="true"
                  stripComments="true" />
     </changeSet>
+
+    <changeSet id="2024_07_16_create_confirmation_code_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_07_16_create_confirmation_code_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+    <changeSet id="2024_07_16_alter_confirmation_code_table" author="batyrkhan-kenzhaliyev">
+        <sqlFile path="changes/2024_07_16_alter_confirmation_code_table.sql"
+                 dbms="mariadb"
+                 encoding="UTF-8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true" />
+    </changeSet>
+
+
 </databaseChangeLog>
