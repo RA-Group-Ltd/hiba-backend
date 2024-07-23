@@ -14,6 +14,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation of the {@link PromotionService} interface.
+ */
 @Service
 @RequiredArgsConstructor
 public class PromotionServiceImpl implements PromotionService {
@@ -22,16 +25,33 @@ public class PromotionServiceImpl implements PromotionService {
     private final PromotionUploadService promotionUploadService;
     private final NotificationService notificationService;
 
+    /**
+     * Retrieves all promotions.
+     *
+     * @return a list of all promotions
+     */
     @Override
     public List<Promotion> getPromotions() {
         return promotionRepository.findAll();
     }
 
+    /**
+     * Retrieves a promotion by its ID.
+     *
+     * @param id the ID of the promotion
+     * @return the promotion with the specified ID
+     */
     @Override
     public Promotion getPromotion(Long id) {
         return promotionRepository.findById(id).orElseThrow();
     }
 
+    /**
+     * Creates a new promotion.
+     *
+     * @param promotionCreateDTO the data transfer object containing promotion creation data
+     * @return the created promotion, or null if a promotion with the same title already exists
+     */
     @Override
     public Promotion createPromotion(PromotionCreateDTO promotionCreateDTO) {
         Optional<Promotion> promotionOptional = Optional.ofNullable(promotionRepository.findPromotionByTitle(promotionCreateDTO.getTitle()));
@@ -54,6 +74,12 @@ public class PromotionServiceImpl implements PromotionService {
         }
     }
 
+    /**
+     * Updates an existing promotion.
+     *
+     * @param promotionUpdateDTO the data transfer object containing promotion update data
+     * @return the updated promotion, or null if the promotion is not found
+     */
     @Override
     public Promotion updatePromotion(PromotionUpdateDTO promotionUpdateDTO) {
         System.out.println(promotionUpdateDTO.getId());
@@ -69,10 +95,14 @@ public class PromotionServiceImpl implements PromotionService {
         updatePromotion.setTitle(promotionUpdateDTO.getTitle());
         updatePromotion.setAudience(promotionUpdateDTO.getAudience());
 
-
         return promotionRepository.save(updatePromotion);
     }
 
+    /**
+     * Deletes a promotion by its ID.
+     *
+     * @param id the ID of the promotion to delete
+     */
     @Override
     public void deletePromotion(Long id) {
         promotionRepository.deleteById(id);

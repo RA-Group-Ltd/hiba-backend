@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 
+/**
+ * Implementation of the {@link PromotionUploadService} interface.
+ */
 @Service
 public class PromotionUploadServiceImpl implements PromotionUploadService {
 
@@ -30,6 +33,13 @@ public class PromotionUploadServiceImpl implements PromotionUploadService {
     @Value("${loadPromotionImageURL}")
     private String myLoadURL;
 
+    /**
+     * Uploads an image for a promotion.
+     *
+     * @param file the image file to upload
+     * @param promotion the promotion entity to update with the image
+     * @return the updated promotion entity, or null if an error occurs
+     */
     @Override
     public Promotion uploadImage(MultipartFile file, Promotion promotion) {
         try {
@@ -41,6 +51,13 @@ public class PromotionUploadServiceImpl implements PromotionUploadService {
         }
     }
 
+    /**
+     * Retrieves the image for a promotion by its ID.
+     *
+     * @param id the ID of the promotion
+     * @return the image bytes, or the default "no image" bytes if an error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     public byte[] getImage(Long id) throws IOException {
 
@@ -64,6 +81,15 @@ public class PromotionUploadServiceImpl implements PromotionUploadService {
 
     }
 
+    /**
+     * Resizes an image file to the specified dimensions.
+     *
+     * @param file the image file to resize
+     * @param targetWidth the target width
+     * @param targetHeight the target height
+     * @return the resized image
+     * @throws IOException if an I/O error occurs
+     */
     private BufferedImage resizeImage(MultipartFile file, int targetWidth, int targetHeight) throws IOException {
         BufferedImage originalImage = ImageIO.read(file.getInputStream());
 
@@ -89,6 +115,13 @@ public class PromotionUploadServiceImpl implements PromotionUploadService {
         return resizedImage;
     }
 
+    /**
+     * Encodes an image to a Base64 string.
+     *
+     * @param image the image to encode
+     * @return the Base64 encoded string
+     * @throws IOException if an I/O error occurs
+     */
     private String encodeImageToBase64(BufferedImage image) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             // Write the image to the ByteArrayOutputStream in PNG format (you can choose a different format)
@@ -98,6 +131,14 @@ public class PromotionUploadServiceImpl implements PromotionUploadService {
             return Base64.getEncoder().encodeToString(baos.toByteArray());
         }
     }
+
+    /**
+     * Converts an image to a byte array.
+     *
+     * @param image the image to convert
+     * @return the byte array representation of the image
+     * @throws IOException if an I/O error occurs
+     */
     private byte[] convertImageToByteArray(BufferedImage image) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             ImageIO.write(image, "png", baos);

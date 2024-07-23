@@ -18,6 +18,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation of the {@link NotificationService} interface.
+ */
 @Service
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
@@ -29,6 +32,12 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final static String token = "fVZIK6o0RCaOFHuCWM3jfF:APA91bF0k-fvhi_GtgczDNhHN2v6bO_fbI6inCerjfhZh91Buo2vN7eFw0Q0euRXPvyXxRhz80Dv4SKixdj9iivjDfJD9d5xDCClFjlwV4mu1LfhzBTk28UJvlyE4KVd25qqcOED3pbO";
 
+    /**
+     * Sends a notification to a user regarding their order status.
+     *
+     * @param id the ID of the order
+     * @param notificationCategory the category of the notification
+     */
     @Override
     public void sendNotificationToUser(Long id, NotificationCategory notificationCategory) {
         Optional<Order> orderOptional = orderRepository.findById(id);
@@ -62,6 +71,11 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
+    /**
+     * Sends a promotion notification to all users.
+     *
+     * @param title the title of the promotion
+     */
     @Override
     public void sendNotificationPromotion(String title) {
         Promotion promotion = promotionRepository.findPromotionByTitle(title);
@@ -98,6 +112,12 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
+    /**
+     * Sends a chat notification to a user.
+     *
+     * @param chat the chat related to the notification
+     * @param savedMsg the chat message to notify about
+     */
     @Override
     public void sendChatNotificationToUser(Chat chat, ChatMessage savedMsg) {
         Notification notification = new Notification();

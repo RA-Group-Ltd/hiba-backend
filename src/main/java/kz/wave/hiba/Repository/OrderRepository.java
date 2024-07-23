@@ -92,13 +92,17 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "   WHERE o.user.id = :id AND o.id NOT IN (SELECT c.order.id FROM Chat c)")
     List<Order> findOrdersByUserIdAndNotInChats(@Param("id") Long id);
 
-    List<Order> findOrdersByCourier(Courier courier);
+    @Query("SELECT o FROM Order o WHERE o.courier = :courier AND (o.orderStatus = kz.wave.hiba.Enum.OrderStatus.RECEIVED OR o.orderStatus = kz.wave.hiba.Enum.OrderStatus.ON_THE_WAY)")
+    List<Order> findOrdersByCourierAndOrderStatus(@Param("courier") Courier courier);
 
     List<Order> findOrdersByCourierIsNullAndOrderStatus(OrderStatus orderStatus);
 
-    int countOrdersByButcheryAndCourier(Butchery butchery, Courier courier);
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.butchery = :butchery AND o.courier = :courier AND (o.orderStatus = kz.wave.hiba.Enum.OrderStatus.RECEIVED OR o.orderStatus = kz.wave.hiba.Enum.OrderStatus.ON_THE_WAY)")
+    int countOrdersByButcheryAndCourier(@Param("butchery") Butchery butchery, @Param("courier") Courier courier);
     int countOrdersByButcheryAndCourierIsNullAndOrderStatus(Butchery butchery, OrderStatus orderStatus);
 
-    List<Order> findOrdersByCourierAndButcheryId(Courier courier, Long id);
+    @Query("SELECT o FROM Order o WHERE o.courier = :courier AND o.butchery.id = :butcheryId AND (o.orderStatus = kz.wave.hiba.Enum.OrderStatus.RECEIVED OR o.orderStatus = kz.wave.hiba.Enum.OrderStatus.ON_THE_WAY)")
+    List<Order> findOrdersByCourierAndButcheryId(@Param("courier") Courier courier, @Param("butcheryId") Long butcheryId);
+
     List<Order> findOrdersByCourierIsNullAndButcheryIdAndOrderStatus(Long id, OrderStatus orderStatus);
 }

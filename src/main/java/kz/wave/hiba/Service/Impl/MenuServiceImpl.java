@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation of the {@link MenuService} interface.
+ */
 @Service
 public class MenuServiceImpl implements MenuService {
 
@@ -31,17 +34,33 @@ public class MenuServiceImpl implements MenuService {
     @Autowired
     private MenuFileUploadService menuFileUploadService;
 
-
+    /**
+     * Retrieves all menus.
+     *
+     * @return a list of all menus
+     */
     @Override
     public List<Menu> getAllMenus() {
         return menuRepository.findAll();
     }
 
+    /**
+     * Retrieves a menu by its ID.
+     *
+     * @param id the ID of the menu
+     * @return the menu found by ID
+     */
     @Override
     public Menu getOneMenu(Long id) {
         return menuRepository.findById(id).orElseThrow();
     }
 
+    /**
+     * Creates a new menu.
+     *
+     * @param menuCreateDTO the data transfer object containing menu creation data
+     * @return the created menu, or null if the butchery category or category is not found
+     */
     @Override
     public Menu createMenu(MenuCreateDTO menuCreateDTO) {
 
@@ -76,6 +95,12 @@ public class MenuServiceImpl implements MenuService {
         return menuRepository.save(newMenu);
     }
 
+    /**
+     * Updates an existing menu.
+     *
+     * @param menuUpdateDTO the data transfer object containing menu update data
+     * @return the updated menu, or null if the menu, butchery category, or category is not found
+     */
     @Override
     public Menu updateMenu(MenuUpdateDTO menuUpdateDTO) {
 
@@ -113,11 +138,22 @@ public class MenuServiceImpl implements MenuService {
         return menuRepository.save(menuUpdate);
     }
 
+    /**
+     * Deletes a menu by its ID.
+     *
+     * @param id the ID of the menu to delete
+     */
     @Override
     public void deleteMenu(Long id) {
         menuRepository.deleteById(id);
     }
 
+    /**
+     * Retrieves a list of menus by butchery category ID.
+     *
+     * @param id the ID of the butchery category
+     * @return a list of menus belonging to the specified butchery category
+     */
     @Override
     public List<Menu> getMenuListByButcheryCategoryId(Long id) {
         return menuRepository.getMenusByButcheryCategoryId(id);

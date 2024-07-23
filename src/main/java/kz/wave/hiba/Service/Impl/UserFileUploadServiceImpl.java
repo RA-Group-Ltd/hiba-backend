@@ -16,8 +16,10 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Base64;
 
+/**
+ * Implementation of the {@link UserFileUploadService} interface.
+ */
 @Service
 public class UserFileUploadServiceImpl implements UserFileUploadService {
     @Autowired
@@ -29,6 +31,13 @@ public class UserFileUploadServiceImpl implements UserFileUploadService {
     @Value("${loadImageURL}")
     private String myLoadURL;
 
+    /**
+     * Uploads an image for a user and resizes it to 150x150 pixels.
+     *
+     * @param file the image file to be uploaded
+     * @param user the user to whom the image belongs
+     * @return the updated user with the uploaded image
+     */
     @Override
     public User uploadImage(MultipartFile file, User user) {
         try {
@@ -41,12 +50,17 @@ public class UserFileUploadServiceImpl implements UserFileUploadService {
         }
     }
 
+    /**
+     * Retrieves the avatar image of a user.
+     *
+     * @param id the ID of the user
+     * @return the byte array of the user's avatar image
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     public byte[] getImage(Long id) throws IOException {
-
         try {
             User user = userRepository.getById(id);
-
             byte[] image = user.getAvatar();
 
             if (image != null && image.length > 0) {
@@ -61,9 +75,17 @@ public class UserFileUploadServiceImpl implements UserFileUploadService {
         ClassPathResource resource = new ClassPathResource(picURL);
         in = resource.getInputStream();
         return IOUtils.toByteArray(in);
-
     }
 
+    /**
+     * Resizes an image to the specified dimensions.
+     *
+     * @param file the image file to be resized
+     * @param targetWidth the target width
+     * @param targetHeight the target height
+     * @return the resized image as a {@link BufferedImage}
+     * @throws IOException if an I/O error occurs
+     */
     private BufferedImage resizeImage(MultipartFile file, int targetWidth, int targetHeight) throws IOException {
         BufferedImage originalImage = ImageIO.read(file.getInputStream());
 
@@ -89,15 +111,13 @@ public class UserFileUploadServiceImpl implements UserFileUploadService {
         return resizedImage;
     }
 
-    private String encodeImageToBase64(BufferedImage image) throws IOException {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            // Write the image to the ByteArrayOutputStream in PNG format (you can choose a different format)
-            ImageIO.write(image, "png", baos);
-
-            // Encode the image bytes to base64
-            return Base64.getEncoder().encodeToString(baos.toByteArray());
-        }
-    }
+    /**
+     * Converts an image to a byte array.
+     *
+     * @param image the image to be converted
+     * @return the byte array of the image
+     * @throws IOException if an I/O error occurs
+     */
     private byte[] convertImageToByteArray(BufferedImage image) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             ImageIO.write(image, "png", baos);

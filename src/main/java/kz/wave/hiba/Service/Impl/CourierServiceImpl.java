@@ -300,7 +300,7 @@ public class CourierServiceImpl implements CourierService {
     public List<OrderResponse> getActiveOrders(HttpServletRequest request) {
         User user = jwtUtils.getUserFromRequest(request);
         Courier courier = courierRepository.findByUserId(user.getId());
-        List<Order> orderList = orderRepository.findOrdersByCourier(courier);
+        List<Order> orderList = orderRepository.findOrdersByCourierAndOrderStatus(courier);
 
         List<OrderResponse> responses = new ArrayList<>();
         for (Order order : orderList) {
@@ -330,7 +330,7 @@ public class CourierServiceImpl implements CourierService {
     }
 
     @Override
-    public Courier verifyCode(Long id, String code, HttpServletRequest request) {
+    public Order verifyCode(Long id, String code, HttpServletRequest request) {
         User user = jwtUtils.getUserFromRequest(request);
         Courier courier = courierRepository.findByUserId(user.getId());
 
@@ -345,7 +345,9 @@ public class CourierServiceImpl implements CourierService {
         if (order.getCourier().equals(courier)) {
             ConfirmationCode confirmationCode = confirmationCodeRepository.getConfirmationCodeByUserId(order.getUser().getId());
             if (confirmationCode.getToken().equals(code)) {
-                return courier;
+                order.setOrderStatus(OrderStatus.DELIVERED);
+                confirmationCodeRepository.deleteById(confirmationCode.getId());
+                return orderRepository.save(order);
             }
         }
 
